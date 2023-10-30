@@ -1,0 +1,31 @@
+@import "global.reset.css";
+@import "global.font.css";
+@import "global.var.css";
+@import "global.ui.css";
+@import "global.icon.css";
+
+* {
+  color: var(--color-main-text-primary);
+  /*background-color: transparent;*/
+}
+
+::-moz-selection {
+  color: white;
+  background: var(--color-text-selection);
+}
+
+::selection {
+  color: white;
+  background: var(--color-text-selection);
+}
+
+button, input, label, span, a, p {
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+}
+
+h1, h2, h3, button, input, label {
+  font-family: "Minecraft", "Arial", "sans-serif";
+  color: var(--color-text-primary);
+}
+

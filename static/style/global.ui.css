@@ -1,0 +1,58 @@
+.ui.interactive {
+  box-sizing: border-box;
+  overflow: hidden;
+  display: block;
+
+  height: var(--ui-interactive-height);
+  min-width: var(--ui-interactive-size);
+  min-height: var(--ui-interactive-size);
+
+  padding-left: var(--ui-interactive-padding);
+  padding-right: var(--ui-interactive-padding);
+
+  outline: none;
+  border: var(--ui-interactive-border-width) solid var(--color-ui-border);
+}
+
+
+/* BUTTON TYPE */
+
+.ui.interactive.button {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-drag: none;
+
+  color: var(--color-text-secondary);
+  background-color: var(--color-ui-primary);
+  box-shadow: inset 0 -4px 0 0 var(--color-ui-secondary);
+
+  transition: background-color .2s ease-out;
+}
+
+.ui.interactive.button:hover {
+  background-color: var(--color-ui-primary-lighter);
+}
+
+.ui.interactive.button:active {
+  background-color: var(--color-ui-secondary);
+  border: var(--ui-interactive-border-width) solid var(--color-ui-primary-lighter);
+}
+
+.ui.interactive.button:disabled {
+  cursor: not-allowed;
+  padding-bottom: 0;
+  background-color: var(--color-main-dark);
+  border: var(--ui-interactive-border-width) solid var(--color-ui-primary);
+}
+
+/* INPUT TYPE */
+
+.ui.interactive.input {
+  box-shadow: inset 4px 4px 0 0 var(--color-ui-shadow);
+}
+
+.ui.interactive.input,
+.ui.interactive.input::placeholder {
+  color: var(--color-text-primary);
+  background-color: transparent;
+}

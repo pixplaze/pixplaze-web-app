@@ -1,0 +1,59 @@
+:root {
+  --ui-interactive-size: 40px;
+  --ui-interactive-height: var(--ui-interactive-size);
+  --ui-interactive-spacing: 20px;
+  --ui-interactive-padding: 30px;
+  --ui-interactive-border-width: 2px;
+
+  --color-green-main: #5CBB3A;
+  --color-green-deep: #42A021;
+  --color-green-penumbra: #52A435;
+
+  --color-gray-silver: #F6F8FA;
+  --color-gray-shadow: rgba(0, 0, 0, 10%);
+  --color-gray-dark: #444444;
+
+  --color-main-background: var(--color-gray-silver);
+
+  --color-main-accent: var(--color-green-main);
+  --color-main-outline: var(--color-green-deep);
+  --color-main-dark: var(--color-green-penumbra);
+
+  --color-main-shadow: var(--color-gray-shadow);
+
+  --color-main-text-primary: var(--color-gray-dark);
+  --color-main-text-secondary: var(--color-gray-silver);
+
+  /* THEME COLORS */
+  --color-text-primary: #444444;
+  --color-text-secondary: #F6F8FA;
+  --color-text-selection: #1E6EE9;
+  --color-ui-background: #F6F8FA;
+  --color-ui-foreground: #FFFFFF;
+  --color-ui-shadow: rgba(0, 0, 0, 10%);
+  --color-ui-primary: #5CBB3A;
+  --color-ui-primary-lighter: #63C83F;
+  --color-ui-secondary: #52A435;
+  --color-ui-border: #42A021;
+}
+
+.themed,
+.themed * { /* can be removed */
+  transition: background-color .2s ease-in-out;
+}
+
+.themed.light {
+  --color-text-primary: #444444;
+  --color-text-secondary: #F6F8FA;
+  --color-text-selection: #1E6EE9;
+  --color-ui-background: #F6F8FA;
+  --color-ui-foreground: #FFFFFF;
+}
+
+.themed.dark {
+  --color-text-primary: #F6F8FA;
+  --color-text-secondary: #F6F8FA;
+  --color-text-selection: #1E6EE9;
+  --color-ui-background: #444444;
+  --color-ui-foreground: #333333;
+}
