@@ -1,8 +1,8 @@
 <script>
 import Header from "$lib/components/Header.svelte";
 import {createPageStore} from "$lib/store/store.page.js";
-export const ssr = false;
-export const csr = false;
+// export const ssr = false;
+// export const csr = false;
 
 const pageStore = createPageStore();
 const currentTheme = pageStore.currentTheme;

@@ -4,11 +4,6 @@
 @import "global.ui.css";
 @import "global.icon.css";
 
-* {
-  color: var(--color-main-text-primary);
-  /*background-color: transparent;*/
-}
-
 ::-moz-selection {
   color: white;
   background: var(--color-text-selection);

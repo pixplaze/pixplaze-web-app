@@ -1,5 +1,7 @@
 <script>
   import Button from "$lib/ui/Button.svelte";
+  import Icon from "$lib/ui/Icon.svelte";
+
   export let icon;
   export let disabled = false;
   export let transparent = false;
@@ -9,16 +11,12 @@
         {transparent}
         square
         on:click>
-  <span class={`icon-${icon}`}>{icon}</span>
+  <Icon {icon}/>
 </Button>
 
 <style>
-  span {
-    font-size: 0;
-  }
-
-  span[class^="icon-"]::before {
+  :global(button>span[class^="icon-"]::before) {
     font-size: 24px;
-    color: var(--color-text-secondary);
+    color: var(--color-text-secondary) !important;
   }
 </style>

@@ -12,6 +12,7 @@
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change ../font/cubic-icons */
+  vertical-align: middle;
   font-family: 'cubic-icons' !important;
   speak: never;
   font-style: normal;

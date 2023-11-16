@@ -8,10 +8,18 @@
 <div class="header">
   <SquareButton icon="menu" transparent on:click={() => dispatch('aside')}/>
   <nav>
-    <SquareButton icon="profile" on:click={() => dispatch('profile')}/>
-    <SquareButton icon="map" on:click={() => dispatch('map')}/>
-    <SquareButton icon="globe" on:click={() => dispatch('globe')}/>
-    <SquareButton icon="settings" on:click={() => dispatch('settings')}/>
+    <SquareButton icon="profile"
+                  transparent
+                  on:click={() => dispatch('profile')}/>
+    <SquareButton icon="map"
+                  transparent
+                  on:click={() => dispatch('map')}/>
+    <SquareButton icon="globe"
+                  transparent
+                  on:click={() => dispatch('globe')}/>
+    <SquareButton icon="settings"
+                  transparent
+                  on:click={() => dispatch('settings')}/>
   </nav>
 </div>
 

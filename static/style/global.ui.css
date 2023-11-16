@@ -10,6 +10,8 @@
   padding-left: var(--ui-interactive-padding);
   padding-right: var(--ui-interactive-padding);
 
+  vertical-align: top;
+
   outline: none;
   border: var(--ui-interactive-border-width) solid var(--color-ui-border);
 }
