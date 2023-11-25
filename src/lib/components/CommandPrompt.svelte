@@ -8,7 +8,7 @@
     TODO: Вынести длину переходов в глобальные переменные стилей
    */
   import {onMount} from "svelte";
-  import {createPrompt} from "$lib/scripts/prompt.js";
+  import {createCommandPrompt} from "$lib/scripts/prompt.command.js";
 
   let prompt;
   let messages = [];
@@ -20,28 +20,25 @@
   let promptInputElement;
 
   onMount(() => {
-    prompt = createPrompt([
-      'Lorem ipsum dolor sit amet.',
-      'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, sapiente.',
-      'Lorem ipsum dolor sit amet, consectetur adipisicing elit.\n' +
-      'Asperiores blanditiis deleniti dolorem illum ipsam iure officiis\n' +
-      'quibusdam ratione saepe vitae.'
-    ], {
-      historyCapacity: 10,
-      messagesCapacity: 100
-    })
-
+    prompt = createCommandPrompt();
     prompt.onpush(() => {
       messages = prompt.messages();
+
       // TODO: Фиксится добавлением высоты одной строки, напр getComputedStyle(document.documentElement).getPropertyValue('--my-variable-name')
       promptMessagesElement.scrollTop = promptMessagesElement.scrollHeight;
+      // console.log(promptMessagesElement);
     });
+    prompt.onenter(() => {
+      prompt.send(inputValue);
+    })
 
     // prompt.onenter(() => {
     //
     // });
 
-    messages = prompt.messages();
+    // messages = prompt.messages();
+    console.log(prompt)
+    prompt.open();
   });
 
   function focus() {
