@@ -42,13 +42,15 @@ const createPrompt = (rows, options) => {
     messages: () => [...messages],
     clear: () => messages = [],
     push: rows => {
-      if (!(Array.isArray(rows) || typeof rows === 'string')) throw new Error('Only string array or flat string value can be pushed in display messages!')
+      if (!(Array.isArray(rows) || typeof rows === 'string'))
+        throw new Error('Only string array or flat string value can be pushed in display messages!')
       if (typeof rows === 'string') rows = [rows.trim()]
       messages = concatWithCapacity(messages, rows, config.messagesCapacity);
       handleOnPush();
     },
     renew: rows => {
-      if (!(Array.isArray(rows) || typeof rows === 'string')) throw new Error('Only string array or flat string value can be pushed in display messages!');
+      if (!(Array.isArray(rows) || typeof rows === 'string'))
+        throw new Error('Only string array or flat string value can be pushed in display messages!');
       if (typeof rows === 'string') rows = [rows]
       messages = concatWithCapacity(rows, [], config.messagesCapacity);
     },
@@ -67,10 +69,10 @@ const createPrompt = (rows, options) => {
     },
     history: () => ({
       reset: () => history.index = history.lines.length - 1,
-      increment: () => history.index < history.lines.length ? history.index++ : history.index,
-      decrement: () => history.index > 0 ? history.index-- : history.index,
+      increment: () => history.lines[history.index < history.lines.length ? ++history.index : history.index],
+      decrement: () => history.lines[history.index > 0 ? --history.index : history.index],
       list: () => [...history.lines],
-      peek: () => history.lines[history.index] // TODO: RETURN LAST ON history.index === history.lines.length - 1
+      peek: () => history.lines[history.index]
     })
   }
 }

@@ -1,18 +1,32 @@
 <script>
+  /*
+    TODO: Реализовать запомнание историей предиката строки
+     при этом не выводить его в input
+    TODO: Исправить автоматическую прокрутку
+    TODO: Вынести в методы обработку и форматирование ввода
+    TODO: Реализовать глобальные стили для тёмных цветов и border/box-shadow
+    TODO: Вынести длину переходов в глобальные переменные стилей
+   */
   import {onMount} from "svelte";
   import {createPrompt} from "$lib/scripts/prompt.js";
 
   let prompt;
   let messages = [];
-  let promptInputValue;
-  let predicate = 'say'
+  let inputValue;
+  let predicateValue = 'say'
   let focused = false;
 
   let promptMessagesElement;
   let promptInputElement;
 
   onMount(() => {
-    prompt = createPrompt(['pipka', 'titka', 'fasdfasd;fjas;dlfkj asdfjasd;lkfj k;asd\nfasdfja;sdlkfja;sldkfja;sldkfja;sldkfaghhrpqogihproeig\ngjwelgjwperogijweprogij'], {
+    prompt = createPrompt([
+      'Lorem ipsum dolor sit amet.',
+      'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, sapiente.',
+      'Lorem ipsum dolor sit amet, consectetur adipisicing elit.\n' +
+      'Asperiores blanditiis deleniti dolorem illum ipsam iure officiis\n' +
+      'quibusdam ratione saepe vitae.'
+    ], {
       historyCapacity: 10,
       messagesCapacity: 100
     })
@@ -23,10 +37,9 @@
       promptMessagesElement.scrollTop = promptMessagesElement.scrollHeight;
     });
 
-    prompt.onenter(() => {
-      prompt.push(`${predicate} ${promptInputValue.trim()}`); // TODO: Заменить на метод
-      promptInputValue = '';
-    });
+    // prompt.onenter(() => {
+    //
+    // });
 
     messages = prompt.messages();
   });
@@ -42,34 +55,73 @@
     console.log('blurred');
   }
 
-  function handleInput(rawInputValue) {
-    if (!rawInputValue.startsWith('/')) return rawInputValue;
+  function parseInput(rawInputValue) {
+    if (rawInputValue.startsWith('/')) {
+      let formattedInputValue = rawInputValue.slice(1);
+      let split = formattedInputValue.split(/\s/);
 
-    let formattedInputValue = rawInputValue.slice(1);
-    let split = formattedInputValue.split(/\s/);
-    predicate = split[0];
-    formattedInputValue = split.slice(1).join(' ');
+      formattedInputValue = split.slice(1).join(' ').trim();
 
-    return formattedInputValue;
+      return {
+        predicate: split[0],
+        input: formattedInputValue
+      };
+    } else {
+      return {
+        predicate: null,
+        input: rawInputValue
+      }
+    }
+  }
+
+  function applyValue(value) {
+    if (!value) {
+      inputValue = '';
+      return;
+    }
+
+    const {predicate, input} = parseInput(value);
+    predicateValue = predicate ? predicate : predicateValue;
+    inputValue = input;
+  }
+
+  function handleEnterKey() {
+    applyValue(inputValue)
+
+    if (inputValue.trim().length !== 0) {
+      prompt.push(`${predicateValue} ${inputValue.trim()}`); // TODO: Заменить на метод
+      prompt.enter(`/${predicateValue} ${inputValue.trim()}`); // TODO: Заменить на метод
+    }
+
+    inputValue = '';
+  }
+
+  function handleSpaceKey() {
+    applyValue(inputValue);
+  }
+
+  function handleArrowUpKey() {
+    applyValue(prompt.history().decrement());
+  }
+
+  function handleArrowDownKey() {
+    applyValue(prompt.history().increment());
   }
 
   function onKeyUp(e) {
     const key = e.code;
     switch (key) {
       case 'Enter':
-        promptInputValue = handleInput(promptInputValue);
-        prompt.enter(`/${predicate} ${promptInputValue.trim()}`); // TODO: Заменить на метод
+        handleEnterKey();
         break;
       case 'Space':
-        promptInputValue = handleInput(promptInputValue);
+        handleSpaceKey();
         break;
       case 'ArrowUp':
-        prompt.history().decrement();
-        promptInputValue = prompt.history().peek();
+        handleArrowUpKey();
         break;
       case 'ArrowDown':
-        prompt.history().increment();
-        promptInputValue = prompt.history().peek();
+        handleArrowDownKey();
         break;
     }
   }
@@ -83,20 +135,20 @@
   <div class="prompt-messages"
        bind:this={promptMessagesElement}>
     {#each messages as message, i (i)}
-      <div class="message-row">
+      <span class="message-row">
         <pre>{message}</pre>
-      </div>
+      </span>
     {/each}
   </div>
 
   <div class="prompt-actionbar">
     <div class="prompt-predicate">
-      <span>/{predicate}</span>
+      <span>/{predicateValue}</span>
     </div>
     <input type="text"
            class="prompt-input"
            bind:this={promptInputElement}
-           bind:value={promptInputValue}
+           bind:value={inputValue}
            on:keyup={onKeyUp}
            on:blur={blur}>
   </div>
@@ -105,6 +157,7 @@
 <style>
   .prompt {
     position: relative;
+    box-sizing: border-box;
 
     width: 100%;
     height: 300px;
@@ -113,6 +166,7 @@
 
     /* TODO: Заменить на другие переменные */
     background-color: var(--color-text-primary);
+    border: 4px solid #333333;
   }
 
   .prompt pre,
@@ -121,6 +175,7 @@
     font-family: "Minecraft", "Arial", "sans-serif";
     line-height: 24px;
     color: var(--color-text-secondary);
+    text-wrap: initial;
   }
 
   .prompt-messages {
@@ -145,10 +200,12 @@
     height: var(--ui-interactive-height);
 
     /*border: var(--ui-interactive-border-width) solid transparent;*/
+    box-shadow: 0 0 0 4px transparent;
+    transition: box-shadow .3s ease;
   }
 
   .prompt.focused .prompt-actionbar {
-    box-shadow: 0 0 0 var(--ui-interactive-border-width) var(--color-main-outline);
+    box-shadow: 0 0 0 4px var(--color-main-outline);
     /*border: var(--ui-interactive-border-width) solid var(--color-main-outline);*/
   }
 
@@ -168,7 +225,7 @@
     margin: auto;
   }
 
-  .prompt-input {
+  input.prompt-input {
     box-sizing: border-box;
 
     width: 100%;
@@ -181,7 +238,7 @@
     border: none;
     background-color: transparent;
 
-    line-height: var(--ui-interactive-size) !important;
+    line-height: 50px;
 
     color: yellow;
   }

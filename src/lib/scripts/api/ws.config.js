@@ -26,12 +26,10 @@ class WebSocketClient {
     this.connection.onclose = this.config.onclose;
     this.connection.onmessage = this.config.onmessage;
     this.connection.onerror = this.config.onerror;
-    console.log(this.connection.readyState);
   }
 
   close() {
     this.invokeIfConnectionOpened(this.connection.close);
-    console.log(this.connection.readyState);
     this.connection = null;
   }
 
