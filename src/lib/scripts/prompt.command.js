@@ -19,10 +19,11 @@ export const createCommandPrompt = () => {
     historyCapacity: 20,
   });
 
-  ws.onmessage = async event => {
+  ws.onmessage = event => {
     const messages = __parseMessages(event);
     prompt.push(messages);
 
+    console.log(event.data);
     handleOnMessage();
   };
 

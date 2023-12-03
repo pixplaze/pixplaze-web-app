@@ -6,6 +6,7 @@
     TODO: Вынести в методы обработку и форматирование ввода
     TODO: Реализовать глобальные стили для тёмных цветов и border/box-shadow
     TODO: Вынести длину переходов в глобальные переменные стилей
+    TODO: Реализовать автоматическое переподключение к консоли сервера
    */
   import {onMount} from "svelte";
   import {createCommandPrompt} from "$lib/scripts/prompt.command.js";
@@ -26,30 +27,25 @@
 
       // TODO: Фиксится добавлением высоты одной строки, напр getComputedStyle(document.documentElement).getPropertyValue('--my-variable-name')
       promptMessagesElement.scrollTop = promptMessagesElement.scrollHeight;
-      // console.log(promptMessagesElement);
+
     });
     prompt.onenter(() => {
-      prompt.send(inputValue);
+      prompt.send(formattedInput());
     })
-
-    // prompt.onenter(() => {
-    //
-    // });
-
-    // messages = prompt.messages();
-    console.log(prompt)
     prompt.open();
   });
 
   function focus() {
     promptInputElement.focus();
     focused = true;
-    console.log('focused');
   }
 
   function blur() {
     focused = false;
-    console.log('blurred');
+  }
+
+  function formattedInput() {
+    return `${predicateValue} ${inputValue.trim()}`;
   }
 
   function parseInput(rawInputValue) {
@@ -86,8 +82,7 @@
     applyValue(inputValue)
 
     if (inputValue.trim().length !== 0) {
-      prompt.push(`${predicateValue} ${inputValue.trim()}`); // TODO: Заменить на метод
-      prompt.enter(`/${predicateValue} ${inputValue.trim()}`); // TODO: Заменить на метод
+      prompt.enter(`/${formattedInput()}`); // TODO: Заменить на метод
     }
 
     inputValue = '';
@@ -136,6 +131,7 @@
         <pre>{message}</pre>
       </span>
     {/each}
+    <span class="message-row hidden"></span>
   </div>
 
   <div class="prompt-actionbar">
@@ -181,7 +177,9 @@
     height: 100%;
     overflow-y: auto;
 
-    padding: 10px 10px 0;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 24px;
   }
 
   .prompt-actionbar {
