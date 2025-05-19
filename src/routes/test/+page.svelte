@@ -24,9 +24,8 @@
     <Input id="test-input"
            placeholder="введи текст, пидор"
            bind:value
-           on:input={(e) => parText = `[${e.target.value}]`}
            on:enter={(e) => console.log(e.detail)}/>
-    <p>{parText}</p>
+    <p>{value}</p>
 
     <SquareButton icon="close" on:click={() => hearts > 0 ? hearts-- : hearts}/>
     <SquareButton icon="heart" on:click={() => hearts < 20 ? hearts++ : hearts}/>

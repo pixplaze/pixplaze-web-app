@@ -31,7 +31,7 @@
     });
     prompt.onenter(() => {
       prompt.send(formattedInput());
-    })
+    });
     prompt.open();
   });
 
