@@ -1,59 +1,50 @@
 <script>
-  import Button from "$lib/ui/Button.svelte";
-  import Input from "$lib/ui/Input.svelte";
-  import SquareButton from "$lib/ui/SquareButton.svelte";
-  import Icon from "$lib/ui/Icon.svelte";
+  import Button from "$lib/components/ui/buttons/Button.svelte";
+  import Input from "$lib/components/ui/inputs/Input.svelte";
+  import ButtonIcon from "$lib/components/ui/buttons/ButtonIcon.svelte";
+  import Icon from "$lib/components/ui/Icon.svelte";
   import CommandPrompt from "$lib/components/CommandPrompt.svelte";
+  import Counter from "$lib/components/Counter.svelte";
+  import ButtonLabel from "$lib/components/ui/buttons/ButtonLabel.svelte";
+  import Rating from "$lib/components/ui/Rating.svelte";
+  import Card from "$lib/components/Card.svelte";
 
   let value = "";
-  let parText = "";
-  let hearts = 0;
-  const themes = {
-    dark: 'theme-dark',
-    bright: 'theme-light'
-  }
-
+  let hearts = $state(1);
 </script>
 
 <div id="test">
   <section id="#test-interactive">
+    <Counter/>
+    <ButtonLabel icon="globe">Балабол</ButtonLabel>
     <Button on:click={() => alert("Ты Пидор!")}>Кнопка</Button>
-    <Button>
-      Лэйбл<Icon icon="close"/>
-    </Button>
+    <Button>Лэйбл<Icon icon="close"/></Button>
+    <Card name="Pixplaze Vanilla"
+          address="vanilla.pixplaze.com"
+          rating={4}
+          description="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab, eius."
+    />
     <Input id="test-input"
            placeholder="введи текст, пидор"
            bind:value
-           on:enter={(e) => console.log(e.detail)}/>
+           onenter={(e) => console.log(e)}/>
     <p>{value}</p>
 
-    <SquareButton icon="close" on:click={() => hearts > 0 ? hearts-- : hearts}/>
-    <SquareButton icon="heart" on:click={() => hearts < 20 ? hearts++ : hearts}/>
-    <p style="display: flex; flex-wrap: wrap;">
-      {#each Array(hearts) as ignore}
-        <Icon icon={"heart-filled"}/>
-      {/each}
-      {#each Array(20 - hearts) as ignore}
-        <Icon icon={"heart"}/>
-      {/each}
-    </p>
-    <SquareButton disabled icon="plugin"/>
-    <SquareButton transparent icon="plugin"/>
+    <ButtonIcon icon="close" onclick={() => hearts > 0 ? hearts-- : hearts}/>
+    <ButtonIcon icon="heart" onclick={() => hearts < 20 ? hearts++ : hearts}/>
+    <Rating rating={hearts} max={20} onVoted={v => hearts = v}/>
+    <ButtonIcon disabled icon="plugin"/>
+    <ButtonIcon transparent icon="plugin"/>
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusantium architecto, assumenda aut autem consequatur corporis debitis distinctio doloribus eius excepturi expedita fugit incidunt magni maiores nam nemo nobis nostrum placeat porro quam quas quod repellendus soluta velit vero voluptas? Consequatur cumque delectus dolores harum perferendis. Autem debitis enim, in magnam, natus possimus repudiandae similique tempora velit veritatis voluptate voluptatum.</p>
   </section>
   <section id="test-prompt">
     <CommandPrompt/>
   </section>
 </div>
-
 <style>
   #test {
     display: grid;
     padding: 30px;
-  }
-
-  #test {
-
   }
 
   #test * {
@@ -61,6 +52,6 @@
   }
 
   #test > section {
-    margin-right: var(--ui-interactive-spacing);
+    margin-right: var(--ui-spacing);
   }
 </style>

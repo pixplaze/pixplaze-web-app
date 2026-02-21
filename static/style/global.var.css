@@ -1,10 +1,14 @@
 :root {
-  --ui-interactive-size: 40px;
-  --ui-interactive-height: var(--ui-interactive-size);
-  --ui-interactive-spacing: 20px;
-  --ui-interactive-padding: 30px;
-  --ui-interactive-border-width: 2px;
+  --ui-size-block: 40px;
+  --ui-size-shadow: 4px;
+  --ui-size-icon: 24px;
+  --ui-size-border: 2px;
+  --ui-width: var(--ui-size-block);
+  --ui-height: var(--ui-size-block);
+  --ui-spacing: 20px;
+  --ui-padding: 30px;
 
+  --color-red-main: #C10000;
   --color-green-main: #5CBB3A;
   --color-green-deep: #42A021;
   --color-green-penumbra: #52A435;
@@ -31,10 +35,16 @@
   --color-ui-background: #F6F8FA;
   --color-ui-foreground: #FFFFFF;
   --color-ui-shadow: rgba(0, 0, 0, 10%);
+  --color-ui-dark: #1C430E;
   --color-ui-primary: #5CBB3A;
   --color-ui-primary-lighter: #63C83F;
   --color-ui-secondary: #52A435;
   --color-ui-border: #42A021;
+  --color-ui-border1: #C0C0C0;
+
+  --color-button-background: var(--color-ui-primary);
+  --color-button-border: var(--color-ui-border);
+  --color-button-shadow: var(--color-ui-secondary)
 }
 
 .themed,

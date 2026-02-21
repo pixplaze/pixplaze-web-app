@@ -1,25 +1,31 @@
 <script>
-  import SquareButton from "$lib/ui/SquareButton.svelte";
+  import ButtonIcon from "$lib/components/ui/buttons/ButtonIcon.svelte";
   import {createEventDispatcher} from "svelte";
-
-  const dispatch = createEventDispatcher();
+  
+  const {
+    onButtonAside,
+    onButtonProfile,
+    onButtonMap,
+    onButtonGlobe,
+    onButtonSettings
+  } = $props();
 </script>
 
 <div class="header">
-  <SquareButton icon="menu" transparent on:click={() => dispatch('aside')}/>
+  <ButtonIcon icon="menu" transparent onclick={onButtonAside}/>
   <nav>
-    <SquareButton icon="profile"
-                  transparent
-                  on:click={() => dispatch('profile')}/>
-    <SquareButton icon="map"
-                  transparent
-                  on:click={() => dispatch('map')}/>
-    <SquareButton icon="globe"
-                  transparent
-                  on:click={() => dispatch('globe')}/>
-    <SquareButton icon="settings"
-                  transparent
-                  on:click={() => dispatch('settings')}/>
+    <ButtonIcon icon="profile"
+                transparent
+                onclick={onButtonProfile}/>
+    <ButtonIcon icon="map"
+                transparent
+                onclick={onButtonMap}/>
+    <ButtonIcon icon="globe"
+                transparent
+                onclick={onButtonGlobe}/>
+    <ButtonIcon icon="settings"
+                transparent
+                onclick={onButtonSettings}/>
   </nav>
 </div>
 

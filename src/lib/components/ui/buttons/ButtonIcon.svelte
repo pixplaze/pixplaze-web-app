@@ -1,16 +1,20 @@
 <script>
-  import Button from "$lib/ui/Button.svelte";
-  import Icon from "$lib/ui/Icon.svelte";
+  import Button from "$lib/components/ui/buttons/Button.svelte";
+  import Icon from "$lib/components/ui/Icon.svelte";
 
-  export let icon;
-  export let disabled = false;
-  export let transparent = false;
+  let {
+    icon,
+    disabled = false,
+    transparent = false,
+    onclick
+  } = $props();
 </script>
 
 <Button {disabled}
         {transparent}
         square
-        on:click>
+        {onclick}
+>
   <Icon {icon}/>
 </Button>
 

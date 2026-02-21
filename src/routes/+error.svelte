@@ -7,7 +7,7 @@
 </script>
 
 <script>
-  export let message;
+  let {message} = $props();
 </script>
 
 <div class="error">

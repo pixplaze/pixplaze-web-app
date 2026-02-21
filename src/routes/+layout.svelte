@@ -9,11 +9,22 @@ const currentTheme = pageStore.currentTheme;
 const isAsideExpanded = pageStore.isAsideExpanded;
 console.log(currentTheme)
 // pageStore.currentTheme.subscribe((value)=> console.log(value))
+
+const onButtonAside = pageStore.toggleAside;
+const onButtonProfile = () => {}
+const onButtonMap = () => {}
+const onButtonGlobe = () => {}
+const onButtonSettings = pageStore.toggleTheme;
 </script>
 
 <div id="layout" class={`container themed ${$currentTheme}`}>
   <header>
-    <Header on:aside={pageStore.toggleAside} on:map={() => console.log("map event")} on:settings={pageStore.toggleTheme}/>
+    <Header {onButtonAside}
+            {onButtonProfile}
+            {onButtonMap}
+            {onButtonGlobe}
+            {onButtonSettings}
+    />
   </header>
   <aside class:expanded={$isAsideExpanded}></aside>
   <main>

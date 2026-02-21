@@ -155,7 +155,7 @@
     width: 100%;
     height: 300px;
 
-    padding-bottom: var(--ui-interactive-height);
+    padding-bottom: var(--ui-height);
 
     /* TODO: Заменить на другие переменные */
     background-color: var(--color-text-primary);
@@ -192,7 +192,7 @@
 
     bottom: 0;
     width: 100%;
-    height: var(--ui-interactive-height);
+    height: var(--ui-height);
 
     /*border: var(--ui-interactive-border-width) solid transparent;*/
     box-shadow: 0 0 0 4px transparent;
@@ -207,7 +207,7 @@
   .prompt-predicate {
     display: flex;
 
-    min-width: var(--ui-interactive-size);
+    min-width: var(--ui-size-block);
     height: 100%;
 
     background-color: #555555;
@@ -226,8 +226,8 @@
     width: 100%;
     height: 100%;
 
-    padding-left: var(--ui-interactive-padding);
-    padding-right: var(--ui-interactive-padding);
+    padding-left: var(--ui-padding);
+    padding-right: var(--ui-padding);
 
     outline: none;
     border: none;
