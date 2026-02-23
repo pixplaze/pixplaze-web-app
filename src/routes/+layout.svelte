@@ -10,11 +10,14 @@ const isAsideExpanded = pageStore.isAsideExpanded;
 console.log(currentTheme)
 // pageStore.currentTheme.subscribe((value)=> console.log(value))
 
+const {children} = $props();
 const onButtonAside = pageStore.toggleAside;
 const onButtonProfile = () => {}
 const onButtonMap = () => {}
 const onButtonGlobe = () => {}
 const onButtonSettings = pageStore.toggleTheme;
+
+let svg = $state();
 </script>
 
 <div id="layout" class={`container themed ${$currentTheme}`}>
@@ -28,9 +31,12 @@ const onButtonSettings = pageStore.toggleTheme;
   </header>
   <aside class:expanded={$isAsideExpanded}></aside>
   <main>
-    <slot/>
+    {@render children()}
   </main>
   <footer></footer>
+  <div class="svg-sprite" style="display: none">
+    {@html svg}
+  </div>
 </div>
 
 <style>

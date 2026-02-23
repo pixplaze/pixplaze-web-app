@@ -9,15 +9,17 @@
   import Rating from "$lib/components/ui/Rating.svelte";
   import Card from "$lib/components/Card.svelte";
 
-  let value = "";
+  let value = $state("");
   let hearts = $state(1);
 </script>
 
 <div id="test">
+  <section id="#test-icons">
+  </section>
   <section id="#test-interactive">
     <Counter/>
     <ButtonLabel icon="globe">Балабол</ButtonLabel>
-    <Button on:click={() => alert("Ты Пидор!")}>Кнопка</Button>
+    <Button onclick={() => alert("Ты Пидор!")}>Кнопка</Button>
     <Button>Лэйбл<Icon icon="close"/></Button>
     <Card name="Pixplaze Vanilla"
           address="vanilla.pixplaze.com"
@@ -32,7 +34,7 @@
 
     <ButtonIcon icon="close" onclick={() => hearts > 0 ? hearts-- : hearts}/>
     <ButtonIcon icon="heart" onclick={() => hearts < 20 ? hearts++ : hearts}/>
-    <Rating rating={hearts} max={20} onVoted={v => hearts = v}/>
+<!--    <Rating value={hearts} max={20} onVoted={v => hearts = v}/>-->
     <ButtonIcon disabled icon="plugin"/>
     <ButtonIcon transparent icon="plugin"/>
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusantium architecto, assumenda aut autem consequatur corporis debitis distinctio doloribus eius excepturi expedita fugit incidunt magni maiores nam nemo nobis nostrum placeat porro quam quas quod repellendus soluta velit vero voluptas? Consequatur cumque delectus dolores harum perferendis. Autem debitis enim, in magnam, natus possimus repudiandae similique tempora velit veritatis voluptate voluptatum.</p>

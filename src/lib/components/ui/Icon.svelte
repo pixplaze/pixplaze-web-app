@@ -1,15 +1,21 @@
 <script>
-  let {icon} = $props();
+  let {
+    icon,
+    size = 24
+  } = $props();
 </script>
 
-<div class={`icon-${icon}`}></div>
+<svg
+  width={size}
+  height={size}
+  class={`icon-${icon}`}
+  aria-hidden="true"
+>
+  <use href={`/icons/sprite.svg#icon-${icon}`}/>
+</svg>
 
 <style>
-  div[class*="icon-"] {
-    display: inline-block;
-
-    font-size: var(--ui-size-icon);
-    width: var(--ui-size-icon);
-    height: var(--ui-size-icon);
+  svg {
+    vertical-align: middle;
   }
 </style>

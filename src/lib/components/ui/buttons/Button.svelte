@@ -23,6 +23,8 @@
     user-select: none;
     -webkit-user-drag: none;
 
+    vertical-align: middle;
+
     color: var(--color-text-secondary);
     background-color: var(--color-ui-primary);
     box-shadow: inset 0 calc(-1 * var(--ui-size-shadow)) 0 0 var(--color-ui-secondary);

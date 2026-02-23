@@ -3,95 +3,84 @@
 
   let {
     max = 5,
-    rating,
+    value = $bindable(0),
     onVoted = () => {}
   } = $props();
 
-  let vote = rating;
-  let isRatingHovered = $state(false);
-  let abortController;
+  let hover = $state(0);
+  let container;
+  let display = $derived(hover || value);
 
-  const getScore = (e) => {
-    const child = e.currentTarget;
-    const parent = child.parentNode;
-    return Array.prototype.indexOf.call(parent.children, child) + 1;
+  function calculateFromEvent(event) {
+    const rect = container.getBoundingClientRect();
+    const relativeX = event.clientX - rect.left;
+    const percent = relativeX / rect.width;
+
+    const raw = Math.ceil(percent * max);
+    return Math.min(Math.max(raw, 0), max);
   }
 
-  const onMouseEnterRating = e => {
-    isRatingHovered = true;
-    // abortController = new AbortController();
-    for (const child of e.currentTarget.childNodes) {
-      if (child.classList && child.classList.contains('score')) {
-        child.addEventListener('mouseenter', onMouseEnterScore);
-        // child.addEventListener('mouseenter', onMouseEnterScore, {signal: abortController.signal});
-      }
+  const onMove = e => {
+    hover = calculateFromEvent(e);
+  }
+
+  function onLeave() {
+    hover = 0;
+  }
+
+  function onClick(event) {
+    value = calculateFromEvent(event);
+    onVoted(value);
+  }
+
+  function handleKey(event) {
+    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+      value = Math.min(value + 1, max);
     }
-  }
 
-  const onMouseLeaveRating = e => {
-    isRatingHovered = false;
-    rating = vote;
-    // abortController.abort();
-    console.log('leave')
-    for (const child of e.currentTarget.childNodes) {
-      if (child.classList && child.classList.contains('score')) {
-        child.removeEventListener('mouseenter', onMouseEnterScore);
-      }
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+      value = Math.max(value - 1, 0);
     }
-  }
 
-  const onMouseEnterScore = e => {
-    rating = getScore(e);
-  }
-
-  const onMouseClickScore = e => {
-    vote = getScore(e);
-    onVoted(vote);
+    if (event.key === 'Home') value = 0;
+    if (event.key === 'End') value = max;
   }
 </script>
 
 <div class="rating"
-     class:hovered={isRatingHovered}
-     role="none"
-     tabindex="-1"
-     onmouseenter={onMouseEnterRating}
-     onmouseleave={onMouseLeaveRating}
+     bind:this={container}
+     role="slider"
+     aria-label="Rating"
+     aria-valuemin="0"
+     aria-valuemax={max}
+     aria-valuenow={value}
+     tabindex="0"
+     onclick={onClick}
+     onmousemove={onMove}
+     onmouseleave={onLeave}
+     onkeydown={handleKey}
 >
-<!--  Из-за того, что динамически перерисовывает, на вновь добавленных элементах нет лиснеров -->
-<!--  Использовать локлаьные переменные для предотвращения реактивности -->
-  {#each Array(rating) as _}
-    <button class="score" onclick={onMouseClickScore}>
-      <Icon icon={"heart-filled"}/>
-    </button>
+  {#each Array(max) as _, i}
+    <Icon icon={display >= i + 1 ? "heart-filled" : "heart"}/>
   {/each}
-  {#each Array(max - rating) as _}
-    <button class="score" onclick={onMouseClickScore}>
-      <Icon icon={"heart"}/>
-    </button>
-  {/each}
-  </div>
+</div>
 
-  <style>
-    .rating {
-      display: flex;
-      width: min-content;
-    }
+<style>
+  .rating {
+    display: flex;
+    width: min-content;
+    cursor: pointer;
+  }
 
-    .score {
-      padding: 0;
-      width: 40px;
-      height: 40px;
-      outline: none;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-    }
+  :global(.rating [class*="icon-heart-filled"]) {
+    color: var(--color-red-main);
+  }
 
-    :global(.rating [class^="icon-heart-filled"]) {
-      color: var(--color-red-main);
-    }
+  :global(.rating:hover [class*="icon-heart-filled"]) {
+    color: #EFC500;
+  }
 
-    :global(.rating.hovered [class^="icon-heart-filled"]) {
-      color: #EFC500;
-    }
-  </style>
+  /*:global(.rating:focus [class^="icon-heart-filled"]) {*/
+  /*  color: #EFC500;*/
+  /*}*/
+</style>

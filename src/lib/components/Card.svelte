@@ -1,5 +1,6 @@
 <script>
   import Rating from "$lib/components/ui/Rating.svelte";
+  import ButtonIcon from "$lib/components/ui/buttons/ButtonIcon.svelte";
 
   let {
     name,
@@ -12,9 +13,15 @@
 <div class="ui box card">
   <div class="server-image"></div>
   <div class="server-info">
-    <h2>{name}</h2>
-    <p>{address}</p>
-    <Rating {rating}/>
+    <div class="description">
+      <h2>{name}</h2>
+      <p>{address}</p>
+      <Rating value={rating}/>
+    </div>
+<!--    <div class="buttons">-->
+<!--      <ButtonIcon icon="more"/>-->
+<!--      <ButtonIcon icon="copy"/>-->
+<!--    </div>-->
   </div>
 </div>
 
