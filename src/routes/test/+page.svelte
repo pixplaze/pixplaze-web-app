@@ -6,7 +6,7 @@
   import CommandPrompt from "$lib/components/CommandPrompt.svelte";
   import Counter from "$lib/components/Counter.svelte";
   import ButtonLabel from "$lib/components/ui/buttons/ButtonLabel.svelte";
-  import Rating from "$lib/components/ui/Rating.svelte";
+  import Rating from "$lib/components/ui/Rating.svelte"
   import Card from "$lib/components/Card.svelte";
 
   let value = $state("");
@@ -24,7 +24,7 @@
     <Card name="Pixplaze Vanilla"
           address="vanilla.pixplaze.com"
           rating={4}
-          description="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab, eius."
+          description="Lorem ipsum dolor sit amet."
     />
     <Input id="test-input"
            placeholder="введи текст, пидор"
@@ -34,7 +34,7 @@
 
     <ButtonIcon icon="close" onclick={() => hearts > 0 ? hearts-- : hearts}/>
     <ButtonIcon icon="heart" onclick={() => hearts < 20 ? hearts++ : hearts}/>
-<!--    <Rating value={hearts} max={20} onVoted={v => hearts = v}/>-->
+    <Rating value={hearts} max={20} onVoted={v => hearts = v}/>
     <ButtonIcon disabled icon="plugin"/>
     <ButtonIcon transparent icon="plugin"/>
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusantium architecto, assumenda aut autem consequatur corporis debitis distinctio doloribus eius excepturi expedita fugit incidunt magni maiores nam nemo nobis nostrum placeat porro quam quas quod repellendus soluta velit vero voluptas? Consequatur cumque delectus dolores harum perferendis. Autem debitis enim, in magnam, natus possimus repudiandae similique tempora velit veritatis voluptate voluptatum.</p>

@@ -4,15 +4,14 @@
 
   let {
     icon,
-    disabled = false,
-    transparent = false,
+    disabled,
+    classes = "",
     onclick
   } = $props();
 </script>
 
 <Button {disabled}
-        {transparent}
-        square
+        classes={`${classes} square`}
         {onclick}
 >
   <Icon {icon}/>

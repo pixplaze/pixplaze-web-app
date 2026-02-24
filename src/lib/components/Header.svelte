@@ -12,19 +12,21 @@
 </script>
 
 <div class="header">
-  <ButtonIcon icon="menu" transparent onclick={onButtonAside}/>
+  <ButtonIcon icon="menu"
+              classes="transparent"
+              onclick={onButtonAside}/>
   <nav>
     <ButtonIcon icon="profile"
-                transparent
+                classes={"transparent"}
                 onclick={onButtonProfile}/>
     <ButtonIcon icon="map"
-                transparent
+                classes="transparent"
                 onclick={onButtonMap}/>
     <ButtonIcon icon="globe"
-                transparent
+                classes="transparent"
                 onclick={onButtonGlobe}/>
     <ButtonIcon icon="settings"
-                transparent
+                classes="transparent"
                 onclick={onButtonSettings}/>
   </nav>
 </div>

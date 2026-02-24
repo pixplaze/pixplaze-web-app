@@ -1,18 +1,15 @@
 <script>
   let {
     disabled = false,
-    square = false,
-    transparent = false,
+    classes = "",
     children,
-    onclick
+    onclick,
   } = $props();
 </script>
 
 <button {disabled}
         type="button"
-        class={`ui interactive button`}
-        class:square
-        class:transparent
+        class={`ui interactive button ${classes}`}
         {onclick}>
   {@render children()}
 </button>
@@ -67,5 +64,4 @@
     background-color: var(--color-ui-secondary)!important;
     border-color: var(--color-ui-primary-lighter)!important;
   }
-
 </style>

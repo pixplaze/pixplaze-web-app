@@ -6,13 +6,17 @@
 <symbol id="icon-heart" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="m14.828 4.929-2.827 2.828-2.828-2.828-5.657 5.657L12 19.07l8.485-8.485zm2.829 5.657-2.829-2.829-2.827 2.828-2.828-2.828-2.828 2.829L12 16.242z" clip-rule="evenodd"/></symbol>
 <symbol id="icon-heart-filled" viewBox="0 0 24 24"><path fill="currentColor" d="m12 7.757 2.828-2.828 5.657 5.657L12 19.07l-8.484-8.485 5.657-5.657z"/></symbol>
 <symbol id="icon-map" viewBox="0 0 24 24"><path fill="currentColor" d="m14.829 10.586-1.415-1.414L12 10.586l-1.414-1.414-1.414 1.414L10.586 12l-1.414 1.414 1.414 1.414L12 13.414l1.414 1.415 1.414-1.415L13.414 12z"/><path fill="currentColor" fill-rule="evenodd" d="M14 4h6v14H10v2H4V6h10zm2 2v2H6v10h2v-2h10V6z" clip-rule="evenodd"/></symbol>
+<symbol id="icon-menu" viewBox="0 0 24 24"><path fill="currentColor" d="M0 9h24v2H0z"/><path fill="currentColor" d="M0 13h24v2H0z"/></symbol>
 <symbol id="icon-mod" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M19 6H5v12h14zM7 16h2v-6h2v6h2v-6h2v6h2V8H7z" clip-rule="evenodd"/></symbol>
 <symbol id="icon-moon" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M6 18V6h12v12zm10-2V8h-4v2h-2v4h2v2z" clip-rule="evenodd"/></symbol>
 <symbol id="icon-more" viewBox="0 0 24 24"><path fill="currentColor" d="M7 11h2v2H7z"/><path fill="currentColor" d="M11 11h2v2h-2z"/><path fill="currentColor" d="M15 11h2v2h-2z"/></symbol>
 <symbol id="icon-plugin" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M7 6h10v2h2v10H5V8h2zm0 10h10v-6h-2V8h-2v2h-2V8H9v2H7z" clip-rule="evenodd"/></symbol>
+<symbol id="icon-profile" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M7 12H4v8h16v-8h-3V4H7zm8-6H9v2h2v2H9v2h6v-2h-2V8h2zM8 16v2H6v-4h12v4h-2v-2h-2v2h-4v-2z" clip-rule="evenodd"/></symbol>
 <symbol id="icon-reload" viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h12v12h-5l1.828 1.828-1.414 1.415L9.172 17l4.242-4.243 1.414 1.415L13 16h3V8H8v10H6z"/></symbol>
 <symbol id="icon-repost" viewBox="0 0 24 24"><path fill="currentColor" d="M17.626 18H7V9.729h10.626m0 0-4-4m4 4-4 4"/></symbol>
 <symbol id="icon-settings" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 4.929 19.071 12l-1.414 1.414-4.243 4.243L12 19.07 4.929 12l1.414-1.414 4.243-4.243zm0 2.828L16.243 12 12 16.243 7.757 12zM13 11h-2v2h2z" clip-rule="evenodd"/></symbol>
+<symbol id="icon-star-filled" viewBox="0 0 24 24"><path fill="currentColor" d="M14.928 9.071 20 12l-5.072 2.928L12 20l-2.929-5.072L4 12l5.071-2.929L12 4z"/></symbol>
+<symbol id="icon-star" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14.928 9.071 20 12l-5.072 2.928L12 20l-2.929-5.072L4 12l5.071-2.929L12 4zm-4.392 1.465L8 12l2.536 1.464L12 16l1.464-2.536L16 12l-2.536-1.464L12 8z" clip-rule="evenodd"/></symbol>
 <symbol id="icon-sun" viewBox="0 0 24 24"><path fill="currentColor" d="M11 4V2h2v2z"/><path fill="currentColor" d="M6 18V6h12v12z"/><path fill="currentColor" d="M11 20v2h2v-2z"/><path fill="currentColor" d="M20 11h2v2h-2z"/><path fill="currentColor" d="M4 11H2v2h2z"/></symbol>
 <symbol id="icon-translate" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M4 10V4h16v16H6V10zm2-2h2v10h10V6H6z" clip-rule="evenodd"/><path fill="currentColor" fill-rule="evenodd" d="M16 10V8h-6v2h2v6h2v-6z" clip-rule="evenodd"/></symbol>
 </svg>

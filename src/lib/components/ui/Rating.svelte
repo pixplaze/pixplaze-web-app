@@ -79,8 +79,4 @@
   :global(.rating:hover [class*="icon-heart-filled"]) {
     color: #EFC500;
   }
-
-  /*:global(.rating:focus [class^="icon-heart-filled"]) {*/
-  /*  color: #EFC500;*/
-  /*}*/
 </style>
