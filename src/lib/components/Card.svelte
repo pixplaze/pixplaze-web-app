@@ -26,7 +26,7 @@
     <div class="buttons">
       <ButtonIcon icon="more"/>
       <ButtonIcon icon="copy" onclick={copyAddressToClipboard}/>
-      <ButtonIcon icon="star-filled"/>
+      <ButtonIcon icons={["star", "star-filled"]}/>
     </div>
   </div>
 </div>
@@ -103,7 +103,11 @@
     background-color: var(--color-ui-border1);
   }
 
-  :global(.card .button:hover svg>[href$="icon-star-filled"]) {
-    fill: url("#myGradient");
+  :global(.card .button:hover use[class$="icon-star"]) {
+    opacity: 0;
+  }
+
+  :global(.card .button:hover use[href$="icon-star-filled"]) {
+    opacity: 1;
   }
 </style>

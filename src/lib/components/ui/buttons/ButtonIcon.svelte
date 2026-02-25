@@ -4,6 +4,7 @@
 
   let {
     icon,
+    icons,
     disabled,
     classes = "",
     onclick
@@ -12,14 +13,12 @@
 
 <Button {disabled}
         classes={`${classes} square`}
-        {onclick}
->
-  <Icon {icon}/>
+        {onclick}>
+  <Icon {icon} {icons}/>
 </Button>
 
 <style>
-  :global(button>span[class^="icon-"]::before) {
-    font-size: 24px;
-    color: var(--color-text-secondary) !important;
+  :global(.button use) {
+    transition: opacity .1s ease-in;
   }
 </style>

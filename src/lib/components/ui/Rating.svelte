@@ -61,7 +61,7 @@
      onkeydown={handleKey}
 >
   {#each Array(max) as _, i}
-    <Icon icon={display >= i + 1 ? "heart-filled" : "heart"}/>
+    <Icon icons={["heart", "heart-filled"]} classes={display >= i + 1 ? "filled" : ""}/>
   {/each}
 </div>
 
@@ -72,11 +72,19 @@
     cursor: pointer;
   }
 
-  :global(.rating [class*="icon-heart-filled"]) {
+  :global(.rating svg.filled use:last-child) {
+    opacity: 1;
+  }
+
+  :global(.rating svg.filled use:first-child) {
+    opacity: 0;
+  }
+
+  :global(.rating [href$="heart-filled"]) {
     color: var(--color-red-main);
   }
 
-  :global(.rating:hover [class*="icon-heart-filled"]) {
+  :global(.rating:hover [href$="heart-filled"]) {
     color: #EFC500;
   }
 </style>
