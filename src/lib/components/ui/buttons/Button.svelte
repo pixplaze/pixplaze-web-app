@@ -29,6 +29,11 @@
     transition: background-color .2s ease-out;
   }
 
+  :global(button>*){
+    display: block;
+    margin: auto;
+  }
+
   button:hover {
     background-color: var(--color-ui-primary-lighter);
   }
@@ -46,8 +51,8 @@
   }
 
   button.square {
-    padding-left: 0;
-    padding-right: 0;
+    padding: 0;
+    margin: 0;
   }
 
   button.transparent {

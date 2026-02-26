@@ -16,6 +16,11 @@
   border: var(--ui-size-border) solid var(--color-ui-border);
 }
 
+.icon {
+  display: inline;
+  vertical-align: middle;
+}
+
 /*.ui.interactive:hover {*/
 /*  !*outline: var(--color-ui-dark) solid 2px;*!*/
 /*  border-color: var(--color-ui-dark);*/
