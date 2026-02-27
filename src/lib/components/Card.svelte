@@ -49,7 +49,7 @@
     display: flex;
     flex-direction: row;
     box-sizing: border-box;
-    width: 345px;
+    min-width: 345px;
     height: 128px;
 
     box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);

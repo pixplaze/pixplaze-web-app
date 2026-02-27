@@ -4,10 +4,10 @@
   
   const {
     onButtonAside,
-    onButtonProfile,
+    onButtonProfile: onButtonConsole,
     onButtonMap,
-    onButtonGlobe,
-    onButtonSettings
+    onButtonGlobe: onButtonSearch,
+    onButtonSettings: onButtonChat
   } = $props();
 </script>
 
@@ -16,18 +16,18 @@
               classes="transparent"
               onclick={onButtonAside}/>
   <nav>
-    <ButtonIcon icon="profile"
+    <ButtonIcon icon="search"
                 classes={"transparent"}
-                onclick={onButtonProfile}/>
+                onclick={onButtonSearch}/>
     <ButtonIcon icon="map"
-                classes="transparent"
+                classes={"transparent"}
                 onclick={onButtonMap}/>
-    <ButtonIcon icon="globe"
-                classes="transparent"
-                onclick={onButtonGlobe}/>
-    <ButtonIcon icon="settings"
-                classes="transparent"
-                onclick={onButtonSettings}/>
+    <ButtonIcon icon="chat"
+                classes={"transparent"}
+                onclick={onButtonChat}/>
+    <ButtonIcon icon="console"
+                classes={"transparent"}
+                onclick={onButtonConsole}/>
   </nav>
 </div>
 

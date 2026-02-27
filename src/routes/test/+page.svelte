@@ -34,7 +34,7 @@
 
     <ButtonIcon icon="close" onclick={() => hearts > 0 ? hearts-- : hearts}/>
     <ButtonIcon icon="heart" onclick={() => hearts < 20 ? hearts++ : hearts}/>
-    <Rating value={hearts} max={20} onVoted={v => hearts = v}/>
+    <Rating value={hearts} max={10} onVoted={v => hearts = v}/>
     <ButtonIcon disabled icon="plugin"/>
     <ButtonIcon transparent icon="plugin"/>
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusantium architecto, assumenda aut autem consequatur corporis debitis distinctio doloribus eius excepturi expedita fugit incidunt magni maiores nam nemo nobis nostrum placeat porro quam quas quod repellendus soluta velit vero voluptas? Consequatur cumque delectus dolores harum perferendis. Autem debitis enim, in magnam, natus possimus repudiandae similique tempora velit veritatis voluptate voluptatum.</p>
@@ -45,15 +45,11 @@
 </div>
 <style>
   #test {
-    display: grid;
+    /*display: grid;*/
     padding: 30px;
   }
 
   #test * {
     color: var(--color-text-primary);
-  }
-
-  #test > section {
-    margin-right: var(--ui-spacing);
   }
 </style>

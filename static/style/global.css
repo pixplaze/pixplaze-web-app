@@ -14,6 +14,10 @@
   background: var(--color-text-selection);
 }
 
+body {
+  background-color: var(--color-ui-secondary);
+}
+
 button, input, label, span, a, p {
   font-size: 12px;
   font-family: Arial, sans-serif;

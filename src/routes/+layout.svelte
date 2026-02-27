@@ -63,7 +63,6 @@ let svg = $state();
                          'footer footer footer';
 
     background-color: var(--color-ui-foreground);
-    gap: 10px;
   }
 
   header {

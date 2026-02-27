@@ -3,7 +3,8 @@
   overflow: hidden;
   display: block;
 
-  height: var(--ui-height);
+  width: 100%;
+  height: var(--ui-size-block);
   min-width: var(--ui-size-block);
   min-height: var(--ui-size-block);
 
