@@ -50,6 +50,7 @@
     flex-direction: row;
     box-sizing: border-box;
     min-width: 345px;
+    max-width: 400px;
     height: 128px;
 
     box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);

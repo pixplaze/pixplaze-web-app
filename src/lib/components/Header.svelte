@@ -35,8 +35,12 @@
   .header {
     display: flex;
     justify-content: space-between;
-    height: 40px;
+    height: var(--ui-size-block);
     background-color: var(--color-ui-primary);
+  }
+
+  .header>* {
+    flex: 0 0 0;
   }
 
   nav {

@@ -3,6 +3,8 @@
   --ui-size-shadow: 4px;
   --ui-size-icon: 24px;
   --ui-size-border: 2px;
+  --ui-size-text: 12px;
+  --ui-size-title: 16px;
   --ui-width: var(--ui-size-block);
   --ui-height: var(--ui-size-block);
   --ui-spacing: 20px;

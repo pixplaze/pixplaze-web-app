@@ -8,8 +8,6 @@
 </script>
 
 <svg aria-hidden="true"
-     width={size}
-     height={size}
      class={`icon ${classes}`}>
   {#each icons as icon}
     <use href={`/icons/sprite.svg#icon-${icon}`}/>
@@ -17,6 +15,10 @@
 </svg>
 
 <style>
+  svg {
+    width: var(--ui-size-icon);
+    height: var(--ui-size-icon);
+  }
   use {
     will-change: opacity, transform; /* Оптимизация отрисовки, увеличивает потребление памяти */
     opacity: 0;

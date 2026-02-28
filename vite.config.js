@@ -13,7 +13,7 @@ export default defineConfig({
       configureServer(server) {
         // автогенерация при изменении SVG в dev
         server.watcher.on('change', (file) => {
-          if (file.endsWith('.svg') && file.endsWith('sprite.svg')) {
+          if (file.endsWith('.svg') && !file.endsWith('sprite.svg')) {
             console.log('🔹 Regenerating sprite...');
             execSync('node scripts/generate-sprite.js', {stdio: 'inherit'});
           }

@@ -94,9 +94,26 @@ let svg = $state();
     grid-area: footer;
   }
 
-  @media screen and (max-width: 400px) {
+  :global(section) {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  @media screen and (max-width: 440px) {
+    header {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 2;
+      width: 100%;
+    }
     aside.expanded {
       width: 100vw;
+    }
+
+    :global(section) {
+      padding-left: 10px;
+      padding-right: 10px;
     }
   }
 </style>

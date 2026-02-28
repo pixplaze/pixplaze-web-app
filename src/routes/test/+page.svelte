@@ -44,11 +44,6 @@
   </section>
 </div>
 <style>
-  #test {
-    /*display: grid;*/
-    padding: 30px;
-  }
-
   #test * {
     color: var(--color-text-primary);
   }

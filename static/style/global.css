@@ -19,7 +19,7 @@ body {
 }
 
 button, input, label, span, a, p {
-  font-size: 12px;
+  font-size: var(--ui-size-text);
   font-family: Arial, sans-serif;
 }
 
@@ -29,11 +29,11 @@ h1, h2, h3, button, input, label {
 }
 
 h1 {
-  font-size: 16px;
+  font-size: var(--ui-size-title);
 }
 
 h2 {
-  font-size: 12px;
+  font-size: var(--ui-size-text);
 }
 
 -webkit-scrollbar {
