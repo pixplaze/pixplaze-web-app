@@ -3,6 +3,8 @@
   overflow: hidden;
   display: block;
 
+  touch-action: manipulation; /* Убирает масштабировани при двойном тапе на мобильных устройствах */
+
   width: 100%;
   height: var(--ui-size-block);
   min-width: var(--ui-size-block);
