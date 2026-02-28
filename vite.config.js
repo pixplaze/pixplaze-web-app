@@ -3,6 +3,7 @@ import {defineConfig} from 'vite';
 import {execSync} from 'node:child_process';
 
 export default defineConfig({
+  server: {host: true}, // Making dev application accessible in LAN
   plugins: [
     {
       name: 'generate-sprite',
