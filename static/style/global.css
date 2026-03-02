@@ -21,6 +21,7 @@ body {
 button, input, label, span, a, p {
   font-size: var(--ui-size-text);
   font-family: Arial, sans-serif;
+  color: var(--color-text-primary);
 }
 
 h1, h2, h3, button, input, label {

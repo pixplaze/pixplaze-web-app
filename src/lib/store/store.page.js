@@ -35,7 +35,7 @@ const createThemeStore = (themes, currentTheme) => {
 export const createPageStore = () => {
   const themeStore = createThemeStore(['light', 'dark'], 'light')
   const isLoading = writable(false);
-  const isAsideExpanded = writable(true);
+  const isAsideExpanded = writable(false);
   const currentTheme = writable(themeStore.current());
 
   function toggleAside() {

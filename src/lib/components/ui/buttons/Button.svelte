@@ -18,7 +18,6 @@
   button {
     cursor: pointer;
     user-select: none;
-    -webkit-user-drag: none;
 
     vertical-align: middle;
 

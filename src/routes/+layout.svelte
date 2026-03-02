@@ -1,32 +1,28 @@
 <script>
 import Header from "$lib/components/Header.svelte";
 import {createPageStore} from "$lib/store/store.page.js";
-// export const ssr = false;
-// export const csr = false;
+import {goto} from "$app/navigation";
+import {error} from "@sveltejs/kit";
 
 const pageStore = createPageStore();
 const currentTheme = pageStore.currentTheme;
 const isAsideExpanded = pageStore.isAsideExpanded;
-console.log(currentTheme)
-// pageStore.currentTheme.subscribe((value)=> console.log(value))
 
 const {children} = $props();
 const onButtonAside = pageStore.toggleAside;
-const onButtonProfile = () => {}
-const onButtonMap = () => {}
-const onButtonGlobe = () => {}
-const onButtonSettings = pageStore.toggleTheme;
-
-let svg = $state();
+const onButtonConsole = () => goto('/servers/console')
+const onButtonMap = () => goto('/servers/map')
+const onButtonSearch = () => goto('/servers/list')
+const onButtonChat = () => goto('/servers/chat');
 </script>
 
 <div id="layout" class={`container themed ${$currentTheme}`}>
   <header>
     <Header {onButtonAside}
-            {onButtonProfile}
+            {onButtonConsole}
             {onButtonMap}
-            {onButtonGlobe}
-            {onButtonSettings}
+            {onButtonSearch}
+            {onButtonChat}
     />
   </header>
   <aside class:expanded={$isAsideExpanded}></aside>
@@ -34,9 +30,6 @@ let svg = $state();
     {@render children()}
   </main>
   <footer></footer>
-  <div class="svg-sprite" style="display: none">
-    {@html svg}
-  </div>
 </div>
 
 <style>
@@ -66,7 +59,7 @@ let svg = $state();
   }
 
   header {
-    min-height: 40px;
+    min-height: var(--ui-size-block);
     background-color: #42A021;
     grid-area: header;
   }
@@ -107,8 +100,18 @@ let svg = $state();
       z-index: 2;
       width: 100%;
     }
+
+    main {
+      overflow: hidden;
+      /*text-wrap: nowrap;*/
+    }
+
     aside.expanded {
       width: 100vw;
+    }
+
+    footer {
+      padding-bottom: var(--ui-size-block);
     }
 
     :global(section) {

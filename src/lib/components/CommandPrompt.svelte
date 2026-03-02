@@ -10,6 +10,12 @@
    */
   import {onMount} from "svelte";
   import {createCommandPrompt} from "$lib/scripts/prompt.command.js";
+  import {error} from "@sveltejs/kit";
+
+  const {
+    host,
+    path,
+  } = $props();
 
   let prompt;
   let messages = [];
@@ -21,7 +27,7 @@
   let promptInputElement;
 
   onMount(() => {
-    prompt = createCommandPrompt();
+    prompt = createCommandPrompt(host, path);
     prompt.onpush(() => {
       messages = prompt.messages();
 

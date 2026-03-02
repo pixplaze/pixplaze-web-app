@@ -12,8 +12,8 @@ const __parseMessages = event => {
   }
 }
 
-export const createCommandPrompt = () => {
-  const ws = createWebSocket('localhost:25566', 'chat', 'ws');
+export const createCommandPrompt = (host, path) => {
+  const ws = createWebSocket(host, path, 'ws');
   const prompt = createPrompt([], {
     messagesCapacity: 100,
     historyCapacity: 20,

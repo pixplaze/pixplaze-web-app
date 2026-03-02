@@ -4,10 +4,10 @@
   
   const {
     onButtonAside,
-    onButtonProfile: onButtonConsole,
+    onButtonConsole,
     onButtonMap,
-    onButtonGlobe: onButtonSearch,
-    onButtonSettings: onButtonChat
+    onButtonSearch,
+    onButtonChat
   } = $props();
 </script>
 
