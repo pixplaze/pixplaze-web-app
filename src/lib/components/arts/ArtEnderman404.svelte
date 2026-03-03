@@ -108,20 +108,20 @@
 
   @keyframes particles {
     0% {opacity: 1}
-    50% {opacity: .8}
+    50% {opacity: .5}
   }
 
   #tnt-block {
     transform-origin: center;
-    animation: drop-tnt .5s forwards cubic-bezier( 0.95, 0.05, 0.80, 0.04 );
+    animation: drop-tnt .5s forwards cubic-bezier(0.95, 0.05, 0.80, 0.04);
   }
 
   #block {
     transform-origin: center;
-    animation: lighten-tnt 3s infinite ease-in-out;
+    animation: lighten-tnt 2s infinite ease-in-out;
   }
 
   #particles {
-    animation: particles 5s infinite ease-out;
+    animation: particles 2s infinite ease;
   }
 </style>

@@ -37,20 +37,12 @@ h2 {
   font-size: var(--ui-size-text);
 }
 
--webkit-scrollbar {
-  width: 12px;               /* width of the entire scrollbar */
-}
-
--webkit-scrollbar-track {
-  background: orange;        /* color of the tracking area */
-}
-
--webkit-scrollbar-thumb {
-  background-color: blue;    /* color of the scroll thumb */
-  border-radius: 20px;       /* roundness of the scroll thumb */
-  border: 3px solid orange;  /* creates padding around scroll thumb */
-}
-
 .pixel-art {
+  box-sizing: border-box;
   image-rendering: pixelated;
+}
+
+.server-icon {
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }

@@ -72,19 +72,18 @@
     cursor: pointer;
   }
 
-  :global(.rating svg.filled use:last-child) {
-    opacity: 1;
-  }
-
-  :global(.rating svg.filled use:first-child) {
-    opacity: 0;
-  }
-
-  :global(.rating [href$="heart-filled"]) {
-    color: var(--color-red-main);
-  }
-
-  :global(.rating:hover [href$="heart-filled"]) {
-    color: #EFC500;
+  :global {
+    .rating svg.filled use:last-child {
+      opacity: 1;
+    }
+    .rating svg.filled use:first-child {
+      opacity: 0;
+    }
+    .rating [href$="heart-filled"] {
+      color: var(--color-red-main);
+    }
+    .rating:hover [href$="heart-filled"] {
+      color: #EFC500;
+    }
   }
 </style>

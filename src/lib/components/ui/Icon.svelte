@@ -20,6 +20,7 @@
     height: var(--ui-size-icon);
   }
   use {
+    shape-rendering: optimizeSpeed;
     will-change: opacity, transform; /* Оптимизация отрисовки, увеличивает потребление памяти */
     opacity: 0;
   }

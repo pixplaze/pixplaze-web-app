@@ -6,8 +6,8 @@
   import CommandPrompt from "$lib/components/CommandPrompt.svelte";
   import Counter from "$lib/components/Counter.svelte";
   import ButtonLabel from "$lib/components/ui/buttons/ButtonLabel.svelte";
-  import Rating from "$lib/components/ui/Rating.svelte"
-  import Card from "$lib/components/Card.svelte";
+  import Rating from "$lib/components/Rating.svelte"
+  import ServerCard from "$lib/components/ServerCard.svelte";
 
   let value = $state("");
   let hearts = $state(1);
@@ -21,10 +21,10 @@
     <ButtonLabel icon="globe">Балабол</ButtonLabel>
     <Button onclick={() => alert("Ты Пидор!")}>Кнопка</Button>
     <Button>Лэйбл<Icon icon="close"/></Button>
-    <Card name="Pixplaze Vanilla"
-          address="vanilla.pixplaze.com"
-          rating={4}
-          description="Lorem ipsum dolor sit amet."
+    <ServerCard name="Pixplaze Vanilla"
+                address="vanilla.pixplaze.com"
+                rating={4}
+                description="Lorem ipsum dolor sit amet."
     />
     <Input id="test-input"
            placeholder="введи текст, пидор"

@@ -2,18 +2,24 @@
 import Header from "$lib/components/Header.svelte";
 import {createPageStore} from "$lib/store/store.page.js";
 import {goto} from "$app/navigation";
-import {error} from "@sveltejs/kit";
+import ServerRow from "$lib/components/ServerRow.svelte";
 
 const pageStore = createPageStore();
 const currentTheme = pageStore.currentTheme;
 const isAsideExpanded = pageStore.isAsideExpanded;
 
 const {children} = $props();
+
+let favoriteServersElement = $state();
+
 const onButtonAside = pageStore.toggleAside;
 const onButtonConsole = () => goto('/servers/console')
 const onButtonMap = () => goto('/servers/map')
 const onButtonSearch = () => goto('/servers/list')
 const onButtonChat = () => goto('/servers/chat');
+const onButtonFavorite = () => {
+  favoriteServersElement.classList.toggle('expanded');
+};
 </script>
 
 <div id="layout" class={`container themed ${$currentTheme}`}>
@@ -23,7 +29,14 @@ const onButtonChat = () => goto('/servers/chat');
             {onButtonMap}
             {onButtonSearch}
             {onButtonChat}
+            {onButtonFavorite}
     />
+    <div class="favorite-servers" bind:this={favoriteServersElement}>
+      {#each Array(40) as _, i}
+<!--        <Button classes="transparent">Сервер {i + 1}</Button>-->
+        <ServerRow name={`Сервер ${i + 1}`}/>
+      {/each}
+    </div>
   </header>
   <aside class:expanded={$isAsideExpanded}></aside>
   <main>
@@ -33,20 +46,8 @@ const onButtonChat = () => goto('/servers/chat');
 </div>
 
 <style>
-  :global(html) {
-    height: 100%;
-  }
-
-  :global(html, body) {
-    overflow-x: hidden;
-  }
-
-  :global(body, #app) {
-    height: inherit;
-  }
-
   #layout {
-    min-height: 100%;
+    min-height: -webkit-fill-available;
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-rows: auto 1fr;
@@ -55,13 +56,35 @@ const onButtonChat = () => goto('/servers/chat');
                          'aside  main   main'
                          'footer footer footer';
 
+    padding-top: var(--ui-size-block);
+    padding-bottom: 0;
+
     background-color: var(--color-ui-foreground);
   }
 
   header {
+    position: fixed;
+    top: 0;
+    bottom: auto;
+
+    z-index: 2;
+
+    width: 100%;
     min-height: var(--ui-size-block);
     background-color: #42A021;
     grid-area: header;
+  }
+
+  .favorite-servers {
+    position: fixed;
+    top: var(--ui-size-block);
+    bottom: auto;
+    width: 100%;
+    max-height: 50%;
+
+    overflow-y: scroll;
+    background-color: var(--color-ui-secondary);
+    box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);
   }
 
   aside {
@@ -76,7 +99,6 @@ const onButtonChat = () => goto('/servers/chat');
   }
 
   main {
-    /*background-color: #FFFFFF;*/
     grid-area: main;
   }
 
@@ -87,36 +109,66 @@ const onButtonChat = () => goto('/servers/chat');
     grid-area: footer;
   }
 
-  :global(section) {
-    padding-left: 30px;
-    padding-right: 30px;
+  .favorite-servers {
+    display: none;
+  }
+
+  .favorite-servers.expanded {
+    display: block;
+  }
+
+  :global {
+    html {
+      height: 100%;
+    }
+
+    html, body {
+      overflow-x: hidden;
+    }
+
+    body, #app {
+      height: inherit;
+    }
+
+    section {
+      padding-left: 30px;
+      padding-right: 30px;
+    }
   }
 
   @media screen and (max-width: 440px) {
+    #layout {
+      padding-top: 0;
+      padding-bottom: var(--ui-size-block);
+    }
     header {
       position: fixed;
+      top: auto;
       bottom: 0;
       left: 0;
-      z-index: 2;
-      width: 100%;
+      right: auto;
+    }
+
+    .favorite-servers {
+      top: auto;
+      bottom: var(--ui-size-block);
+
+      box-shadow: 0 calc(-1 *var(--ui-size-shadow)) 0 0 var(--color-ui-shadow);
     }
 
     main {
       overflow: hidden;
-      /*text-wrap: nowrap;*/
     }
 
     aside.expanded {
       width: 100vw;
     }
 
-    footer {
-      padding-bottom: var(--ui-size-block);
-    }
-
-    :global(section) {
-      padding-left: 10px;
-      padding-right: 10px;
+    :global {
+      section {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
     }
   }
 </style>

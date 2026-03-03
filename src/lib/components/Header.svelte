@@ -1,13 +1,13 @@
 <script>
   import ButtonIcon from "$lib/components/ui/buttons/ButtonIcon.svelte";
-  import {createEventDispatcher} from "svelte";
-  
+
   const {
     onButtonAside,
     onButtonConsole,
     onButtonMap,
     onButtonSearch,
-    onButtonChat
+    onButtonChat,
+    onButtonFavorite
   } = $props();
 </script>
 
@@ -29,6 +29,9 @@
                 classes={"transparent"}
                 onclick={onButtonConsole}/>
   </nav>
+  <ButtonIcon icon={"star"}
+              classes="transparent"
+              onclick={onButtonFavorite}/>
 </div>
 
 <style>

@@ -18,7 +18,9 @@
 </Button>
 
 <style>
-  :global(.button use) {
-    transition: opacity .1s ease-in;
+  :global {
+    .button use {
+      transition: opacity .1s ease-in;
+    }
   }
 </style>
