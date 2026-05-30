@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  app:
+    image: pixplaze-web-app
+    build: .
+    container_name: pixplaze-web-app
+    ports:
+      - "80:3000"
+    restart: unless-stopped
