@@ -23,15 +23,16 @@
   .server-row {
     display: flex;
     flex-direction: row;
+
+    &:hover {
+      background-color: var(--color-ui-primary);
+    }
+
+    >* {
+      display: flex;
+    }
   }
-  .server-row:hover {
-    background-color: var(--color-ui-primary);
-  }
-  .server-row>* {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
+
   .server-icon {
     border-right: var(--ui-size-border) solid transparent;
 
@@ -41,12 +42,10 @@
   }
 
   :global {
-    .server-row button.ui.interactive.transparent.server-info {
+    .server-row button.server-info {
       display: flex;
       align-items: center;
-
       padding: 0;
-      background-color: transparent;
       color: var(--color-text-secondary);
     }
   }

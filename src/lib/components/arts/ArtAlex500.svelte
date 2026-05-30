@@ -1,6 +1,3 @@
-<script>
-</script>
-
 <svg width="256" height="160" viewBox="0 0 256 160" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g id="art-alex-500">
     <g id="zombie-chase">
@@ -74,13 +71,13 @@
         <path d="M104 130V142H96L96 130L104 130Z" fill="#6D955B"/>
       </g>
       <g id="head_2">
-        <path d="M148 90H152V110H148V90Z" fill="#5A7A4B"/>
-        <path d="M116 78H148V110H116V78Z" fill="#6D955B"/>
+        <path d="M148 90V98H152V110H148V90Z" fill="#5A7A4B"/>
+        <path d="M116 78H148V98V110H116V78Z" fill="#6D955B"/>
         <path d="M148 78H116V94H120V90H128V86H140V90L148 90V78Z" fill="#436D35"/>
         <path d="M120 98H128V102H120V98Z" fill="#1A1A1A"/>
         <path d="M136 98H144V102H136V98Z" fill="#1A1A1A"/>
         <path fill-rule="evenodd" clip-rule="evenodd" d="M136 102H128V106H124V110H140V106H136V102Z" fill="#436D35"/>
-        <path d="M148 78H152V90H148V78Z" fill="#345429"/>
+        <path d="M148 78H152V98H148V90V78Z" fill="#345429"/>
       </g>
     </g>
     <g id="alex">
@@ -124,10 +121,20 @@
         <path d="M40 78H52V110H40V78Z" fill="#D68C40"/>
         <path d="M44 93H48V97H52V101H44V93Z" fill="#DBB98F"/>
       </g>
-      <rect id="left-eye" width="8" height="8" transform="matrix(-1 0 0 1 80 94)" fill="white"/>
-      <rect id="left-pupil" width="4" height="4" transform="matrix(-1 0 0 1 80 96)" fill="#236128"/>
-      <rect id="right-eye" width="8" height="8" transform="matrix(-1 0 0 1 64 94)" fill="white"/>
-      <rect id="right-pupil" width="4" height="4" transform="matrix(-1 0 0 1 64 96)" fill="#236128"/>
+      <g id="right-eye">
+        <path d="M80 94H72V102H80V94Z" fill="white"/>
+        <path d="M80 96H76V100H80V96Z" fill="#236128"/>
+      </g>
+      <g id="left-eye">
+        <path d="M64 94H56V102H64V94Z" fill="white"/>
+        <path d="M64 96H60V100H64V96Z" fill="#236128"/>
+      </g>
+      <g id="particles">
+        <path d="M92 78H96V82H92V78Z" fill="#6B94F3"/>
+        <path d="M80 66H84V70H80V66Z" fill="#6B94F3"/>
+        <path d="M92 62H96V66H92V62Z" fill="#6B94F3"/>
+        <path d="M100 70H104V74H100V70Z" fill="#6B94F3"/>
+      </g>
     </g>
   </g>
 </svg>
@@ -138,5 +145,16 @@
     transform-origin: top;
     min-width: 512px;
     min-height: 320px;
+  }
+
+  @keyframes eye-shake {
+    0% { transform: translateY(-2px)}
+    100% {transform: translateY(0)}
+  }
+
+  g#left-eye,
+  g#right-eye,
+  #particles {
+    animation: eye-shake 0.1s linear infinite;
   }
 </style>

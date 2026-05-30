@@ -8,7 +8,7 @@
   --ui-width: var(--ui-size-block);
   --ui-height: var(--ui-size-block);
   --ui-spacing: 20px;
-  --ui-padding: 30px;
+  --ui-padding: 20px;
 
   --color-red-main: #C10000;
   --color-green-main: #5CBB3A;
@@ -29,6 +29,7 @@
 
   --color-main-text-primary: var(--color-gray-dark);
   --color-main-text-secondary: var(--color-gray-silver);
+  --color-main-text-placeholder: var(--color-main-shadow);
 
   /* THEME COLORS */
   --color-text-primary: #444444;
@@ -43,6 +44,13 @@
   --color-ui-secondary: #52A435;
   --color-ui-border: #42A021;
   --color-ui-border1: #C0C0C0;
+
+  --color-ui-info-border: var(--color-ui-border);
+  --color-ui-info-background: var(--color-ui-primary);
+  --color-ui-warning-border: #EFC500;
+  --color-ui-warning-background: #E8CE57;
+  --color-ui-error-border: var(--color-red-main);
+  --color-ui-error-background: #ED0808;
 
   --color-button-background: var(--color-ui-primary);
   --color-button-border: var(--color-ui-border);

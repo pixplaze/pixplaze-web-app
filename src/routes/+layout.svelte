@@ -1,25 +1,43 @@
 <script>
-import Header from "$lib/components/Header.svelte";
-import {createPageStore} from "$lib/store/store.page.js";
-import {goto} from "$app/navigation";
-import ServerRow from "$lib/components/ServerRow.svelte";
+ import Header from "$lib/components/Header.svelte";
+ import {createPageStore} from "$lib/store/store.page.js";
+ import {goto} from "$app/navigation";
+ import {env} from "$env/dynamic/public";
+ import ServerRow from "$lib/components/ServerRow.svelte";
+ import ButtonLabel from "$lib/components/ui/buttons/ButtonLabel.svelte";
+ import {onMount} from "svelte";
+ import {error} from "@sveltejs/kit";
 
-const pageStore = createPageStore();
-const currentTheme = pageStore.currentTheme;
-const isAsideExpanded = pageStore.isAsideExpanded;
+ const pageStore = createPageStore();
+ const currentTheme = $state(pageStore.currentTheme);
+ const isAsideExpanded = pageStore.isAsideExpanded;
 
-const {children} = $props();
+ const {children} = $props();
 
-let favoriteServersElement = $state();
+ let favoriteServersElement = $state();
 
-const onButtonAside = pageStore.toggleAside;
-const onButtonConsole = () => goto('/servers/console')
-const onButtonMap = () => goto('/servers/map')
-const onButtonSearch = () => goto('/servers/list')
-const onButtonChat = () => goto('/servers/chat');
-const onButtonFavorite = () => {
-  favoriteServersElement.classList.toggle('expanded');
-};
+ const onButtonAside = pageStore.toggleAside;
+ const onButtonConsole = () => goto('/servers/console')
+ const onButtonMap = () => goto('/servers/map')
+ const onButtonSearch = () => goto('/servers/list')
+ const onButtonChat = () => goto('/servers/chat');
+ const onButtonFavorite = () => {
+   favoriteServersElement.classList.toggle('expanded');
+ };
+ const onButtonToggleTheme = () => {
+   pageStore.toggleTheme();
+   console.log('after theme toggle: ', $currentTheme);
+ };
+ onMount(() => {
+   // fetch(`${env.PUBLIC_PIXPLAZE_WEB_API_URL}/servers`)
+   //     .then(res => res.json())
+   //     .then(res => console.log(res))
+   //     .catch(err => {
+   //       if (err) {
+   //         throw error(500, err);
+   //       }
+   //     });
+ });
 </script>
 
 <div id="layout" class={`container themed ${$currentTheme}`}>
@@ -33,12 +51,13 @@ const onButtonFavorite = () => {
     />
     <div class="favorite-servers" bind:this={favoriteServersElement}>
       {#each Array(40) as _, i}
-<!--        <Button classes="transparent">Сервер {i + 1}</Button>-->
         <ServerRow name={`Сервер ${i + 1}`}/>
       {/each}
     </div>
   </header>
-  <aside class:expanded={$isAsideExpanded}></aside>
+  <aside class:expanded={$isAsideExpanded}>
+<!--    <ButtonLabel icon="sun" onclick={onButtonToggleTheme}>Переключить тему</ButtonLabel>-->
+  </aside>
   <main>
     {@render children()}
   </main>
@@ -141,6 +160,7 @@ const onButtonFavorite = () => {
       padding-top: 0;
       padding-bottom: var(--ui-size-block);
     }
+
     header {
       position: fixed;
       top: auto;

@@ -4,7 +4,6 @@
   import ButtonIcon from "$lib/components/ui/buttons/ButtonIcon.svelte";
   import Icon from "$lib/components/ui/Icon.svelte";
   import CommandPrompt from "$lib/components/CommandPrompt.svelte";
-  import Counter from "$lib/components/Counter.svelte";
   import ButtonLabel from "$lib/components/ui/buttons/ButtonLabel.svelte";
   import Rating from "$lib/components/Rating.svelte"
   import ServerCard from "$lib/components/ServerCard.svelte";
@@ -17,7 +16,6 @@
   <section id="#test-icons">
   </section>
   <section id="#test-interactive">
-    <Counter/>
     <ButtonLabel icon="globe">Балабол</ButtonLabel>
     <Button onclick={() => alert("Ты Пидор!")}>Кнопка</Button>
     <Button>Лэйбл<Icon icon="close"/></Button>

@@ -1,7 +1,5 @@
 <script>
   import {onMount} from "svelte";
-  export const ssr = false;
-  export const csr = true;
 
   let element = null;
 

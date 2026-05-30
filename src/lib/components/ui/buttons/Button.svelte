@@ -15,53 +15,51 @@
 </button>
 
 <style>
-  button {
+  .button {
     cursor: pointer;
     user-select: none;
-
     vertical-align: middle;
-
     color: var(--color-text-secondary);
+    border-color: var(--color-ui-border);
     background-color: var(--color-ui-primary);
     box-shadow: inset 0 calc(-1 * var(--ui-size-shadow)) 0 0 var(--color-ui-secondary);
-
     transition: background-color .2s ease-out;
-  }
 
-  button:hover {
-    background-color: var(--color-ui-primary-lighter);
-  }
+    &:hover {
+      background-color: var(--color-ui-primary-lighter);
+    }
 
-  button:active {
-    background-color: var(--color-ui-secondary);
-    border: var(--ui-size-border) solid var(--color-ui-primary-lighter);
-  }
+    &:active {
+      background-color: var(--color-ui-secondary);
+      border-color: var(--color-ui-primary-lighter);
+    }
 
-  button:disabled {
-    cursor: not-allowed;
-    padding-bottom: 0;
-    background-color: var(--color-main-dark);
-    border: var(--ui-size-border) solid var(--color-ui-primary);
-  }
+    &:disabled {
+      cursor: not-allowed;
+      padding-bottom: 0;
+      background-color: var(--color-main-dark);
+      border-color: var(--color-ui-primary);
+    }
 
-  button.square {
-    width: var(--ui-size-block);
-    padding: 0;
-    margin: 0;
-  }
+    &.square {
+      width: var(--ui-size-block);
+      padding: 0;
+      margin: 0;
+    }
 
-  button.transparent {
-    background-color: transparent;
-    border-color: transparent;
-    box-shadow: none;
-  }
+    &.transparent {
+      background-color: transparent;
+      border-color: transparent;
+      box-shadow: none;
 
-  button.transparent:hover {
-    background-color: var(--color-ui-primary-lighter)!important;
-  }
+      &:hover {
+        background-color: var(--color-ui-primary-lighter);
+      }
 
-  button.transparent:active {
-    background-color: var(--color-ui-secondary)!important;
-    border-color: var(--color-ui-primary-lighter)!important;
+      &:active {
+        background-color: var(--color-ui-secondary);
+        border-color: var(--color-ui-primary-lighter);
+      }
+    }
   }
 </style>

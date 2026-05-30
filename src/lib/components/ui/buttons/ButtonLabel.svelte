@@ -7,14 +7,15 @@
     disabled = false,
     square = false,
     transparent = false,
-    children
+    children,
+    onclick
   } = $props();
 </script>
 
 <Button {disabled}
         {transparent}
         {square}
-        on:click>
+        {onclick}>
   {@render children()}
   <Icon {icon}/>
 </Button>

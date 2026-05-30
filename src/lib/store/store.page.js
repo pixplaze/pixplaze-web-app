@@ -1,4 +1,5 @@
-import {writable, get} from "svelte/store";
+import {writable, get} from 'svelte/store';
+import {browser} from '$app/environment'
 
 const createThemeStore = (themes, currentTheme) => {
   let index = themes.indexOf(currentTheme);
@@ -33,10 +34,10 @@ const createThemeStore = (themes, currentTheme) => {
 }
 
 export const createPageStore = () => {
-  const themeStore = createThemeStore(['light', 'dark'], 'light')
+  const currentTheme = writable(browser ? localStorage.getItem('currentTheme') || 'light' : 'light');
+  const themeStore = createThemeStore(['light', 'dark'], get(currentTheme));
   const isLoading = writable(false);
   const isAsideExpanded = writable(false);
-  const currentTheme = writable(themeStore.current());
 
   function toggleAside() {
     if (get(isAsideExpanded)) {
@@ -47,8 +48,10 @@ export const createPageStore = () => {
   }
 
   function toggleTheme() {
-    currentTheme.set(themeStore.toggle());
-    // console.log(themeStore.current());
+    const theme = themeStore.toggle();
+    currentTheme.set(theme);
+    localStorage.setItem('currentTheme', theme);
+
   }
 
   return {

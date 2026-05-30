@@ -16,8 +16,14 @@
   vertical-align: top;
 
   outline: none;
-  border: var(--ui-size-border) solid var(--color-ui-border);
+  border: var(--ui-size-border) solid transparent;
+  background-color: transparent;
   border-radius: 0;
+}
+
+.ui.interactive:focus {
+  /*outline: black 4px solid;*/
+  /*outline-offset: 0;*/
 }
 
 .icon {
@@ -25,14 +31,19 @@
   vertical-align: middle;
 }
 
-/*.ui.interactive:hover {*/
-/*  !*outline: var(--color-ui-dark) solid 2px;*!*/
-/*  border-color: var(--color-ui-dark);*/
-/*}*/
+.content-box {
+  padding-top: var(--ui-spacing);
+  padding-left: var(--ui-spacing);
+  padding-right: var(--ui-spacing);
+}
 
-/*.ui.interactive:active {*/
-/*  border-color: var(--color-ui-primary);*/
-/*}*/
+.content-line {
+  margin-bottom: var(--ui-spacing);
+}
+
+.content-line:last-child {
+  margin-bottom: 0;
+}
 
 /* BUTTON TYPE */
 
