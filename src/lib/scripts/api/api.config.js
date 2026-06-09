@@ -2,7 +2,7 @@
 
 const apiConfig = {
   // url: `${env.PUBLIC_PIXPLAZE_WEB_API_URL}`
-  url: `http://localhost:8080`
+  url: `http://192.168.1.100:8080`
 }
 
 const _fetch = (url, options) => fetch(url, {

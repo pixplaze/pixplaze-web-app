@@ -20,6 +20,10 @@ export const createIdEnricher = () => {
   return item => ({id: increment(), ...item});
 }
 
+export const classIf = (className, condition) => {
+  return condition ? className : '';
+}
+
 export function createDebounce(callback, delay) {
   let timeoutId;
   let abortController;

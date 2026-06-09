@@ -4,24 +4,13 @@
 
   let {
     value = $bindable(''),
-    getItems,
+    getSuggestions,
     children
   } = $props();
 
-  const dropdown = new HoverDropdown(200);
+  const dropdown = new HoverDropdown(0);
   let suggestions = $derived(getSuggestions(value));
   let isVisible = $derived(suggestions.length > 0 && (dropdown.isInFocus || dropdown.isMouseInside));
-
-  function getSuggestions(value) {
-    const items = getItems(value);
-    const filterSuggestions = (i) => {
-      i = i.toLowerCase();
-      value = value.toLowerCase();
-      return value.length !== 0 && i !== value && i.startsWith(value);
-    };
-
-    return items.filter(filterSuggestions);
-  }
 
   function selectSuggestion(suggestion) {
     value = suggestion;
@@ -51,6 +40,7 @@
 
   ul {
     position: absolute;
+    z-index: 2;
     top: 100%;
     left: 0;
     width: 100%;

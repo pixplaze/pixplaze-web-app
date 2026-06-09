@@ -15,7 +15,8 @@
     classes,
     value = $bindable(""),
     schema,
-    isValid = $bindable(false)
+    isValid = $bindable(false),
+    action
   } = $props();
 
   let validate = createDebounce(getValidityIssues, 800);
@@ -62,6 +63,7 @@
        {disabled}
        classes={`${classes}${validityClass}`}
        bind:value
+       {action}
 />
 <Notice bind:notices={validityNotices} {classes}/>
 

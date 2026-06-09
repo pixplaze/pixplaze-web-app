@@ -1,13 +1,13 @@
 <script>
   let {
-    id = "",
-    label = "",
-    placeholder = "",
-    type = "text",
+    id = '',
+    label = '',
+    placeholder = '',
+    type = 'text',
     maxlength,
     disabled,
-    classes = "",
-    value = $bindable(""),
+    classes = '',
+    value = $bindable(''),
     action,
     oninput,
     onenter,
@@ -21,6 +21,11 @@
     const code = e.code;
     if (code === 'Enter') {
       onenter('enter event');
+      return;
+    }
+
+    if (code === 'Escape') {
+
     }
   }
 </script>
@@ -71,5 +76,15 @@
     box-shadow: none;
     user-select: none;
     cursor: not-allowed;
+  }
+
+  :global {
+    .warning + .ui.interactive.input {
+      border: var(--ui-size-border) solid #EFC500;
+    }
+
+    .error + .ui.interactive.input {
+      border: var(--ui-size-border) solid var(--color-red-main);
+    }
   }
 </style>

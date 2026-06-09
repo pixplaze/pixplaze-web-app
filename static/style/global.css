@@ -18,7 +18,7 @@ body {
   background-color: var(--color-ui-secondary);
 }
 
-button, input, label, span, a, p {
+div, button, input, label, span, a, p {
   font-size: var(--ui-size-text);
   font-family: Arial, sans-serif;
   color: var(--color-text-primary);

@@ -2,6 +2,8 @@
   import ButtonIcon from "$lib/components/ui/buttons/ButtonIcon.svelte";
   import Icon from "$lib/components/ui/Icon.svelte";
   import {createIdEnricher} from "$lib/scripts/util/utils.js";
+  import {blockDrop} from "$lib/scripts/util/animation.js";
+  import {flip} from 'svelte/animate';
 
   let {
     notice,
@@ -10,18 +12,21 @@
     classes = "",
     onClose
   } = $props();
+
   const enrichWithId = createIdEnricher();
   let _notices = $derived(notices.map(enrichWithId));
 
-  // notices.forEach(n => console.log(n))
-
   const close = (id) => {
-    notices = _notices.filter(n => n.id !== id);
+    notices = [..._notices.filter(n => n.id !== id)];
   }
+
 </script>
 
-{#each _notices as notice (notice.id)}
-  <div data-id="{notice.id}" class="notice {notice.level} {classes}">
+{#each _notices as notice, i (notice.id)}
+  <div in:blockDrop={{ delay: i * 50, duration: 300 }}
+       animate:flip={{duration: 300}}
+       data-id="{notice.id}"
+       class="notice {notice.level} {classes}">
     <p class="notice-content">
       <Icon icon={notice.level}/>
       {notice.message}
@@ -56,14 +61,14 @@
   }
 
   :global {
-    .notice > button.tiny {
+    .notice > .button.tiny {
       margin: calc(-1*var(--ui-size-border));
       height: auto;
       align-self: stretch;
     }
 
     .notice.warning {
-      > button.tiny {
+      > .button.tiny {
         &:hover {
           /*border: var(--ui-size-border) solid #EFC500;*/
           background-color: #ffdf4e;
@@ -77,7 +82,7 @@
     }
 
     .notice.error {
-      > button.tiny {
+      > .button.tiny {
         &:hover {
           /*border: var(--ui-size-border) solid #EFC500;*/
           background-color: #FF0000;
