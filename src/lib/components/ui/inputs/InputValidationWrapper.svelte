@@ -1,9 +1,9 @@
 <script>
-  import {parseAsync} from "valibot";
   import notice from "$lib/scripts/service/notice.js";
-  import Notice from "$lib/components/ui/Notice.svelte";
+  import {parseAsync} from "valibot";
   import {createDebounce} from "$lib/scripts/util/utils.js";
   import {untrack} from "svelte";
+  import Notice from "$lib/components/ui/Notice.svelte";
 
   let {
     value = $bindable(""),
@@ -25,7 +25,6 @@
       if (!currentValue) {
         validate.cancel();
         validityNotices = [];
-        isValid = true;
         inputClasses = '';
         return;
       }
@@ -44,7 +43,7 @@
       return error.issues.map(i => notice.create(i.message, notice.LEVEL.WARNING));
     }
 
-    await _onValidated(value);
+    await onSuccess(value);
     isValid = true;
     return [];
   }
@@ -53,10 +52,6 @@
     return validityNotices.map(n => n.level)
         .filter((v, i, s) => s.indexOf(v) === i && v !== notice.LEVEL.INFO)
         .join(' ');
-  }
-
-  async function _onValidated() {
-    await onSuccess(value);
   }
 </script>
 

@@ -5,70 +5,6 @@ const apiConfig = {
   url: `http://192.168.1.100:8080`
 }
 
-const _fetch = (url, options) => fetch(url, {
-  method: options.method || 'GET',
-  url: url,
-  data: JSON.stringify(options.data),
-  headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-})
-
-let token = localStorage.getItem('jwt') || null;
-
-async function ensureToken() {
-  if (!token) {
-    const res = await fetch('/auth/guest');
-    token = await res.text();
-    localStorage.setItem('jwt', token);
-  }
-  return token;
-}
-
-export async function apiFetch(url, options = {}) {
-  let jwt = await ensureToken();
-  options.headers = {
-    ...options.headers,
-    'Authorization': `Bearer ${jwt}`,
-    'Content-Type': 'application/json'
-  };
-
-  let res = await fetch(url, options);
-
-  if (res.status === 401) {
-    // Access JWT истёк → пробуем refresh
-    const refreshRes = await fetch('/auth/refresh', { method: 'POST', credentials: 'include' });
-    if (refreshRes.ok) {
-      const data = await refreshRes.json();
-      token = data.token;
-      localStorage.setItem('jwt', token);
-      return apiFetch(url, options); // повторяем запрос
-    } else {
-      // новый guest токен
-      localStorage.removeItem('jwt');
-      token = null;
-      return apiFetch(url, options);
-    }
-  }
-  return res.json();
-}
-
-export async function login(username, password) {
-  const res = await fetch('/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
-    credentials: 'include'
-  });
-
-  if (!res.ok) throw new Error('Login failed');
-
-  const data = await res.json();
-  token = data.token;
-  localStorage.setItem('jwt', token);
-  return data;
-}
-
-/// NEW API ///
-
 class ApiClient {
   constructor(baseUrl) {
     this.baseUrl = baseUrl;
@@ -89,9 +25,6 @@ class ApiClient {
     this.refreshSubscribers = [];
   }
 
-  /**
-   * Основной метод запроса (Best Practice: инкапсуляция логики fetch)
-   */
   async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
 
@@ -137,7 +70,7 @@ class ApiClient {
       } catch (refreshError) {
         console.error(refreshError);
         this.isRefreshing = false;
-        this.signOut(); // Если рефреш не удался — выходим
+        await this.signOut(); // Если рефреш не удался — выходим
         throw refreshError;
       }
     }
@@ -145,14 +78,30 @@ class ApiClient {
     return response;
   }
 
+  async get(endpoint, options = {}) {
+    return await this.request(endpoint, {method: 'GET', ...options})
+  }
+
+  async post(endpoint, options = {}) {
+    return await this.request(endpoint, {method: 'POST', ...options})
+  }
+
+  async put(endpoint, options = {}) {
+    return await this.request(endpoint, {method: 'PUT', ...options})
+  }
+
+  async delete(endpoint, options = {}) {
+    return await this.request(endpoint, {method: 'DELETE', ...options})
+  }
+
   /**
    * Методы авторизации
    */
 
-  async signIn(username, password) {
+  async signIn(signInData) {
     const res = await this.request('/auth/sign-in', {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify(signInData),
     });
     const data = await res.json();
     if (res.ok) this.accessToken = data.accessToken;
@@ -171,7 +120,7 @@ class ApiClient {
     await this.request('/auth/sign-out', { method: 'POST' });
     this.accessToken = null;
     // Опционально: редирект на страницу логина
-    window.location.href = '/login';
+    window.location.href = '/auth/sign-in';
   }
 
   async refresh() {

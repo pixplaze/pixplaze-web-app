@@ -62,7 +62,6 @@ export class HoverDropdown {
     };
 
     const onClickInside = (e) => {
-      console.log(e);
       this.triggerElement.focus();
     };
 

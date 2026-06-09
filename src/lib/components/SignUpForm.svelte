@@ -1,55 +1,31 @@
 <script>
   import {api} from '$lib/scripts/api/api.config.js';
+  import noticeService from '$lib/scripts/service/notice.js';
   import {getEmailSuggestions, getUsernameSuggestions} from '$lib/scripts/service/autocomplition.js';
+  import {check, checkAsync, email, minLength, pipe, pipeAsync, regex, string} from 'valibot';
+  import {createFormData, isFormDataValid} from "$lib/scripts/service/form.service.js";
   import Input from '$lib/components/ui/inputs/Input.svelte';
   import Button from '$lib/components/ui/buttons/Button.svelte';
-  import {check, checkAsync, email, minLength, pipe, pipeAsync, regex, string} from 'valibot';
   import InputAutocompletionWrapper from '$lib/components/ui/inputs/InputAutocompletionWrapper.svelte';
   import Delimiter from '$lib/components/ui/Delimiter.svelte';
   import InputValidationWrapper from '$lib/components/ui/inputs/InputValidationWrapper.svelte';
   import Notice from '$lib/components/ui/Notice.svelte';
-  import noticeService from '$lib/scripts/service/notice.js';
-  import {createFormData, isFormDataValid} from "$lib/scripts/service/form.service.js";
+  import {voucherService} from "$lib/scripts/service/voucher.service.js";
 
   const {
     inviteCode,
     onSubmit
   } = $props();
 
-  let userName = $state("");
-  let isUserNameValid = $state(false);
-  let userEmail = $state("");
-  let isEmailValid = $state(false);
-  let userPassword = $state("");
-  let isPasswordValid = $state(false);
-  let userPasswordRepeat = $state("");
-  let isPasswordRepeatValid = $state(false);
-  let userInviteCode = $state((() => inviteCode || '')());
-  let isInviteCodeValid = $state((() => !!inviteCode)())
-  let isFormValid = $derived(isSignUpFormValid(isEmailValid, isPasswordValid, isPasswordRepeatValid, isInviteCodeValid));
-  
-  const formData = {
-    username: {
-      value,
-      isValid:
-    },
-    email: {
-      value,
-      isValid: false
-    },
-    password: {
-      value,
-      isValid: false
-    },
-    passwordRepeat: {
-      value,
-      isValid: false
-    },
-    inviteCode: {
-      value,
-      isValid: false
-    }
-  }
+  const data = $state(createFormData({
+    name: {value: '', isValid: true},
+    email: '',
+    password: '',
+    passwordRepeat: '',
+    inviteCode: {value: inviteCode, isValid: !!inviteCode}
+  }));
+
+  const isDataValid = $derived(isFormDataValid(data));
 
   let inviteCodeNotices = $state([]);
 
@@ -67,39 +43,23 @@
   );
   const repeatPasswordValidationSchema = pipe(
       string(),
-      check(r => r === userPassword, 'Пароли должны совпадать')
+      check(r => r === data.password.value, 'Пароли должны совпадать')
   );
   const inviteCodeValidationSchema = pipeAsync(
       string(),
       minLength(8, 'Код приглашения должен состоять из 8 символов'),
-      checkAsync(async voucher => {
-        if (voucher.length < 8) {
-          return true;
-        }
-
-        try {
-          const result = await api.request(`/vouchers/invite/validate/${voucher}`, {method: 'POST'});
-          return await result.json();
-        } catch (e) {
-          return false;
-        }
-      }, 'Неверный код приглашения'));
-
-  function isSignUpFormValid(isEmailValid, isPasswordValid, isPasswordRepeatValid, isInviteCodeValid) {
-    console.log(`isEmailValid: ${isEmailValid}, isPasswordValid: ${isPasswordValid}, isRepeatPasswordValid: ${isPasswordRepeatValid}, isInviteCodeValid: ${isInviteCodeValid}`)
-    return userEmail && isEmailValid && userPassword && isPasswordValid && userPasswordRepeat && isPasswordRepeatValid && userInviteCode && isInviteCodeValid;
-  }
+      checkAsync(voucherService.isInviteCodeValid, 'Неверный код приглашения'));
 
   function onFormSubmit() {
-    if (!isFormValid) {
+    if (!isFormDataValid(data)) {
       return;
     }
 
     const signUpData = $state.snapshot({
-      username: userName,
-      email: userEmail,
-      password: userPassword,
-      inviteCode: userInviteCode
+      username: data.name.value,
+      email: data.email.value,
+      password: data.password.value,
+      inviteCode: data.inviteCode.value
     });
 
     onSubmit(signUpData);
@@ -109,22 +69,22 @@
 <form onsubmit={e => {e.preventDefault(); onSubmit()}} class="auth-form content-box">
   <h1 class="content-line">Регистрация</h1>
 
-  <InputAutocompletionWrapper bind:value={userName} getSuggestions={getUsernameSuggestions}>
+  <InputAutocompletionWrapper bind:value={data.name.value} getSuggestions={getUsernameSuggestions}>
     {#snippet children({action})}
       <Input id="user-name"
              label="Имя пользователя"
              placeholder="notch"
-             bind:value={userName}
+             bind:value={data.name.value}
              {action}
       />
     {/snippet}
   </InputAutocompletionWrapper>
 
-  <InputValidationWrapper bind:value={userEmail}
-                          bind:isValid={isEmailValid}
+  <InputValidationWrapper bind:value={data.email.value}
+                          bind:isValid={data.email.isValid}
                           schema={emailValidationSchema}>
     {#snippet children({inputClasses})}
-    <InputAutocompletionWrapper bind:value={userEmail}
+    <InputAutocompletionWrapper bind:value={data.email.value}
                                 getSuggestions={getEmailSuggestions}>
       {#snippet children({action})}
         <Input id="user-email"
@@ -132,36 +92,36 @@
                placeholder="notch@email.com"
                classes={inputClasses}
                action={action}
-               bind:value={userEmail}/>
+               bind:value={data.email.value}/>
       {/snippet}
     </InputAutocompletionWrapper>
     {/snippet}
   </InputValidationWrapper>
 
   <InputValidationWrapper schema={passwordValidationSchema}
-                          bind:value={userPassword}
-                          bind:isValid={isPasswordValid}>
+                          bind:value={data.password.value}
+                          bind:isValid={data.password.isValid}>
     {#snippet children({inputClasses})}
       <Input id="user-password"
              label="Пароль"
              type="password"
              placeholder="********"
              classes={` ${inputClasses}`}
-             bind:value={userPassword}
+             bind:value={data.password.value}
       />
     {/snippet}
   </InputValidationWrapper>
 
   <InputValidationWrapper schema={repeatPasswordValidationSchema}
-                          bind:value={userPasswordRepeat}
-                          bind:isValid={isPasswordRepeatValid}>
+                          bind:value={data.passwordRepeat.value}
+                          bind:isValid={data.passwordRepeat.isValid}>
     {#snippet children({inputClasses})}
       <Input id="user-password-repeat"
              label="Повторите пароль"
              type="password"
              placeholder="********"
              classes={` ${inputClasses}`}
-             bind:value={userPasswordRepeat}/>
+             bind:value={data.passwordRepeat.value}/>
     {/snippet}
   </InputValidationWrapper>
   <InputValidationWrapper schema={inviteCodeValidationSchema}
@@ -171,21 +131,21 @@
                             console.log(notice);
                             inviteCodeNotices.push(notice);
                           }}
-                          bind:value={userInviteCode}
-                          bind:isValid={isInviteCodeValid}>
+                          bind:value={data.inviteCode.value}
+                          bind:isValid={data.inviteCode.isValid}>
     {#snippet children({inputClasses})}
       <Input id="user-invite-code"
              label="Код приглашения"
              maxlength="8"
-             disabled={inviteCode}
+             disabled={data.inviteCode.value}
              classes={` ${inputClasses}`}
-             bind:value={userInviteCode}/>
+             bind:value={data.inviteCode.value}/>
     {/snippet}
   </InputValidationWrapper>
   <Notice bind:notices={inviteCodeNotices}/>
   <Button onclick={onFormSubmit}
           classes="content-line"
-          disabled={!isFormValid}>Зарегистрироваться</Button>
+          disabled={!isDataValid}>Зарегистрироваться</Button>
   <Delimiter value="или"/>
 </form>
 
