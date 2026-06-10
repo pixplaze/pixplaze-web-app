@@ -1,5 +1,6 @@
 <script>
-  import notice from "$lib/scripts/service/notice.js";
+  import {noticeService} from "$lib/scripts/service/notice.service.js";
+  import {LEVEL} from "$lib/scripts/util/notice.util.js";
   import {parseAsync} from "valibot";
   import {createDebounce} from "$lib/scripts/util/utils.js";
   import {untrack} from "svelte";
@@ -40,7 +41,7 @@
       await parseAsync(schema, value);
     } catch (error) {
       isValid = false;
-      return error.issues.map(i => notice.create(i.message, notice.LEVEL.WARNING));
+      return error.issues.map(i => noticeService.create(i.message, LEVEL.WARNING));
     }
 
     await onSuccess(value);
@@ -50,7 +51,7 @@
 
   function getValidityClasses(validityNotices) {
     return validityNotices.map(n => n.level)
-        .filter((v, i, s) => s.indexOf(v) === i && v !== notice.LEVEL.INFO)
+        .filter((v, i, s) => s.indexOf(v) === i && v !== LEVEL.INFO)
         .join(' ');
   }
 </script>

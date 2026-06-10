@@ -8,7 +8,7 @@ export function createFormData(data) {
     }
 
     if (
-        Object.prototype.hasOwnProperty.call(data[key], 'isValid') &&
+        Object.prototype.hasOwnProperty.call(data[key], 'isValid') ||
         Object.prototype.hasOwnProperty.call(data[key], 'value')
     ) {
       formStructure[key] = data[key];
@@ -27,17 +27,6 @@ export function createFormData(data) {
 export function isPropertyValid(property) {
   return property.isValid && !!property.value && !!property.value.trim();
 }
-
-// export function isPropertiesValid(...properties) {
-//   console.log(`isPropertiesValid(${[...properties]})`);
-//   for (const property in [...properties]) {
-//     console.log(`${property}`);
-//     if (!isPropertyValid(property)) {
-//       return false;
-//     }
-//   }
-//   return true;
-// }
 
 export function isFormDataValid(data) {
   console.log('isFormDataValid(obj)');

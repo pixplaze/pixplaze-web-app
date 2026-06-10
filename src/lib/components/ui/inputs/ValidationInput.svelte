@@ -1,6 +1,6 @@
 <script>
   import {flatten, safeParse, safeParseAsync} from "valibot";
-  import notice from "$lib/scripts/service/notice.js";
+  import notice from "$lib/scripts/service/notice.service.js";
   import Input from "$lib/components/ui/inputs/Input.svelte";
   import Notice from "$lib/components/ui/Notice.svelte";
   import {createDebounce} from "$lib/scripts/util/utils.js";

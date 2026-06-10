@@ -1,16 +1,15 @@
 <script>
-  import SignUpForm from "$lib/components/SignUpForm.svelte";
   import {page} from "$app/state";
   import {userService} from "$lib/scripts/service/user.service.js";
 
-  function onSubmit (signUpData) {
+  function onSubmit(signUpData) {
     console.log(JSON.parse(JSON.stringify(signUpData)));
-    const result = userService.signUp(signUpData);
-    console.log(`Signing up with data: ${JSON.stringify(signUpData)}`)
+    const result = userService.signIn(signUpData);
+    console.log(`Signing in with data: ${JSON.stringify(signUpData)}`)
     console.log(signUpData);
     console.log(result);
   }
   const inviteCode = page.url.searchParams.get('inviteCode');
 </script>
 
-<SignUpForm {inviteCode} {onSubmit}/>
+<SignInForm {onSubmit}/>
