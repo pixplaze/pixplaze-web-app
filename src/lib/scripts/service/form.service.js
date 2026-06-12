@@ -29,12 +29,10 @@ export function isPropertyValid(property) {
 }
 
 export function isFormDataValid(data) {
-  console.log('isFormDataValid(obj)');
   for (const key in data) {
     if (!Object.prototype.hasOwnProperty.call(data, key)) {
       continue;
     }
-    console.log(`${key}: '${data[key].value}', isValid: ${isPropertyValid(data[key])}`);
     if (!isPropertyValid(data[key])) {
       return false;
     }

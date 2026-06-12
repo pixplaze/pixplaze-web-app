@@ -15,12 +15,12 @@
 </button>
 
 <style>
-  .button {
+  button.button {
     cursor: pointer;
     user-select: none;
     vertical-align: middle;
     color: var(--color-text-secondary);
-    border-color: var(--color-ui-border);
+    border: var(--ui-size-border) solid var(--color-ui-border);
     background-color: var(--color-ui-primary);
     box-shadow: inset 0 calc(-1 * var(--ui-size-shadow)) 0 0 var(--color-ui-secondary);
     transition: background-color .2s ease-out;

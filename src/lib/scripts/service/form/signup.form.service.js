@@ -1,47 +1,52 @@
 import {createSignUpFormStore} from "$lib/scripts/store/form/signup.form.store.svelte.js";
 import {createFormData} from "$lib/scripts/service/form.service.js";
-import {check, checkAsync, email, minLength, pipe, pipeAsync, regex, string} from "valibot";
+import {BaseFormService} from "$lib/scripts/service/form/base.form.service.js";
+import {emailSchema, inviteCodeSchema, passwordRepeatSchema, passwordSchema} from "$lib/scripts/service/form/validations.js";
 import {voucherService} from "$lib/scripts/service/voucher.service.js";
 import {noticeService} from "$lib/scripts/service/notice.service.js";
 import {LEVEL} from "$lib/scripts/util/notice.util.js";
 
-class SignupFormService {
+/**
+ * Бизнес-логика формы регистрации: набор схем валидации, формирование DTO
+ * и побочные эффекты (сообщение по коду приглашения). Общий доступ к состоянию
+ * и схемам предоставляет BaseFormService.
+ */
+class SignUpFormService extends BaseFormService {
   constructor(data) {
-    this.signUpFormStore = createSignUpFormStore(createFormData(data));
-
-    this.emailValidationSchema = pipe(
-        string(),
-        email('Электронная почта не соответствует маске')
-    );
-    this.passwordValidationSchema = pipe(
-        string(),
-        minLength(8, 'Пароль должен быть длиннее 8 символов'),
-        regex(/[a-z]/, 'Пароль должен содержать хотя бы один символ в нижнем регистре'),
-        regex(/[A-Z]/, 'Пароль должен содержать хотя бы один символ в верхнем регистре'),
-        regex(/[0-9]/, 'Пароль должен содержать хотя бы один символ цифры'),
-        regex(/[^a-zA-Z0-9]/, 'Пароль должен содержать хотя бы один спецсимвол')
-    );
-    this.repeatPasswordValidationSchema = pipe(
-        string(),
-        check((r) => r === this.signUpFormStore.data.password.value, 'Пароли должны совпадать')
-    );
-    this.inviteCodeValidationSchema = pipeAsync(
-        string(),
-        minLength(8, 'Код приглашения должен состоять из 8 символов'),
-        checkAsync(async code => await voucherService.isInviteCodeValid(code), 'Неверный код приглашения')
-    );
+    const store = createSignUpFormStore(createFormData(data));
+    super(store, {
+      email: emailSchema(),
+      password: passwordSchema(),
+      passwordRepeat: passwordRepeatSchema(() => store.data.password.value),
+      inviteCode: inviteCodeSchema()
+    });
   }
 
-  async getInviteCodeMessage(code) {
+  /** Уведомления по коду приглашения (read-only). */
+  get inviteCodeNotices() {
+    return this.store.inviteCodeNotices;
+  }
+
+  /** Закрыть плашку: владелец массива уведомлений — сервис, не компонент Notice. */
+  closeInviteCodeNotice(id) {
+    this.store.inviteCodeNotices = this.store.inviteCodeNotices.filter(n => n.id !== id);
+  }
+
+  async showInviteCodeNotice(code) {
     const message = await voucherService.getInviteCodeMessage(code);
-    const notice = noticeService.create(message, LEVEL.INFO);
-    this.signUpFormStore.inviteCodeNotices.push(notice); // TODO !!!
+    this.store.inviteCodeNotices = [noticeService.create(message, LEVEL.INFO)];
   }
 
-  async isInviteCodeValid(code) {
-    return await voucherService.isInviteCodeValid(code);
+  /** DTO для запроса регистрации: name → username, passwordRepeat отбрасывается. */
+  toRequest() {
+    const {data} = this.store;
+    return {
+      username: data.name.value,
+      email: data.email.value,
+      password: data.password.value,
+      inviteCode: data.inviteCode.value
+    };
   }
 }
 
-export const createSignUpFormService = (data) => new SignupFormService(data);
-// export const createSignUpFormStore = (data) => new SignUpFormStore(data);
+export const createSignUpFormService = (data) => new SignUpFormService(data);

@@ -3,13 +3,12 @@
   import ArtEnderman404 from "$lib/components/arts/ArtEnderman404.svelte";
   import ArtAlex500 from '../lib/components/arts/ArtAlex500.svelte';
 
-  let errorImage
+  console.error(page.error);
   const getMessageByCode = c => {
     switch (c) {
       case 404:
         return 'То, что вы пытаетесь найти, унёс Эндермен...';
       case 500:
-        console.error(c);
         return 'Кажется, что-то отвалилось...';
       default:
         return 'Что-то пошло не так...'

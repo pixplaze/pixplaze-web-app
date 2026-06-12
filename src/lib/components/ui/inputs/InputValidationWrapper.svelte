@@ -16,7 +16,7 @@
   } = $props();
 
   let validityNotices = $state([]);
-  let inputClasses = $derived(getValidityClasses(validityNotices));
+  let validationClasses = $derived(getValidityClasses(validityNotices));
   let validate = createDebounce(getValidityIssues, 1000);
 
   $effect(async () => {
@@ -26,13 +26,10 @@
       if (!currentValue) {
         validate.cancel();
         validityNotices = [];
-        inputClasses = '';
         return;
       }
 
       validityNotices = await validate.run();
-
-      inputClasses = getValidityClasses(validityNotices);
     })
   });
 
@@ -56,7 +53,7 @@
   }
 </script>
 
-{@render children({inputClasses})}
+{@render children({validationClasses})}
 <Notice bind:notices={validityNotices} {classes}/>
 
 <style>

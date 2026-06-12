@@ -8,10 +8,12 @@
 		"preview": "vite preview"
 	},
 	"devDependencies": {
+		"@csstools/postcss-global-data": "^4.0.0",
 		"@sveltejs/adapter-node": "^5.5.4",
 		"@sveltejs/kit": "^2.63.0",
 		"autoprefixer": "^10.4.27",
 		"postcss": "^8.5.6",
+		"postcss-custom-media": "^12.0.1",
 		"postcss-nesting": "^14.0.0",
 		"svelte": "^5.56.2",
 		"svgo": "4.0.1",

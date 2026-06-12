@@ -1,3 +1,5 @@
+@custom-media --mobile (max-width: 440px);
+
 :root {
   --ui-size-block: 40px;
   --ui-size-shadow: 4px;
@@ -9,6 +11,7 @@
   --ui-height: var(--ui-size-block);
   --ui-spacing: 20px;
   --ui-padding: 20px;
+  --ui-size-screen: 500px;
 
   --color-red-main: #C10000;
   --color-green-main: #5CBB3A;

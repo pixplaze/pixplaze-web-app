@@ -17,6 +17,11 @@
   let _notices = $derived(notices.map(enrichWithId));
 
   const close = (id) => {
+    if (onClose) {
+      // Владелец массива (например, форма) сам решает, как удалить уведомление.
+      onClose(id);
+      return;
+    }
     notices = [..._notices.filter(n => n.id !== id)];
   }
 
@@ -61,14 +66,14 @@
   }
 
   :global {
-    .notice > .button.tiny {
+    .notice > button.button.tiny {
       margin: calc(-1*var(--ui-size-border));
       height: auto;
       align-self: stretch;
     }
 
     .notice.warning {
-      > .button.tiny {
+      > button.button.tiny {
         &:hover {
           /*border: var(--ui-size-border) solid #EFC500;*/
           background-color: #ffdf4e;
@@ -82,7 +87,7 @@
     }
 
     .notice.error {
-      > .button.tiny {
+      > button.button.tiny {
         &:hover {
           /*border: var(--ui-size-border) solid #EFC500;*/
           background-color: #FF0000;

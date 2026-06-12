@@ -1,25 +1,31 @@
 import {authService} from "$lib/scripts/service/auth.service.js";
-import {userStore} from "$lib/scripts/store/user.store.svelte.js";
-import {parseJwt} from "$lib/scripts/util/jwt.util.js";
+import {createUserStore} from "$lib/scripts/store/user.store.svelte.js";
+import {buildUserFromToken} from "$lib/scripts/util/user.mapper.js";
 
 class UserService {
-  getCurrentUser() {
-
-  }
+  // Сервис «создаёт» стор, впрыскивая в него доменную логику token → user.
+  #store = createUserStore(buildUserFromToken);
 
   async signUp(data){
-    const token = await authService.signUp(data);
-    console.log(parseJwt(token));
+    // Токен кладётся в authStore внутри authService — user выведется сам.
+    await authService.signUp(data);
   }
 
   async signIn(data){
-    const token = await authService.signIn(data);
-    console.log(parseJwt(token));
+    await authService.signIn(data);
   }
 
   async signOut() {
+    // authService.signOut() чистит токен — user станет null автоматически.
     await authService.signOut();
-    userStore.user = null;
+  }
+
+  get user() {
+    return this.#store.user;
+  }
+
+  get username() {
+    return this.#store.user?.name || 'Профиль';
   }
 }
 

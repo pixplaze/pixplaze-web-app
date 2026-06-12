@@ -1,8 +1,8 @@
 <script>
-  const { value } = $props();
+  const { value, classes } = $props();
 </script>
 
-<div class="delimiter"
+<div class={`delimiter ${classes}`}
      role="separator"
      class:text={value}
      aria-orientation="horizontal"
@@ -12,7 +12,7 @@
 
 <style>
   .delimiter {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     width: 100%;
     text-align: center;

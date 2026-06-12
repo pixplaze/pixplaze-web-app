@@ -21,7 +21,9 @@ export const getUsernameSuggestions = (value) => {
     return value.length !== 0 && i !== value && i.startsWith(value);
   };
 
-  return items.filter(filterSuggestions);
+  let res = items.filter(filterSuggestions);
+      console.log(res);
+  return res;
 }
 
 export const getEmailSuggestions = (value) => {

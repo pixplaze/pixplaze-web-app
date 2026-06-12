@@ -4,11 +4,7 @@
 @import "global.ui.css";
 @import "global.icon.css";
 
-::-moz-selection {
-  color: white;
-  background: var(--color-text-selection);
-}
-
+::-moz-selection,
 ::selection {
   color: white;
   background: var(--color-text-selection);
@@ -45,4 +41,8 @@ h2 {
 .server-icon {
   -webkit-user-select: none;
   -webkit-user-drag: none;
+}
+
+.debug {
+  //outline: red 1px solid;
 }

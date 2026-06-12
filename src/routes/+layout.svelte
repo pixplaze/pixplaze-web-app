@@ -1,28 +1,41 @@
 <script>
-  import Header from "$lib/components/Header.svelte";
-  import {createPageStore} from "$lib/store/store.page.js";
-  import {goto} from "$app/navigation";
-  import ServerRow from "$lib/components/ServerRow.svelte";
+  import {pageService} from "$lib/scripts/service/page.service.js";
   import {onMount} from "svelte";
+  import {goto, replaceState} from "$app/navigation";
+  import {page} from "$app/state";
+  import Header from "$lib/components/Header.svelte";
+  import ServerRow from "$lib/components/ServerRow.svelte";
   import Sidebar from "$lib/components/Sidebar.svelte";
-
-  const pageStore = createPageStore();
-  const currentTheme = $state(pageStore.currentTheme);
-  const isAsideExpanded = pageStore.isAsideExpanded;
+  import '$lib/style/global.css';
 
   const {children} = $props();
 
-  let isFavoriteServersExpanded = $state(false);
+  // Прокидываем SvelteKit-навигатор в page.service — единственная точка связи с $app.
+  pageService.setNavigator({goto, replaceState});
 
-  const onButtonAside = pageStore.toggleAside;
-  const onButtonConsole = () => goto('/servers/console')
-  const onButtonMap = () => goto('/servers/map')
-  const onButtonSearch = () => goto('/servers/list')
-  const onButtonChat = () => goto('/servers/chat');
-  const onButtonFavorite = () => {
-    isFavoriteServersExpanded = !isFavoriteServersExpanded;
-    console.log(isFavoriteServersExpanded);
-  };
+  const onButtonAside = () => pageService.toggleAside();
+  const onButtonConsole = () => pageService.goToServersConsole();
+  const onButtonMap = () => pageService.goToServersMap();
+  const onButtonSearch = () => pageService.goToServersList();
+  const onButtonChat = () => pageService.goToServersChat();
+  const onButtonFavorite = () => pageService.toggleFavoriteServers();
+
+  const onButtonProfile = () => {}
+  const onButtonLanguage = () => {}
+  const onButtonSettings = () => {}
+  const onButtonHelp = () => {}
+
+  $inspect(pageService.isAsideExpanded);
+
+  /*
+    Реактивный guard: один на всё приложение. Срабатывает только когда нет валидного
+    токена (accessToken пуст) и мы не на странице авторизации. Успешный refresh меняет
+    токен old → new, не обнуляя его, поэтому ротация редирект не вызывает.
+  */
+  $effect(() => {
+    pageService.enforceAuth(page.url.pathname);
+  });
+
   onMount(() => {
     // fetch(`${env.PUBLIC_PIXPLAZE_WEB_API_URL}/servers`)
     //     .then(res => res.json())
@@ -35,7 +48,7 @@
   });
 </script>
 
-<div id="layout" class={`container themed ${$currentTheme}`}>
+<div id="layout" class={`container themed ${pageService.currentTheme}`}>
   <header>
     <Header {onButtonAside}
             {onButtonConsole}
@@ -45,8 +58,8 @@
             {onButtonFavorite}
     />
     <!--{#if isFavoriteServersExpanded}-->
-    <div class="favorite-servers-menu">
-      <div class="favorite-servers" class:expanded={isFavoriteServersExpanded}>
+    <div class="favorite-servers-menu debug">
+      <div class="favorite-servers" class:expanded={pageService.isFavoriteServersExpanded}>
         {#each Array(40) as _, i}
           <ServerRow name={`Сервер ${i + 1}`}/>
         {/each}
@@ -54,10 +67,13 @@
     </div>
     <!--{/if}-->
   </header>
-  <aside class:expanded={$isAsideExpanded}>
-    {#if $isAsideExpanded}
-      <Sidebar expanded={$isAsideExpanded}/>
-    {/if}
+  <aside class:expanded={pageService.isAsideExpanded} class="debug">
+    <div class="aside-host">
+      <Sidebar {onButtonProfile}
+               {onButtonLanguage}
+               {onButtonSettings}
+               {onButtonHelp}/>
+    </div>
   </aside>
   <main>
     {@render children()}
@@ -105,8 +121,6 @@
 
     padding: 0 0 var(--ui-size-shadow);
     margin: 0 0 calc(-1 * var(--ui-size-shadow));
-
-    outline: red 1px solid;
   }
 
   .favorite-servers {
@@ -139,21 +153,36 @@
     100% {opacity: 100%; transform: translateY(0) }
   }
 
+  /*
+    Десктоп — «push»: aside делит грид с main. Анимируем ширину 0 → 300px,
+    что сдвигает и сжимает main вправо. Сам контент (.aside-host) фиксированной
+    ширины и выезжает через transform (композитор) — не сжимается и не искажается.
+  */
   aside {
-    width: 0;
-    background-color: darkgray;
     grid-area: aside;
-    transition: width .5s ease-in-out;
+    overflow: hidden;
+    width: 0;
+    will-change: width;
+    transition: width .3s ease;
   }
 
   aside.expanded {
-    /*animation: aside-animation .2s;*/
     width: 300px;
   }
 
-  @keyframes aside-animation {
-    0% {transform: scaleX(0) }
-    100% {transform: scaleX(100%) }
+  .aside-host {
+    width: 300px;
+    height: 100%;
+
+    background-color: var(--color-ui-foreground);
+
+    transform: translateX(-100%);
+    will-change: transform;
+    transition: transform .3s ease;
+  }
+
+  aside.expanded .aside-host {
+    transform: translateX(0);
   }
 
   main {
@@ -222,7 +251,26 @@
       overflow: hidden;
     }
 
+    /*
+      Мобайл — overlay: aside выходит из грида (position: fixed), перекрывая main
+      во весь экран кроме Header (он снизу), и не сдвигает main. Слайд — тем же
+      transform на .aside-host. z-index ниже Header (z-index: 2).
+    */
+    aside {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+
+      width: 0;
+      height: calc(100% - var(--ui-size-block));
+    }
+
     aside.expanded {
+      width: 100vw;
+    }
+
+    .aside-host {
       width: 100vw;
     }
 
@@ -230,6 +278,7 @@
       section {
         padding-left: 10px;
         padding-right: 10px;
+        /*width: 100%;*/
       }
     }
   }

@@ -52,6 +52,11 @@ class AuthService {
     }
   }
 
+  /** Авторизован ли пользователь (read-only, реактивно через authStore). */
+  get isAuthenticated() {
+    return authStore.isAuthenticated();
+  }
+
   async signIn(signInData) {
     const res = await api.post('/auth/sign-in', {
       body: JSON.stringify(signInData),
@@ -73,8 +78,8 @@ class AuthService {
   async signOut() {
     await api.post('/auth/sign-out');
     authStore.clearAccessToken();
-    // Редирект на страницу логина
-    window.location.href = '/auth/sign-in';
+    // Навигацию не делаем здесь: очистка токена сама уведёт на /auth/sign-in
+    // через реактивный guard в корневом +layout.svelte.
   }
 
   async refresh() {
@@ -88,6 +93,10 @@ class AuthService {
     const data = await res.json();
     authStore.setAccessToken(data.accessToken);
     return data.accessToken;
+  }
+
+  async approve(userCode) {
+
   }
 }
 

@@ -32,9 +32,9 @@
 }
 
 .content-box {
-  padding-top: var(--ui-spacing);
-  padding-left: var(--ui-spacing);
-  padding-right: var(--ui-spacing);
+  /*padding-top: var(--ui-spacing);*/
+  /*padding-left: var(--ui-spacing);*/
+  /*padding-right: var(--ui-spacing);*/
 }
 
 .content-line {

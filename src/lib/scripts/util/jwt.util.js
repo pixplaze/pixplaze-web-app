@@ -8,7 +8,7 @@
  * @returns {object}
  */
 export function parseJwt(token) {
-  const base64 = token.split('.')[1].replace(/-/g, '+')
+  const base64 = token.split('\.')[1].replace(/-/g, '+')
       .replace(/_/g, '/');
   const jsonPayload = decodeURIComponent(
       window.atob(base64)

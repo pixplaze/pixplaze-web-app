@@ -1,6 +1,7 @@
 <script>
 
   import {HoverDropdown} from "$lib/scripts/mixins/dropdown.svelte.js";
+  import ItemList from "$lib/components/ui/ItemList.svelte";
 
   let {
     value = $bindable(''),
@@ -9,7 +10,12 @@
   } = $props();
 
   const dropdown = new HoverDropdown(0);
-  let suggestions = $derived(getSuggestions(value));
+  let suggestions = $derived(
+    getSuggestions(value).map(suggestion => ({
+      item: suggestion,
+      onClick: () => selectSuggestion(suggestion)
+    }))
+  );
   let isVisible = $derived(suggestions.length > 0 && (dropdown.isInFocus || dropdown.isMouseInside));
 
   function selectSuggestion(suggestion) {
@@ -20,15 +26,13 @@
 <div class="dropdown-container">
   {@render children({action: dropdown.trigger})}
   {#if isVisible}
-    <ul use:dropdown.menu>
-      {#each suggestions as suggestion}
-        <li>
-          <button class="dropdown-item" onclick={() => selectSuggestion(suggestion)}>
-            {suggestion}
-          </button>
-        </li>
-      {/each}
-    </ul>
+    <div use:dropdown.menu class="dropdown-inner">
+      <ItemList items={suggestions} classes="dropdown-item" onClick={(menuItem) => menuItem.onClick()}>
+        {#snippet listItem({item: suggestion, onClick})}
+          {suggestion}
+        {/snippet}
+      </ItemList>
+    </div>
   {/if}
 </div>
 
@@ -38,7 +42,7 @@
     box-sizing: border-box;
   }
 
-  ul {
+  .dropdown-inner {
     position: absolute;
     z-index: 2;
     top: 100%;
@@ -48,39 +52,6 @@
     overflow-y: auto;
     box-sizing: border-box;
     background-color: white;
-    border: var(--ui-size-border) solid var(--color-ui-shadow);
-    border-top: none;
     box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);
-  }
-
-  li:first-child > button {
-    border-top: none;
-  }
-
-  button {
-    box-sizing: border-box;
-
-    display: block;
-    text-align: inherit;
-    align-items: center;
-
-    width: 100%;
-    height: var(--ui-size-block);
-    padding: 0 0 0 var(--ui-padding);
-
-    user-select: none;
-    -webkit-user-drag: none;
-    cursor: pointer;
-
-    background-color: transparent;
-    border: none;
-    border-top: var(--ui-size-border) solid var(--color-ui-shadow);
-    border-bottom: none;
-  }
-
-  button:active {
-    background-color: var(--color-ui-shadow);
-    box-shadow: inset 0 4px 0 0 var(--color-ui-shadow);
-    transition: .2s ease;
   }
 </style>

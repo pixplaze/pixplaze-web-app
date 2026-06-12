@@ -1,7 +1,6 @@
 export const random = {
   choice: arr => arr[Math.floor(Math.random() * arr.length)]
 }
-// not working
 export const sequence = () => {
   let i = 0;
   const inc = () => {

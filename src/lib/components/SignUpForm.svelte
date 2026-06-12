@@ -3,10 +3,9 @@
   import {createSignUpFormService} from '$lib/scripts/service/form/signup.form.service.js';
   import Input from '$lib/components/ui/inputs/Input.svelte';
   import Button from '$lib/components/ui/buttons/Button.svelte';
-  import InputAutocompletionWrapper from '$lib/components/ui/inputs/InputAutocompletionWrapper.svelte';
-  import Delimiter from '$lib/components/ui/Delimiter.svelte';
-  import InputValidationWrapper from '$lib/components/ui/inputs/InputValidationWrapper.svelte';
   import Notice from '$lib/components/ui/Notice.svelte';
+  import InputAutocompletionWrapper from '$lib/components/ui/inputs/InputAutocompletionWrapper.svelte';
+  import InputValidationWrapper from '$lib/components/ui/inputs/InputValidationWrapper.svelte';
 
   const {
     inviteCode,
@@ -21,100 +20,102 @@
     inviteCode: {value: inviteCode, isValid: !!inviteCode}
   });
 
-  const signUpFormStore = signUpFormService.signUpFormStore;
+  const fields = signUpFormService.fields;
+  const validations = signUpFormService.validations;
 
   function onFormSubmit() {
-    if (!signUpFormStore.isFormDataValid) {
+    if (!signUpFormService.isValid) {
       return;
     }
 
-    onSubmit(signUpFormStore.getSignUpFormData());
+    onSubmit(signUpFormService.toRequest());
   }
 </script>
 
-<form onsubmit={e => {e.preventDefault(); onSubmit()}} class="auth-form content-box">
-  <h1 class="content-line">Регистрация</h1>
+<form onsubmit={e => {e.preventDefault(); onFormSubmit()}} class="auth-form content-box">
+  <h1>Регистрация</h1>
 
-  <InputAutocompletionWrapper bind:value={signUpFormStore.data.name.value} getSuggestions={getUsernameSuggestions}>
+  <InputAutocompletionWrapper bind:value={fields.name.value} getSuggestions={getUsernameSuggestions}>
     {#snippet children({action})}
       <Input id="user-name"
              label="Имя пользователя"
              placeholder="notch"
-             bind:value={signUpFormStore.data.name.value}
+             bind:value={fields.name.value}
              {action}
       />
     {/snippet}
   </InputAutocompletionWrapper>
 
-  <InputValidationWrapper bind:value={signUpFormStore.data.email.value}
-                          bind:isValid={signUpFormStore.data.email.isValid}
-                          schema={signUpFormService.emailValidationSchema}>
-    {#snippet children({inputClasses})}
-    <InputAutocompletionWrapper bind:value={signUpFormStore.data.email.value}
+  <InputValidationWrapper bind:value={fields.email.value}
+                          bind:isValid={fields.email.isValid}
+                          schema={validations.email}>
+    {#snippet children({validationClasses})}
+    <InputAutocompletionWrapper bind:value={fields.email.value}
                                 getSuggestions={getEmailSuggestions}>
       {#snippet children({action})}
         <Input id="user-email"
                label="Электронная почта"
                placeholder="notch@email.com"
-               classes={inputClasses}
+               classes={validationClasses}
                action={action}
-               bind:value={signUpFormStore.data.email.value}/>
+               bind:value={fields.email.value}/>
       {/snippet}
     </InputAutocompletionWrapper>
     {/snippet}
   </InputValidationWrapper>
 
-  <InputValidationWrapper schema={signUpFormService.passwordValidationSchema}
-                          bind:value={signUpFormStore.data.password.value}
-                          bind:isValid={signUpFormStore.data.password.isValid}>
-    {#snippet children({inputClasses})}
+  <InputValidationWrapper schema={validations.password}
+                          bind:value={fields.password.value}
+                          bind:isValid={fields.password.isValid}>
+    {#snippet children({validationClasses})}
       <Input id="user-password"
              label="Пароль"
              type="password"
              placeholder="********"
-             classes={` ${inputClasses}`}
-             bind:value={signUpFormStore.data.password.value}
+             classes={` ${validationClasses}`}
+             bind:value={fields.password.value}
       />
     {/snippet}
   </InputValidationWrapper>
 
-  <InputValidationWrapper schema={signUpFormService.repeatPasswordValidationSchema}
-                          bind:value={signUpFormStore.data.passwordRepeat.value}
-                          bind:isValid={signUpFormStore.data.passwordRepeat.isValid}>
-    {#snippet children({inputClasses})}
+  <InputValidationWrapper schema={validations.passwordRepeat}
+                          bind:value={fields.passwordRepeat.value}
+                          bind:isValid={fields.passwordRepeat.isValid}>
+    {#snippet children({validationClasses})}
       <Input id="user-password-repeat"
              label="Повторите пароль"
              type="password"
              placeholder="********"
-             classes={` ${inputClasses}`}
-             bind:value={signUpFormStore.data.passwordRepeat.value}/>
+             classes={` ${validationClasses}`}
+             bind:value={fields.passwordRepeat.value}/>
     {/snippet}
   </InputValidationWrapper>
-  <InputValidationWrapper schema={signUpFormService.inviteCodeValidationSchema}
-                          onSuccess={async (v) => await signUpFormService.getInviteCodeMessage(v)}
-                          bind:value={signUpFormStore.data.inviteCode.value}
-                          bind:isValid={signUpFormStore.data.inviteCode.isValid}>
-    {#snippet children({inputClasses})}
+  <InputValidationWrapper schema={validations.inviteCode}
+                          onSuccess={(v) => signUpFormService.showInviteCodeNotice(v)}
+                          bind:value={fields.inviteCode.value}
+                          bind:isValid={fields.inviteCode.isValid}>
+    {#snippet children({validationClasses})}
       <Input id="user-invite-code"
              label="Код приглашения"
              maxlength="8"
-             disabled={inviteCode}
-             classes={` ${inputClasses}`}
-             bind:value={signUpFormStore.data.inviteCode.value}/>
+             disabled={!!inviteCode}
+             classes={` ${validationClasses}`}
+             bind:value={fields.inviteCode.value}/>
     {/snippet}
   </InputValidationWrapper>
-  <Notice bind:notices={signUpFormStore.inviteCodeNotices}/>
+  <Notice notices={signUpFormService.inviteCodeNotices}
+          onClose={(id) => signUpFormService.closeInviteCodeNotice(id)}/>
   <Button onclick={onFormSubmit}
           classes="content-line"
-          disabled={!signUpFormStore.isFormDataValid}>Зарегистрироваться</Button>
-  <Delimiter value="или"/>
+          disabled={!signUpFormService.isValid}>Зарегистрироваться</Button>
 </form>
 
 <style>
   :global {
     form.auth-form {
       > input,
-      > div {
+      > div,
+      > h1 {
         margin-bottom: var(--ui-spacing);
       }
     }
