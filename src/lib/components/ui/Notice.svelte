@@ -9,12 +9,21 @@
     notice,
     notices = $bindable(notice ? [notice] : []),
     closeable = true,
+    autoCloseAfter,
     classes = "",
     onClose
   } = $props();
 
   const enrichWithId = createIdEnricher();
   let _notices = $derived(notices.map(enrichWithId));
+
+  $effect(() => {
+    if (autoCloseAfter) {
+      _notices.forEach(n => {
+        setTimeout(() => close(n.id), autoCloseAfter);
+      });
+    }
+  });
 
   const close = (id) => {
     if (onClose) {

@@ -3,7 +3,7 @@ import {api} from "$lib/scripts/api/api.config.js";
 class VoucherService {
   async getInviteCodeMessage(code){
       const message = await api.get(`/vouchers/invite/message/${code}`);
-      return message.text();
+      return message.message();
   }
 
   async isInviteCodeValid(code) {

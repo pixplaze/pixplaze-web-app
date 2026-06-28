@@ -21,6 +21,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"qrious": "^4.0.2",
 		"valibot": "^1.4.0"
 	}
 }

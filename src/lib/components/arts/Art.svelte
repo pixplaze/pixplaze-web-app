@@ -6,7 +6,7 @@
 
   const fetchSvg = async () => {
     const res = await fetch(`/arts/${name}.svg`);
-    svgContent = await res.text();
+    svgContent = await res.message();
   }
 
   onMount(fetchSvg);

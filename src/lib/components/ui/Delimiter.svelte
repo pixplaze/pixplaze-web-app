@@ -12,7 +12,7 @@
 
 <style>
   .delimiter {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     width: 100%;
     text-align: center;
