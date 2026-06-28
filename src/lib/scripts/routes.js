@@ -11,4 +11,8 @@ export const ROUTES = {
   signIn: '/auth/sign-in',
   // Параметризованный маршрут авторизации: '/auth/sign-in' | '/auth/sign-up'.
   auth: (mode) => `/auth/${mode}`,
+  // Вход устройства приложения без пароля (device-flow, запрашивающая сторона).
+  authDevice: '/auth/device',
+
+  home: '/',
 };

@@ -106,7 +106,6 @@
   <Notice notices={signUpFormService.inviteCodeNotices}
           onClose={(id) => signUpFormService.closeInviteCodeNotice(id)}/>
   <Button onclick={onFormSubmit}
-          classes="content-line"
           disabled={!signUpFormService.isValid}>Зарегистрироваться</Button>
 </form>
 
@@ -117,6 +116,12 @@
       > div,
       > h1 {
         margin-bottom: var(--ui-spacing);
+      }
+    }
+    @media screen and (max-width: 440px) {
+      section {
+        padding-left: 10px;
+        padding-right: 10px;
       }
     }
   }

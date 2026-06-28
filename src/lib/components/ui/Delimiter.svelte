@@ -22,6 +22,7 @@
 
   .text {
     gap: var(--ui-padding);
+    overflow-wrap: anywhere;
   }
 
   .delimiter::before,
@@ -30,7 +31,8 @@
     flex: 1;
     height: var(--ui-size-border);
     background-color: var(--color-ui-border);
-
+    /*min-width: calc(2 * var(--ui-size-block));*/
+    min-width: max(calc(2 * var(--ui-size-block)), 25%); /* текст ≤ ~50% контейнера */
     will-change: transform;
     contain: strict;
   }

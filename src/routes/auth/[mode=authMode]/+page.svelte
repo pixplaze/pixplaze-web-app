@@ -3,24 +3,27 @@
   import {page} from '$app/state';
   import {pageService} from '$lib/scripts/service/page.service.js';
   import {authService} from "$lib/scripts/service/auth.service.js";
-  import {deviceService} from "$lib/scripts/service/device.service.js";
-  import {DEVICE_STATUS} from "$lib/scripts/store/device.store.svelte.js";
   import SignInForm from '$lib/components/SignInForm.svelte';
   import SignUpForm from '$lib/components/SignUpForm.svelte';
   import Button from "$lib/components/ui/buttons/Button.svelte";
   import Notice from "$lib/components/ui/Notice.svelte";
   import DeviceConsent from "$lib/components/DeviceConsent.svelte";
+  import DeviceAuthorization from "$lib/components/DeviceAuthorization.svelte";
   import Delimiter from "$lib/components/ui/Delimiter.svelte";
+  import QrCode from "$lib/components/QrCode.svelte";
 
-  // Активная форма: 'sign-in' | 'sign-up'. Инициализируется из адреса маршрута.
   let mode = $state(page.params.mode);
 
-  // inviteCode нужен только регистрации; читаем один раз из query.
   const inviteCode = page.url.searchParams.get('inviteCode');
-
-  // user_code из device-flow (?userCode=...). Если есть — это подтверждение входа
-  // стороннего устройства (RFC 8628, §5.4 гайда), а не обычный вход.
   const userCode = page.url.searchParams.get('userCode');
+
+  const device = authService.device;
+  const showDeviceAuthorization = $derived(mode === 'device');
+  const showDeviceConsent = $derived(!!device.info);
+  const showSignIn = $derived(mode === 'sign-in');
+  const showSignUp = $derived(mode === 'sign-up');
+  const showRedirectQrCode = $derived(!authService.isAuthenticated && userCode)
+  // const hideForms = $derived(authService.isAuthenticated && !!userCode);
 
   /** Сделать форму активной и отразить это в адресе, сохранив query (inviteCode/userCode). */
   function activate(next) {
@@ -29,18 +32,15 @@
     }
     mode = next;
     pageService.setAuthMode(next, page.url.search);
+    console.log(mode, page.url.search);
   }
 
-  // На входе на страницу: авторизован — аппрувим device-flow сразу; иначе код
-  // запоминается, и аппрув произойдёт после входа/регистрации (resumePending).
-  onMount(() => {
-    deviceService.handleUserCode(userCode);
-  });
+  onMount(() => device.resolveConsent(userCode));
 
   const onSignIn = async (data) => {
     const accessToken = await authService.signIn(data);
     if (accessToken) {
-      await deviceService.resumePending();
+      await device.resolveConsent(userCode);
     }
     return accessToken;
   };
@@ -48,79 +48,82 @@
   const onSignUp = async (data) => {
     const accessToken = await authService.signUp(data);
     if (accessToken) {
-      await deviceService.resumePending();
+      await device.resolveConsent(userCode);
     }
     return accessToken;
   };
 
-  const onAllow = () => deviceService.allow();
-  const onDeny = () => deviceService.deny();
+  const onAllow = () => device.decideConsent(true);
+  const onDeny = () => device.decideConsent(false);
 
-  // Нужна ли интерактивная панель согласия (субъект != USER). USER подтверждается
-  // автоматически и панель не показывает — для него работает только баннер.
-  const showConsent = $derived(deviceService.requiresConsent);
-
-  const deviceNotice = $derived.by(() => {
-    if (showConsent) {
-      return null;
+  // Баннер авто-сценариев (USER) и ожидания входа. При показе панели — статус ведёт она.
+  let deviceNotices = $derived.by(() => {
+    if (showDeviceConsent) {
+      return [];
     }
-    switch (deviceService.status) {
-      case DEVICE_STATUS.LOADING:
-        return {level: 'info', message: 'Загружаем запрос на подтверждение…'};
-      case DEVICE_STATUS.APPROVING:
-        return {level: 'info', message: 'Подтверждаем вход устройства…'};
-      case DEVICE_STATUS.APPROVED:
-        return {level: 'info', message: 'Вход устройства подтверждён — вернитесь к устройству.'};
-      case DEVICE_STATUS.FAILED:
-        return {level: 'error', message: 'Не удалось подтвердить вход устройства. Попробуйте снова.'};
-      default:
-        return (!authService.isAuthenticated && (userCode || deviceService.hasPending))
-          ? {level: 'info', message: 'Войдите или зарегистрируйтесь, чтобы подтвердить вход устройства.'}
-          : null;
+    if (device.consentFailed) {
+      return [{level: 'error', message: 'Не удалось подтвердить вход устройства. Попробуйте снова.'}];
     }
+    if (device.consentBusy) {
+      return [{level: 'info', message: 'Подтверждаем вход устройства…'}];
+    }
+    if (device.consentDone === 'approved') {
+      return [{level: 'info', message: 'Вход устройства подтверждён — вернитесь к устройству.'}];
+    }
+    if (!authService.isAuthenticated && userCode) {
+      return [{level: 'info', message: 'Войдите или зарегистрируйтесь, чтобы подтвердить вход устройства.'}];
+    }
+    return [];
   });
+  $inspect(`deviceNotice: ${JSON.stringify(deviceNotices)}`);
 </script>
 
 <div class="auth">
-  {#if deviceNotice}
+  {#if deviceNotices && deviceNotices.length !== 0}
     <section class="auth-pane device-flow">
-      <Notice notice={deviceNotice} closeable={true} autoCloseAfter={10000} classes="content-box"/>
+      <Notice bind:notices={deviceNotices} closeable={true} autoCloseAfter={5000} classes="content-box"/>
     </section>
   {/if}
-  {#if showConsent}
+  {#if showSignIn}
+    <section class="auth-pane form sign-in">
+      <SignInForm onSubmit={onSignIn}/>
+    </section>
+  {/if}
+  {#if showSignIn && showRedirectQrCode}
+    <section class="auth-pane redirect">
+      <Delimiter value="или сканируйте с авторизованного устройства" classes="content-line"/>
+      <QrCode url={location.href}/>
+    </section>
+  {/if}
+  {#if showSignUp}
+    <section class="auth-pane form sign-up">
+      <SignUpForm {inviteCode} onSubmit={onSignUp}/>
+    </section>
+  {/if}
+  {#if showDeviceAuthorization}
+    <section class="auth-pane">
+      <DeviceAuthorization/>
+    </section>
+  {/if}
+  {#if showDeviceConsent}
     <section class="auth-pane device-flow">
-      <DeviceConsent url={page.params}
-                     info={deviceService.info}
-                     status={deviceService.status}
+      <DeviceConsent info={device.info}
+                     busy={device.consentBusy}
+                     done={device.consentDone}
+                     failed={device.consentFailed}
                      {onAllow}
                      {onDeny}/>
     </section>
   {/if}
-  <!--{#if !hideForms}-->
-    {#if mode === 'sign-in'}
-      <section class="auth-pane content-line"
-               class:active={mode === 'sign-in'}
-               onfocusin={() => activate('sign-in')}>
-        <SignInForm onSubmit={onSignIn}/>
-<!--      <Delimiter value="или" classes="content-box"/>-->
-      </section>
-    {/if}
-    {#if mode === 'sign-up'}
-      <section class="auth-pane content-line"
-               class:active={mode === 'sign-up'}
-               onfocusin={() => activate('sign-up')}>
-        <SignUpForm {inviteCode} onSubmit={onSignUp}/>
-      </section>
-    {/if}
-    <section class="auth-pane">
-      <Delimiter value="или" classes="content-line"/>
-      <div class="ui box">
-        <Button onclick={() => activate('sign-in')} disabled={mode === 'sign-in'}>Вход</Button>
-        <Button onclick={() => activate('sign-up')} disabled={mode === 'sign-up'}>Регистрация</Button>
-      </div>
-    </section>
-  <!--{/if}-->
 </div>
+<section class="auth-pane">
+  <Delimiter value="или" classes="content-line"/>
+  <div class="ui box">
+    <Button onclick={() => activate('sign-in')} disabled={showSignIn}>Вход</Button>
+    <Button onclick={() => activate('sign-up')} disabled={showSignUp}>Регистрация</Button>
+    <Button onclick={() => activate('device')} disabled={showDeviceAuthorization}>Войти по QR</Button>
+  </div>
+</section>
 
 <style>
   .auth {
@@ -130,36 +133,37 @@
     justify-content: center;
     align-items: flex-start;
     padding-top: var(--ui-spacing);
-    padding-bottom: calc(2 * var(--ui-spacing));
+    /*padding-bottom: calc(2 * var(--ui-spacing));*/
   }
 
   .auth-pane {
-    flex: 1 1 320px;
-    max-width: 440px;
-    transition: opacity .2s ease;
+    flex: 1 1 440px;
+    box-sizing: border-box;
+    margin-bottom: var(--ui-spacing);
   }
 
-  /* Баннер device-flow — на всю ширину строки, над переключателем форм. */
+  .auth-pane:last-child {
+    margin-bottom: 0;
+  }
+
+  .auth-pane.form {
+    margin-bottom: var(--ui-spacing);
+  }
+
   .auth-pane.device-flow {
     flex-basis: 100%;
     max-width: 440px;
+  }
+
+  .redirect {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .ui.box {
     box-sizing: border-box;
     display: flex;
     margin-bottom: var(--ui-spacing);
-  }
-
-  :global {
-    /*.delimiter.content-box {*/
-    /*  display: none;*/
-    /*}*/
-
-    /*@media (--mobile) {*/
-    /*  .delimiter.content-box {*/
-    /*    display: inline-flex;*/
-    /*  }*/
-    /*}*/
   }
 </style>

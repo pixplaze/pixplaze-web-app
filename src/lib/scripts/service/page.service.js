@@ -13,12 +13,12 @@ const THEMES = ['light', 'dark'];
  */
 class PageService {
   // Заглушки до инициализации через setNavigator (точка композиции — корневой layout).
-  #navigate = () => {};
+  navigate = () => {};
   #replace = () => {};
 
   /** Впрыснуть SvelteKit-навигатор. @param {{goto: Function, replaceState: Function}} nav */
   setNavigator({goto, replaceState}) {
-    this.#navigate = goto;
+    this.navigate = goto;
     this.#replace = replaceState;
   }
 
@@ -59,7 +59,7 @@ class PageService {
   /** Применить guard: увести неавторизованного на вход. Зовётся из реактивного эффекта. */
   enforceAuth(pathname) {
     if (this.shouldRedirectToAuth(pathname)) {
-      this.#navigate(ROUTES.signIn);
+      this.navigate(ROUTES.signIn);
     }
   }
 
@@ -92,10 +92,10 @@ class PageService {
 
   // --- Навигация (через впрыснутый навигатор) ---
 
-  goToServersConsole() { this.#navigate(ROUTES.serversConsole); }
-  goToServersMap()     { this.#navigate(ROUTES.serversMap); }
-  goToServersList()    { this.#navigate(ROUTES.serversList); }
-  goToServersChat()    { this.#navigate(ROUTES.serversChat); }
+  goToServersConsole() { this.navigate(ROUTES.serversConsole); }
+  goToServersMap()     { this.navigate(ROUTES.serversMap); }
+  goToServersList()    { this.navigate(ROUTES.serversList); }
+  goToServersChat()    { this.navigate(ROUTES.serversChat); }
 
   /** Отразить активную форму авторизации в URL без добавления записи в историю. */
   setAuthMode(mode, search = '') {

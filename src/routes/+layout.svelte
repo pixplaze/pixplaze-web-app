@@ -25,8 +25,6 @@
   const onButtonSettings = () => {}
   const onButtonHelp = () => {}
 
-  $inspect(pageService.isAsideExpanded);
-
   /*
     Реактивный guard: один на всё приложение. Срабатывает только когда нет валидного
     токена (accessToken пуст) и мы не на странице авторизации. Успешный refresh меняет

@@ -6,6 +6,6 @@ import {redirect} from '@sveltejs/kit';
  * inviteCode подразумевает регистрацию, поэтому открываем sign-up.
  */
 export function load({url}) {
-  const mode = url.searchParams.has('inviteCode') ? 'sign-up' : 'sign-in';
+  const mode = url.searchParams.has('inviteCode') ? 'sign-up' : 'sign-in' || 'sign-in';
   redirect(307, `/auth/${mode}${url.search}`);
 }

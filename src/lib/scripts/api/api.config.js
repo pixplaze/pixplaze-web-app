@@ -3,8 +3,8 @@ import {authStore} from '$lib/scripts/store/auth.store.svelte.js';
 
 export const apiConfig = {
   // url: `${env.PUBLIC_PIXPLAZE_WEB_API_URL}`
-  // url: `http://192.168.1.100:8080`
-  url: `http://localhost:8080`
+  url: `http://192.168.1.100:8080`
+  // url: `http://localhost:8080`
 }
 
 /**

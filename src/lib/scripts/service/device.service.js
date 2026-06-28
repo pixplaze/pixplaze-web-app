@@ -1,143 +1,288 @@
-import {authService} from '$lib/scripts/service/auth.service.js';
-import {DEVICE_STATUS, deviceStore} from '$lib/scripts/store/device.store.svelte.js';
+import {api, apiConfig} from '$lib/scripts/api/api.config.js';
+import {authStore} from '$lib/scripts/store/auth.store.svelte.js';
+import {POLL_STATUS, deviceStore} from '$lib/scripts/store/device.store.svelte.js';
+import {randomUUID} from '$lib/scripts/util/utils.js';
+
+const SLOW_DOWN_STEP = 5; // RFC 8628 §3.5 — на сколько увеличивать interval при slow_down
 
 /**
- * Сервис device-flow (RFC 8628) на стороне подтверждающего устройства (веб-приложение,
- * носитель AAD). Оркеструет шаг подтверждения входа стороннего устройства по `user_code`
- * из адресной строки (?userCode=...). Сырой вызов API живёт в {@link authService};
- * здесь — сценарий: аппрувить сразу для авторизованного, иначе запомнить код и
- * аппрувить после входа/регистрации.
- *
- * Пока реализован только аппрув (ALLOW). Старт флоу/поллинг/отклонение — отложены.
+ * Сервис device-flow (RFC 8628): device-API обеих сторон + оркестрация поверх
+ * {@link deviceStore}. Используется не напрямую, а через фасад {@link authService}
+ * (`authService.device`). AAD-токен в grant-запросы подставляет api-клиент из authStore,
+ * поэтому в authService этот сервис не нуждается (нет цикла зависимостей).
  */
 class DeviceService {
-  /** Текущая стадия подтверждения (read-only, реактивно). */
-  get status() {
-    return deviceStore.status;
-  }
+  // Непубличные значения цикла поллинга (реактивность не нужна).
+  #deviceCode = '';
+  #clientId = '';
+  #timer = null;
+  #stopped = false;
 
-  /** DeviceAuthorizationInfo — что именно подтверждаем (read-only, реактивно). */
-  get info() {
-    return deviceStore.info;
-  }
+  // --- Read-only проекция стора для UI ---
+  get info() { return deviceStore.info; }
+  get consentBusy() { return deviceStore.consentBusy; }
+  get consentDone() { return deviceStore.consentDone; }
+  get consentFailed() { return deviceStore.consentFailed; }
 
-  /** Есть ли отложенный код, ожидающий подтверждения после входа (read-only). */
-  get hasPending() {
-    return !!deviceStore.pendingUserCode;
-  }
+  get pollStatus() { return deviceStore.pollStatus; }
+  get userCode() { return deviceStore.userCode; }
+  get verificationUri() { return deviceStore.verificationUri; }
+  get verificationUriComplete() { return deviceStore.verificationUriComplete; }
+  get pollError() { return deviceStore.pollError; }
+
+  // ============================================================
+  //  Подтверждающая сторона (consent, §5.3–5.4)
+  // ============================================================
 
   /**
-   * Нужно ли явное решение пользователя: субъект — не USER (игрок/сервер). Для USER
-   * (вход самого устройства приложения) подтверждаем автоматически.
+   * Разобрать `userCode`: загрузить DeviceAuthorizationInfo и развести по типу субъекта.
+   * USER (вход самого устройства приложения) — аппрувим автоматически; иначе показываем
+   * панель согласия. No-op без кода/без авторизации или если уже разобрали.
+   * @param {string} userCode
    */
-  get requiresConsent() {
-    return !!deviceStore.info && deviceStore.info.type !== 'USER';
-  }
-
-  /**
-   * Обработать `user_code` из адресной строки на странице авторизации.
-   * Авторизован — разбираем запрос (тип субъекта решает: авто-аппрув или согласие);
-   * не авторизован — запоминаем код до входа/регистрации ({@link resumePending}).
-   * @param {string | null | undefined} userCode
-   */
-  async handleUserCode(userCode) {
-    if (!userCode) {
+  async resolveConsent(userCode) {
+    if (!userCode || !authStore.isAuthenticated() || deviceStore.info || deviceStore.consentDone) {
       return;
     }
 
-    if (authService.isAuthenticated) {
-      return this.#resolve(userCode);
-    }
-
-    // Не авторизован: запоминаем код, ждём входа/регистрации.
-    deviceStore.setPendingUserCode(userCode);
-  }
-
-  /**
-   * Продолжить отложенный код после успешного входа/регистрации. No-op, если
-   * отложенного кода нет или пользователь всё ещё не авторизован.
-   */
-  async resumePending() {
-    const userCode = deviceStore.pendingUserCode;
-    if (!userCode || !authService.isAuthenticated) {
-      return;
-    }
-
-    return this.#resolve(userCode);
-  }
-
-  /** Решение пользователя «Разрешить» из UI согласия. */
-  async allow() {
-    return this.#approve(deviceStore.pendingUserCode);
-  }
-
-  /** Решение пользователя «Запретить» из UI согласия. */
-  async deny() {
-    const userCode = deviceStore.pendingUserCode;
-    if (!userCode) {
-      return;
-    }
-
-    deviceStore.status = DEVICE_STATUS.DENYING;
+    deviceStore.approvingCode = userCode;
+    deviceStore.consentBusy = true;
+    deviceStore.consentFailed = false;
     try {
-      const ok = await authService.deny(userCode);
-      deviceStore.status = DEVICE_STATUS.DENIED;
-      deviceStore.clearPendingUserCode();
-      return ok;
+      const grant = await this.#grantInfo(userCode);
+      // if (grant.type === 'USER') {
+      //   await this.#grantDecision('ALLOW', userCode);
+      //   deviceStore.consentDone = 'approved';
+      // } else {
+        deviceStore.info = grant;
+      // }
     } catch (error) {
-      deviceStore.status = DEVICE_STATUS.FAILED;
-      console.error('Device-flow deny failed:', error);
-      throw error;
+      deviceStore.consentFailed = true;
+      console.error('Device-flow resolve failed:', error);
+    } finally {
+      deviceStore.consentBusy = false;
     }
   }
 
   /**
-   * Загрузить DeviceAuthorizationInfo и развести по типу субъекта:
-   * USER → авто-аппрув (вход устройства приложения); иначе → показать запрос и ждать
-   * решения пользователя (status = CONSENT).
+   * Решение пользователя из панели согласия: ALLOW/DENY (§5.4).
+   * @param {boolean} allow
    */
-  async #resolve(userCode) {
-    deviceStore.setPendingUserCode(userCode);
-    deviceStore.status = DEVICE_STATUS.LOADING;
-
-    let info;
+  async decideConsent(allow) {
+    deviceStore.consentBusy = true;
+    deviceStore.consentFailed = false;
     try {
-      info = await authService.getGrantInfo(userCode);
+      await this.#grantDecision(allow ? 'ALLOW' : 'DENY', deviceStore.approvingCode);
+      deviceStore.consentDone = allow ? 'approved' : 'denied';
     } catch (error) {
-      deviceStore.status = DEVICE_STATUS.FAILED;
-      console.error('Device-flow grant info failed:', error);
-      throw error;
+      deviceStore.consentFailed = true;
+      console.error('Device-flow decision failed:', error);
+    } finally {
+      deviceStore.consentBusy = false;
     }
-
-    deviceStore.info = info;
-
-    // USER — вход самого устройства приложения: подтверждаем автоматически.
-    if (info.type === 'USER') {
-      return this.#approve(userCode);
-    }
-
-    // Игрок/сервер — нужно явное согласие пользователя (см. UI согласия).
-    deviceStore.status = DEVICE_STATUS.CONSENT;
   }
 
-  /** Подтвердить код, отражая стадию в сторе и очищая отложенный код. */
-  async #approve(userCode) {
-    if (!userCode) {
+  /**
+   * Запросить, что именно подтверждаем — §5.3: GET /auth/oauth/grant?user_code=...,
+   * авторизуясь AAD access-токеном (его добавляет api-клиент). Протухший/неизвестный
+   * код → тело `{"error": ...}` (бросаем).
+   */
+  async #grantInfo(userCode) {
+    const res = await api.get(`/auth/oauth/grant?user_code=${encodeURIComponent(userCode)}`);
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || data.error) {
+      throw new Error(data.error || 'device_grant_info_failed');
+    }
+
+    return data;
+  }
+
+  /**
+   * Подтвердить/отклонить — §5.4: POST /auth/oauth/grant с `{decision, userCode}`,
+   * авторизуясь AAD access-токеном. Ответ `200 true`.
+   */
+  async #grantDecision(decision, userCode) {
+    const res = await api.post('/auth/oauth/grant', {
+      body: JSON.stringify({decision, userCode}),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'device_grant_failed');
+    }
+
+    return true;
+  }
+
+  // ============================================================
+  //  Запрашивающая сторона (request + polling, §5.1–5.2)
+  // ============================================================
+
+  /**
+   * Старт device-flow на запрашивающей стороне: запросить user_code и запустить цикл
+   * поллинга. Пустой `scope` ⇒ `AAD:USER` (вход устройства приложения).
+   * @param {{scope?: string, authorizationDetails?: object}} [options]
+   */
+  async startLogin({scope, authorizationDetails} = {}) {
+    this.#stopped = false;
+    clearTimeout(this.#timer);
+    deviceStore.resetRequest();
+    deviceStore.pollStatus = POLL_STATUS.STARTING;
+    this.#clientId = randomUUID();
+
+    let auth;
+    try {
+      auth = await this.#authorize({clientId: this.#clientId, scope, authorizationDetails});
+    } catch (error) {
+      if (this.#stopped) {
+        return;
+      }
+      deviceStore.pollStatus = POLL_STATUS.ERROR;
+      deviceStore.pollError = error.message;
       return;
     }
 
-    deviceStore.status = DEVICE_STATUS.APPROVING;
+    if (this.#stopped) {
+      return;
+    }
+
+    this.#deviceCode = auth.device_code;
+    deviceStore.userCode = auth.user_code;
+    deviceStore.verificationUri = auth.verification_uri;
+    deviceStore.verificationUriComplete = auth.verification_uri_complete;
+    deviceStore.interval = auth.interval || deviceStore.interval;
+    deviceStore.pollStatus = POLL_STATUS.PENDING;
+    this.#scheduleTick();
+  }
+
+  /** Остановить цикл поллинга (вызывать при размонтировании страницы). */
+  stopLogin() {
+    this.#stopped = true;
+    clearTimeout(this.#timer);
+  }
+
+  /** Перезапуск после expired/denied/error. */
+  restartLogin(options) {
+    this.stopLogin();
+    return this.startLogin(options);
+  }
+
+  #scheduleTick() {
+    clearTimeout(this.#timer);
+    this.#timer = setTimeout(() => this.#tick(), deviceStore.interval * 1000);
+  }
+
+  /** Один цикл поллинга token-эндпоинта. */
+  async #tick() {
+    if (this.#stopped) {
+      return;
+    }
+
+    let result;
     try {
-      const ok = await authService.approve(userCode);
-      deviceStore.status = DEVICE_STATUS.APPROVED;
-      deviceStore.clearPendingUserCode();
-      return ok;
+      result = await this.#pollToken({deviceCode: this.#deviceCode, clientId: this.#clientId});
     } catch (error) {
-      deviceStore.status = DEVICE_STATUS.FAILED;
-      // Код оставляем отложенным: вход мог быть валиден, но грант — нет (напр.
-      // протухший user_code). Чистим, только если код заведомо больше не нужен.
-      console.error('Device-flow approve failed:', error);
-      throw error;
+      if (this.#stopped) {
+        return;
+      }
+      deviceStore.pollStatus = POLL_STATUS.ERROR;
+      deviceStore.pollError = error.message;
+      return;
+    }
+
+    if (this.#stopped) {
+      return;
+    }
+
+    switch (result.status) {
+      case 'authorized':
+        // Токены выданы: access — в стор; refresh — в HttpOnly-куке (выставил сервер).
+        if (result.tokens?.access_token) {
+          authStore.setAccessToken(result.tokens.access_token);
+        }
+        deviceStore.pollStatus = POLL_STATUS.AUTHORIZED;
+        return; // поллинг завершён
+      case 'pending':
+        this.#scheduleTick();
+        return;
+      case 'slow_down':
+        deviceStore.interval += SLOW_DOWN_STEP;
+        this.#scheduleTick();
+        return;
+      case 'denied':
+        deviceStore.pollStatus = POLL_STATUS.DENIED;
+        return;
+      case 'expired':
+        deviceStore.pollStatus = POLL_STATUS.EXPIRED;
+        return;
+    }
+  }
+
+  /**
+   * Старт device-flow — §5.1 (RFC 8628 §3.1): POST /auth/oauth/authorize,
+   * `application/x-www-form-urlencoded`, без авторизации. Пустой `scope` ⇒ `AAD:USER`.
+   */
+  async #authorize({clientId, scope, authorizationDetails}) {
+    const body = new URLSearchParams();
+    body.set('client_id', clientId);
+    if (scope) {
+      body.set('scope', scope);
+    }
+    if (authorizationDetails) {
+      body.set('authorization_details', JSON.stringify(authorizationDetails));
+    }
+
+    const res = await fetch(`${apiConfig.url}/auth/oauth/authorize`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: body.toString(),
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || data.error) {
+      throw new Error(data.error || 'device_authorization_failed');
+    }
+
+    return data;
+  }
+
+  /**
+   * Один опрос token-эндпоинта — §5.2 (RFC 8628 §3.4). Возвращает дискриминированный
+   * результат, а НЕ бросает на штатные сигналы цикла (`authorization_pending`/`slow_down`).
+   * Исключение — только на неожиданных ошибках. `credentials: 'include'` — чтобы сервер
+   * мог выставить refresh-куку при успехе.
+   * @returns {Promise<{status: 'authorized'|'pending'|'slow_down'|'denied'|'expired', tokens?: object}>}
+   */
+  async #pollToken({deviceCode, clientId}) {
+    const body = new URLSearchParams();
+    body.set('grant_type', 'urn:ietf:params:oauth:grant-type:device_code');
+    body.set('client_id', clientId);
+    body.set('device_code', deviceCode);
+
+    const res = await fetch(`${apiConfig.url}/auth/oauth/token`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      credentials: 'include',
+      body: body.toString(),
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data.access_token) {
+      return {status: 'authorized', tokens: data};
+    }
+
+    switch (data.error) {
+      case 'authorization_pending':
+        return {status: 'pending'};
+      case 'slow_down':
+        return {status: 'slow_down'};
+      case 'access_denied':
+        return {status: 'denied'};
+      case 'expired_token':
+        return {status: 'expired'};
+      default:
+        throw new Error(data.error || 'device_token_failed');
     }
   }
 }

@@ -20,6 +20,10 @@
 
 <style>
   canvas {
+    /*width: 100%;*/
+    max-width: 512px;
+
     image-rendering: pixelated;
+    user-select: none;
   }
 </style>

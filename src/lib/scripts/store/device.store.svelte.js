@@ -1,46 +1,58 @@
 /**
- * Стор device-flow (RFC 8628) — реактивное состояние подтверждения входа стороннего
- * устройства. Хранит только `user_code`, который нужно зааппрувить, и стадию процесса.
- * Бизнес-логики и обращений к API не содержит.
+ * Стор device-flow (RFC 8628) — единственный источник реактивного состояния обеих
+ * сторон потока. Бизнес-логики и обращений к API не содержит (это в device.service).
  *
- * `user_code` переживает перезагрузку и редирект между формами входа/регистрации
- * (его кладёт неавторизованный пользователь, а аппрувит уже после входа), поэтому
- * держим его в sessionStorage — в рамках вкладки, без утечки в соседние сессии.
+ * Две независимые секции:
+ *  - consent  — подтверждающая сторона (носитель AAD одобряет вход устройства, §5.3–5.4);
+ *  - request  — запрашивающая сторона (устройство показывает user_code и поллит, §5.1–5.2).
  */
-const PENDING_USER_CODE_KEY = 'deviceUserCode';
 
-/** Стадия подтверждения для UI. */
-export const DEVICE_STATUS = {
-  IDLE: 'idle',
-  LOADING: 'loading',       // загружаем DeviceAuthorizationInfo (GET grant)
-  CONSENT: 'consent',       // ждём явного решения пользователя (тип != USER)
-  APPROVING: 'approving',
-  APPROVED: 'approved',
-  DENYING: 'denying',
-  DENIED: 'denied',
-  FAILED: 'failed',
+/** Стадии поллинга запрашивающей стороны (для UI). */
+export const POLL_STATUS = {
+  IDLE: 'idle',             // ещё не стартовали
+  STARTING: 'starting',     // запрашиваем user_code (POST authorize)
+  PENDING: 'pending',       // показываем user_code, ждём подтверждения
+  AUTHORIZED: 'authorized', // токены получены
+  DENIED: 'denied',         // пользователь отклонил
+  EXPIRED: 'expired',       // device_code истёк
+  ERROR: 'error',           // неожиданная ошибка (сеть/server_error)
 };
 
+const DEFAULT_INTERVAL = 5; // RFC 8628 §3.5 — дефолтный интервал поллинга, сек
+
 class DeviceStore {
-  // user_code, ожидающий подтверждения (из ?userCode=... адресной строки).
-  pendingUserCode = $state('');
-  // Текущая стадия подтверждения (см. DEVICE_STATUS).
-  status = $state(DEVICE_STATUS.IDLE);
-  // DeviceAuthorizationInfo от GET /auth/oauth/grant (что именно подтверждаем).
-  info = $state(null);
+  // --- Consent (подтверждающая сторона) ---
+  approvingCode = $state('');  // user_code, который разбираем/подтверждаем
+  info = $state(null);         // DeviceAuthorizationInfo — что подтверждаем (панель)
+  consentBusy = $state(false); // запрос в полёте (загрузка info / отправка решения)
+  consentDone = $state(null);  // 'approved' | 'denied' | null — итог
+  consentFailed = $state(false); // ошибка последнего действия
 
-  constructor() {
-    this.pendingUserCode = sessionStorage.getItem(PENDING_USER_CODE_KEY) || '';
+  // --- Request (запрашивающая сторона) ---
+  pollStatus = $state(POLL_STATUS.IDLE);
+  userCode = $state('');                  // показываемый код
+  verificationUri = $state('');
+  verificationUriComplete = $state('');
+  interval = $state(DEFAULT_INTERVAL);
+  pollError = $state(null);
+
+  /** Сбросить секцию подтверждения в исходное. */
+  resetConsent() {
+    this.approvingCode = '';
+    this.info = null;
+    this.consentBusy = false;
+    this.consentDone = null;
+    this.consentFailed = false;
   }
 
-  setPendingUserCode(userCode) {
-    sessionStorage.setItem(PENDING_USER_CODE_KEY, userCode);
-    this.pendingUserCode = userCode;
-  }
-
-  clearPendingUserCode() {
-    sessionStorage.removeItem(PENDING_USER_CODE_KEY);
-    this.pendingUserCode = '';
+  /** Сбросить секцию запроса/поллинга в исходное. */
+  resetRequest() {
+    this.pollStatus = POLL_STATUS.IDLE;
+    this.userCode = '';
+    this.verificationUri = '';
+    this.verificationUriComplete = '';
+    this.interval = DEFAULT_INTERVAL;
+    this.pollError = null;
   }
 }
 

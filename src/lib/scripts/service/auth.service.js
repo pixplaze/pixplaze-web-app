@@ -1,5 +1,6 @@
 import {api, apiConfig} from '$lib/scripts/api/api.config.js';
 import {authStore} from '$lib/scripts/store/auth.store.svelte.js';
+import {deviceService} from '$lib/scripts/service/device.service.js';
 
 /**
  * Сервис авторизации: бизнес-логика, обращения к API и управление стором.
@@ -96,62 +97,12 @@ class AuthService {
   }
 
   /**
-   * Запросить, что именно подтверждаем — шаг §5.3 гайда:
-   * GET /auth/oauth/grant?user_code=..., авторизуясь AAD access-токеном.
-   * Возвращает универсальный `DeviceAuthorizationInfo` (type/status/source/targets/
-   * permissions/details). Протухший/неизвестный код → тело `{"error": ...}` (бросаем).
-   * @param {string} userCode
-   * @returns {Promise<object>} DeviceAuthorizationInfo
+   * Фасад авторизации устройства (device-flow, RFC 8628). Сам сервис — тонкая
+   * проекция: вся device-логика, API и состояние — в {@link deviceService}/deviceStore.
+   * UI ходит через `authService.device.*`, не импортируя device-сервис напрямую.
    */
-  async getGrantInfo(userCode) {
-    const res = await api.get(`/auth/oauth/grant?user_code=${encodeURIComponent(userCode)}`);
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok || data.error) {
-      throw new Error(data.error || 'device_grant_info_failed');
-    }
-
-    return data;
-  }
-
-  /**
-   * Отклонить (DENY) device-flow по `user_code` — §5.4 гайда. Симметрично approve:
-   * POST /auth/oauth/grant с `{decision: "DENY", userCode}`.
-   * @param {string} userCode
-   * @returns {Promise<boolean>}
-   */
-  async deny(userCode) {
-    const res = await api.post('/auth/oauth/grant', {
-      body: JSON.stringify({decision: 'DENY', userCode}),
-    });
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || 'device_grant_failed');
-    }
-
-    return true;
-  }
-
-  /**
-   * Подтвердить (ALLOW) device-flow по `user_code` — шаг §5.4 гайда:
-   * POST /auth/oauth/grant, авторизуясь AAD access-токеном (его добавляет api-клиент
-   * из стора). Тело — JSON `{decision, userCode}`. Ответ `200 true`; иначе бросаем
-   * ошибку с кодом из тела (`{"error": ...}`), напр. `expired_token`/`access_denied`.
-   * @param {string} userCode короткий код из ?userCode=... адресной строки.
-   * @returns {Promise<boolean>} true при успешном подтверждении.
-   */
-  async approve(userCode) {
-    const res = await api.post('/auth/oauth/grant', {
-      body: JSON.stringify({decision: 'ALLOW', userCode}),
-    });
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || 'device_grant_failed');
-    }
-
-    return true;
+  get device() {
+    return deviceService;
   }
 }
 
