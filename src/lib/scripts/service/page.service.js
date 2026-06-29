@@ -56,10 +56,16 @@ class PageService {
     return !this.isAuthenticated && !pathname.startsWith('/auth');
   }
 
-  /** Применить guard: увести неавторизованного на вход. Зовётся из реактивного эффекта. */
-  enforceAuth(pathname) {
+  /**
+   * Применить guard: увести неавторизованного на вход, СОХРАНИВ исходный query
+   * (напр. `?userCode=...`), чтобы после входа можно было вернуться к подтверждению
+   * устройства. Зовётся из реактивного эффекта.
+   * @param {string} pathname текущий путь
+   * @param {string} search текущая строка запроса (включая ведущий `?`)
+   */
+  enforceAuth(pathname, search = '') {
     if (this.shouldRedirectToAuth(pathname)) {
-      this.navigate(ROUTES.signIn);
+      this.navigate(`${ROUTES.signIn}${search}`);
     }
   }
 
@@ -96,6 +102,7 @@ class PageService {
   goToServersMap()     { this.navigate(ROUTES.serversMap); }
   goToServersList()    { this.navigate(ROUTES.serversList); }
   goToServersChat()    { this.navigate(ROUTES.serversChat); }
+  goToProfile()        { this.navigate(ROUTES.profile); }
 
   /** Отразить активную форму авторизации в URL без добавления записи в историю. */
   setAuthMode(mode, search = '') {

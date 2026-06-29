@@ -75,6 +75,9 @@
   }
 
   :global {
+    .notice-content>svg {
+      margin-right: 5px;
+    }
     .notice > button.button.tiny {
       margin: calc(-1*var(--ui-size-border));
       height: auto;

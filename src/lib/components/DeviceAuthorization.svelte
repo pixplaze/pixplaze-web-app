@@ -1,23 +1,26 @@
 <script>
   import {onMount} from 'svelte';
   import {authService} from '$lib/scripts/service/auth.service.js';
-  import {POLL_STATUS} from '$lib/scripts/store/device.store.svelte.js';
-  import {ROUTES} from '$lib/scripts/routes.js';
-  import {pageService} from "$lib/scripts/service/page.service.js";
+  import {POLL_STATUS} from '$lib/scripts/service/device.authorization.service.js';
   import QrCode from '$lib/components/QrCode.svelte';
   import Button from '$lib/components/ui/buttons/Button.svelte';
+  import {LEVEL} from '$lib/scripts/util/notice.util.js';
+  import {noticeService} from "$lib/scripts/service/notice.service.js";
+  import Notice from "$lib/components/ui/Notice.svelte";
 
   /**
    * Запрашивающая сторона device-flow (RFC 8628, §5.1–5.2 гайда): получает `user_code`,
    * показывает его + QR на `verification_uri_complete` и поллит token-эндпоинт до выдачи
    * токенов. Подтверждение приходит со стороннего (уже авторизованного) устройства.
    *
-   * Логика и состояние — в фасаде authService.device; здесь — UI и привязка lifecycle
-   * (старт в onMount, стоп при размонтировании).
+   * Свой экземпляр DAF на компонент (`authService.createDeviceAuthorization()`); здесь —
+   * UI и привязка lifecycle (старт в onMount, стоп при размонтировании). `onAuthorized`
+   * передаётся в `startLogin` и зовётся ИМПЕРАТИВНО в момент прихода токенов — поэтому
+   * срабатывает даже если компонент размонтируется фактом авторизации.
    *
    * @param {{scope?: string, authorizationDetails?: object, onAuthorized?: Function}} props
    *   Пустой `scope` ⇒ `AAD:USER` (вход устройства приложения). `onAuthorized` —
-   *   что делать после выдачи токенов (по умолчанию — переход на главную).
+   *   что делать после выдачи токенов.
    */
   const {
     scope,
@@ -25,61 +28,53 @@
     onAuthorized = () => {},
   } = $props();
 
-  const device = authService.device;
+  // Конфиг флоу — снимок пропсов на создание (живёт сколько экземпляр); он статичен.
+  // svelte-ignore state_referenced_locally
+  const device = authService.createDeviceAuthorization({scope, authorizationDetails, onAuthorized});
+  const statusNotices = $derived.by(() => {
+    switch (device.pollStatus) {
+      case POLL_STATUS.STARTING: return [noticeService.create("Запрашиваем код...", LEVEL.WARNING)];
+      case POLL_STATUS.PENDING: return [noticeService.create("Ожидаем подтверждения...", LEVEL.INFO)];
+      case POLL_STATUS.AUTHORIZED: return [noticeService.create("Входим...", LEVEL.INFO)];
+      case POLL_STATUS.DENIED: return [noticeService.create("Запрос отклонён.", LEVEL.ERROR)];
+      case POLL_STATUS.EXPIRED: return [noticeService.create("Код истёк.", LEVEL.WARNING)];
+      case POLL_STATUS.ERROR: return [noticeService.create("Не удалось получить код.", LEVEL.ERROR)];
+    }
+  });
+  const isNotSucceeded = $derived([POLL_STATUS.DENIED, POLL_STATUS.EXPIRED, POLL_STATUS.ERROR].indexOf(device.pollStatus) !== -1)
 
   onMount(() => {
-    device.startLogin({scope, authorizationDetails});
+    device.startLogin();
     return () => device.stopLogin();
   });
 
-  const onRestart = () => device.restartLogin({scope, authorizationDetails});
-
-  // После выдачи токенов (refresh — уже в HttpOnly-куке) отдаём управление владельцу.
-  $effect(async () => {
-    console.log(`DeviceAuthorization ${device.pollStatus}`);
-    if (device.pollStatus === POLL_STATUS.AUTHORIZED) {
-      await onAuthorized();
-    }
-  });
+  const onRestart = () => device.restartLogin();
 </script>
 
 <div class="device-auth content-box">
-<!--  <h1>Вход по QR</h1>-->
+  {#if device.verificationUriComplete}
+    <div class="device-qr">
+      <QrCode url={device.verificationUriComplete}/>
+      <output class="device-code">{device.userCode}</output>
+    </div>
+  {/if}
 
-  {#if device.pollStatus === POLL_STATUS.STARTING}
-<!--    <p class="device-hint">Запрашиваем код…</p>-->
-  {:else if device.pollStatus === POLL_STATUS.PENDING}
-<!--    <p class="device-hint">-->
-<!--      Отсканируйте QR-код на авторизованном устройстве или откройте-->
-<!--      <strong>{device.verificationUri}</strong> и подтвердите вход.-->
-<!--    </p>-->
-
-    {#if device.verificationUriComplete}
-      <div class="device-qr">
-        <QrCode url={device.verificationUriComplete}/>
-        <output class="device-code">{device.userCode}</output>
-      </div>
-    {/if}
-
-    <p class="device-hint device-waiting">Ожидаем подтверждения…</p>
-    {:else if device.pollStatus === POLL_STATUS.AUTHORIZED}
-    <p class="device-hint">Готово — входим…</p>
-    {:else if device.pollStatus === POLL_STATUS.DENIED}
-    <p class="device-hint">Запрос отклонён.</p>
-    <Button onclick={onRestart}>Начать заново</Button>
-    {:else if device.pollStatus === POLL_STATUS.EXPIRED}
-    <p class="device-hint">Код истёк.</p>
-    <Button onclick={onRestart}>Получить новый код</Button>
-    {:else if device.pollStatus === POLL_STATUS.ERROR}
-    <p class="device-hint device-error">Не удалось получить код. Попробуйте снова.</p>
+  <Notice notices={statusNotices} closeable={false}/>
+  {#if isNotSucceeded}
     <Button onclick={onRestart}>Повторить</Button>
   {/if}
 </div>
 
 <style>
-  .device-auth > * {
-    margin-bottom: var(--ui-spacing);
+  :global {
+    .device-auth > * {
+      margin-bottom: var(--ui-spacing);
+    }
+    /*.device-auth > *:last-child {*/
+    /*  margin-bottom: 0;*/
+    /*}*/
   }
+
 
   .device-qr {
     display: flex;

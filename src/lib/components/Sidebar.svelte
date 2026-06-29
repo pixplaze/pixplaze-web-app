@@ -9,8 +9,9 @@
   const onButtonTheme = () => pageService.toggleTheme();
   const onButtonSignOut = () => userService.signOut();
 
+  const onButtonProfile = () => pageService.goToProfile();
+
   // Заглушки: функционал ещё не реализован, поэтому ничего не вызываем.
-  const onButtonProfile = () => {};
   const onButtonLanguage = () => {};
   const onButtonSettings = () => {};
   const onButtonHelp = () => {};
@@ -18,7 +19,7 @@
   const themeIcon = $derived(pageService.currentTheme === 'dark' ? 'sun' : 'moon');
 
   const menuItems = $derived([
-    {item: userService.username, icon: 'profile', oœnClick: onButtonProfile},
+    {item: userService.username, icon: 'profile', onClick: onButtonProfile},
     {item: 'Настройки', icon: 'settings', onClick: onButtonSettings},
     {item: 'Помощь', icon: 'question', onClick: onButtonHelp},
     {item: 'Сменить тему', icon: themeIcon, onClick: onButtonTheme},

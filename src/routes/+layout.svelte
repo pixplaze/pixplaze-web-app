@@ -31,7 +31,7 @@
     токен old → new, не обнуляя его, поэтому ротация редирект не вызывает.
   */
   $effect(() => {
-    pageService.enforceAuth(page.url.pathname);
+    pageService.enforceAuth(page.url.pathname, page.url.search);
   });
 
   onMount(() => {

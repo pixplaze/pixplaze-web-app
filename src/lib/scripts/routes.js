@@ -14,5 +14,8 @@ export const ROUTES = {
   // Вход устройства приложения без пароля (device-flow, запрашивающая сторона).
   authDevice: '/auth/device',
 
+  // Профиль; принимает ?userCode=... для подтверждения входа стороннего устройства (DCF).
+  profile: '/profile',
+
   home: '/',
 };

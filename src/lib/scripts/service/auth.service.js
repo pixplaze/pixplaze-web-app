@@ -1,6 +1,7 @@
 import {api, apiConfig} from '$lib/scripts/api/api.config.js';
 import {authStore} from '$lib/scripts/store/auth.store.svelte.js';
-import {deviceService} from '$lib/scripts/service/device.service.js';
+import {createDeviceConsentFlow} from '$lib/scripts/service/device.consent.service.js';
+import {createDeviceAuthorizationFlow} from '$lib/scripts/service/device.authorization.service.js';
 
 /**
  * Сервис авторизации: бизнес-логика, обращения к API и управление стором.
@@ -96,13 +97,25 @@ class AuthService {
     return data.accessToken;
   }
 
+  // --- Фабричный фасад device-flow (RFC 8628). DCF и DAF — два независимых процесса,
+  //     каждый создаётся отдельным экземпляром на владельца (без синглтона). ---
+
   /**
-   * Фасад авторизации устройства (device-flow, RFC 8628). Сам сервис — тонкая
-   * проекция: вся device-логика, API и состояние — в {@link deviceService}/deviceStore.
-   * UI ходит через `authService.device.*`, не импортируя device-сервис напрямую.
+   * Создать Device-Consent-Flow (DCF) — подтверждение входа стороннего устройства
+   * (§5.3–5.4). Владелец — страница. Новый экземпляр на каждый вызов.
    */
-  get device() {
-    return deviceService;
+  createDeviceConsent() {
+    return createDeviceConsentFlow();
+  }
+
+  /**
+   * Создать Device-Authorization-Flow (DAF) — запрос входа текущего устройства с
+   * поллингом (§5.1–5.2). Владелец — компонент DeviceAuthorization. Новый экземпляр
+   * на каждый вызов; конфиг (`scope/authorizationDetails/onAuthorized`) хранится в сторе.
+   * @param {{scope?: string, authorizationDetails?: object, onAuthorized?: Function}} [config]
+   */
+  createDeviceAuthorization(config) {
+    return createDeviceAuthorizationFlow(config);
   }
 }
 
