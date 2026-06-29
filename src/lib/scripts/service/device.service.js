@@ -41,7 +41,9 @@ class DeviceService {
    * @param {string} userCode
    */
   async resolveConsent(userCode) {
+    console.log("resolving consent");
     if (!userCode || !authStore.isAuthenticated() || deviceStore.info || deviceStore.consentDone) {
+      console.log("consent failed!");
       return;
     }
 

@@ -10,7 +10,6 @@
   import DeviceConsent from "$lib/components/DeviceConsent.svelte";
   import DeviceAuthorization from "$lib/components/DeviceAuthorization.svelte";
   import Delimiter from "$lib/components/ui/Delimiter.svelte";
-  import QrCode from "$lib/components/QrCode.svelte";
 
   let mode = $state(page.params.mode);
 
@@ -37,10 +36,16 @@
 
   onMount(() => device.resolveConsent(userCode));
 
+  const onAuthorized = async () => {
+    await device.resolveConsent(userCode);
+    pageService.navigate(ROUTES.home);
+    console.log('onAuthorized')
+  }
+
   const onSignIn = async (data) => {
     const accessToken = await authService.signIn(data);
     if (accessToken) {
-      await device.resolveConsent(userCode);
+      await onAuthorized();
     }
     return accessToken;
   };
@@ -48,7 +53,7 @@
   const onSignUp = async (data) => {
     const accessToken = await authService.signUp(data);
     if (accessToken) {
-      await device.resolveConsent(userCode);
+      await onAuthorized();
     }
     return accessToken;
   };
@@ -92,7 +97,10 @@
   {#if showSignIn && showRedirectQrCode}
     <section class="auth-pane redirect">
       <Delimiter value="или сканируйте с авторизованного устройства" classes="content-line"/>
-      <QrCode url={location.href}/>
+<!--      <QrCode url={location.href}/>-->
+      <DeviceAuthorization {onAuthorized}/>
+<!--      <section class="auth-pane">-->
+<!--      </section>-->
     </section>
   {/if}
   {#if showSignUp}
@@ -150,10 +158,10 @@
     margin-bottom: var(--ui-spacing);
   }
 
-  .auth-pane.device-flow {
-    flex-basis: 100%;
-    max-width: 440px;
-  }
+  /*.auth-pane.device-flow {*/
+  /*  flex-basis: 100%;*/
+  /*  max-width: 440px;*/
+  /*}*/
 
   .redirect {
     display: flex;

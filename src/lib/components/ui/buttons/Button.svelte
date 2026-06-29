@@ -24,7 +24,10 @@
     background-color: var(--color-ui-primary);
     box-shadow: inset 0 calc(-1 * var(--ui-size-shadow)) 0 0 var(--color-ui-secondary);
     transition: background-color .2s ease-out;
-
+    min-width: 20px;
+    overflow-wrap: anywhere;
+    white-space: nowrap;
+    /*text-overflow: ellipsis;*/
     &:hover {
       background-color: var(--color-ui-primary-lighter);
     }
