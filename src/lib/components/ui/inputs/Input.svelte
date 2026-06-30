@@ -63,7 +63,7 @@
 
   .ui.interactive.input::placeholder {
     color: var(--color-main-text-placeholder);
-    opacity: 1;
+    opacity: .25;
   }
 
   .ui.interactive.input:disabled {

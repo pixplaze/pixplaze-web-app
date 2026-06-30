@@ -22,14 +22,15 @@ export const DEFAULT_INTERVAL = 5;
  * @param {{scope?: string, authorizationDetails?: object, onAuthorized?: Function}} [config]
  *   Конфиг флоу — фиксируется на создании и живёт ровно столько, сколько стор.
  */
-export function createDeviceAuthorizationStore({scope, authorizationDetails, onAuthorized} = {}) {
+export function createDeviceAuthorizationStore({scope, authorizationDetails, onAuthorized, interval} = {}) {
+  const defaultInterval = DEFAULT_INTERVAL;
   const store = $state({
     // --- Реактивное состояние для UI ---
     pollStatus: POLL_STATUS.IDLE,
     userCode: '',
     verificationUri: '',
     verificationUriComplete: '',
-    interval: DEFAULT_INTERVAL,
+    interval: interval || defaultInterval,
     error: null,
 
     // --- Конфиг флоу (неизменен в течение жизни флоу) ---

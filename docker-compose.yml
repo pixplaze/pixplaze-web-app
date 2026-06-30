@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   app:
     image: pixplaze-web-app
@@ -7,4 +5,12 @@ services:
     container_name: pixplaze-web-app
     ports:
       - "80:3000"
+    environment:
+      # URL API, по которому ходит БРАУЗЕР клиента. Читается в рантайме
+      # ($env/dynamic/public), поэтому меняется без пересборки образа.
+      # В проде заменить на публично доступный адрес API (НЕ localhost), напр.
+      # https://api.pixplaze.net — и настроить CORS на стороне API.
+      - PUBLIC_PIXPLAZE_WEB_API_URL=http://localhost:8080
+      # adapter-node: публичный origin самого веб-приложения (для корректных URL/кук).
+      # - ORIGIN=https://app.pixplaze.net
     restart: unless-stopped

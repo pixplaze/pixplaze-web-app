@@ -19,7 +19,8 @@
 
 <style>
   ul {
-    background-color: white;
+    color: var(--color-text-primary);
+    background-color: var(--color-ui-foreground);
     border: var(--ui-size-border) solid var(--color-ui-shadow);
     /*border-top: var(--ui-size-border) solid var(--color-ui-shadow);*/
     border-top: none;

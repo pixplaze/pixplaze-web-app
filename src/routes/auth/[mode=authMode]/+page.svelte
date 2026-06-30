@@ -65,7 +65,7 @@
   {/if}
   {#if showSignIn}
     <section class="auth-pane redirect">
-      <Delimiter value="или сканируйте с авторизованного устройства" classes="content-line"/>
+      <Delimiter value="или сканировать с авторизованного устройства" classes="content-line"/>
       <DeviceAuthorization {onAuthorized}/>
     </section>
   {/if}
@@ -119,4 +119,10 @@
     display: flex;
     margin-bottom: var(--ui-spacing);
   }
+
+  /*:global {*/
+  /*  .auth button.button {*/
+  /*    display: -moz-grid-group;*/
+  /*  }*/
+  /*}*/
 </style>

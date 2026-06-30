@@ -1,7 +1,12 @@
 import {createSignUpFormStore} from "$lib/scripts/store/form/signup.form.store.svelte.js";
-import {createFormData} from "$lib/scripts/service/form.service.js";
-import {BaseFormService} from "$lib/scripts/service/form/base.form.service.js";
-import {emailSchema, inviteCodeSchema, passwordRepeatSchema, passwordSchema} from "$lib/scripts/service/form/validations.js";
+import {FormService, createFormData} from "$lib/scripts/service/form/form.service.js";
+import {
+  emailSchema,
+  inviteCodeSchema,
+  passwordRepeatSchema,
+  passwordSchema,
+  usernameSchema
+} from "$lib/scripts/util/validation.util.js";
 import {voucherService} from "$lib/scripts/service/voucher.service.js";
 import {noticeService} from "$lib/scripts/service/notice.service.js";
 import {LEVEL} from "$lib/scripts/util/notice.util.js";
@@ -9,12 +14,13 @@ import {LEVEL} from "$lib/scripts/util/notice.util.js";
 /**
  * Бизнес-логика формы регистрации: набор схем валидации, формирование DTO
  * и побочные эффекты (сообщение по коду приглашения). Общий доступ к состоянию
- * и схемам предоставляет BaseFormService.
+ * и схемам предоставляет FormService.
  */
-class SignUpFormService extends BaseFormService {
+class SignUpFormService extends FormService {
   constructor(data) {
     const store = createSignUpFormStore(createFormData(data));
     super(store, {
+      name: usernameSchema(),
       email: emailSchema(),
       password: passwordSchema(),
       passwordRepeat: passwordRepeatSchema(() => store.data.password.value),

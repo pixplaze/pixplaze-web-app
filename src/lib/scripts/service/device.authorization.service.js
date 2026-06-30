@@ -78,6 +78,10 @@ export function createDeviceAuthorizationService(store) {
       case 'expired':
         store.pollStatus = POLL_STATUS.EXPIRED;
         return;
+      default: // 'error', 'server_error', неизвестное — терминально, без throw.
+        store.pollStatus = POLL_STATUS.ERROR;
+        store.error = result.error ?? 'device_token_failed';
+        return;
     }
   }
 
@@ -174,23 +178,11 @@ export function createDeviceAuthorizationService(store) {
       body: body.toString(),
     });
     const data = await res.json().catch(() => ({}));
-
     if (res.ok && data.access_token) {
       return {status: 'authorized', tokens: data};
     }
 
-    switch (data.error) {
-      case 'authorization_pending':
-        return {status: 'pending'};
-      case 'slow_down':
-        return {status: 'slow_down'};
-      case 'access_denied':
-        return {status: 'denied'};
-      case 'expired_token':
-        return {status: 'expired'};
-      default:
-        throw new Error(data.error || 'device_token_failed');
-    }
+    return parseStatus(data.error);
   }
 
   return {
@@ -204,6 +196,24 @@ export function createDeviceAuthorizationService(store) {
     stopLogin,
     restartLogin,
   };
+}
+
+function parseStatus(error) {
+  switch (error) {
+    case 'authorization_pending':
+      return {status: 'pending'};
+    case 'slow_down':
+      return {status: 'slow_down'};
+    case 'access_denied':
+      return {status: 'denied'};
+    case 'expired_token':
+      return {status: 'expired'};
+    default:
+      // server_error и любые неожиданные/пустые коды — терминальная ошибка. Главное —
+      // ВСЕГДА вернуть объект: иначе `result.status` у undefined бросит исключение в
+      // tick (уже не в try/catch) и засорит консоль реальной JS-ошибкой.
+      return {status: 'error', error: error || 'device_token_failed'};
+  }
 }
 
 /**

@@ -1,4 +1,4 @@
-import {isFormDataValid} from "$lib/scripts/service/form.service.js";
+import {isFormDataValid} from "$lib/scripts/service/form/form.service.js";
 
 /**
  * Базовое реактивное состояние формы: поля ({@link data}) и производный

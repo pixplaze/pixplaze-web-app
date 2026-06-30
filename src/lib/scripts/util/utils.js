@@ -88,3 +88,37 @@ export function createDebounce(callback, delay) {
   return { run, cancel };
 }
 
+export function createDistinctDebounce(callback, delay) {
+  const debounce = createDebounce(callback, delay);
+
+  let lastArgsJson = null;
+  let lastResultPromise = null;
+
+  const run = (...args) => {
+    const currentArgsJson = JSON.stringify(args);
+
+    if (currentArgsJson === lastArgsJson && lastResultPromise) {
+      return lastResultPromise;
+    }
+
+    lastArgsJson = currentArgsJson;
+
+    lastResultPromise = debounce.run(...args).catch((err) => {
+      lastArgsJson = null;
+      lastResultPromise = null;
+      throw err;
+    });
+
+    return lastResultPromise;
+  };
+
+  const cancel = () => {
+    lastArgsJson = null;
+    lastResultPromise = null;
+    debounce.cancel();
+  };
+
+  return { run, cancel };
+}
+
+

@@ -155,9 +155,18 @@
     Десктоп — «push»: aside делит грид с main. Анимируем ширину 0 → 300px,
     что сдвигает и сжимает main вправо. Сам контент (.aside-host) фиксированной
     ширины и выезжает через transform (композитор) — не сжимается и не искажается.
+
+    sticky + height: панель ровно в высоту экрана минус хедер и НЕ скроллится со
+    страницей. sticky оставляет aside в потоке грид-колонкой, поэтому push сохраняется
+    (в отличие от position: fixed, который бы схлопнул колонку).
   */
   aside {
     grid-area: aside;
+    position: sticky;
+    top: var(--ui-size-block);
+    align-self: start;
+    height: calc(100dvh - var(--ui-size-block));
+
     overflow: hidden;
     width: 0;
     will-change: width;

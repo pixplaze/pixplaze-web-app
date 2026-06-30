@@ -29,33 +29,11 @@
 </script>
 
 <nav class="sidebar">
-<!--  <Button onclick={onButtonProfile}>-->
-<!--    <Icon icon="profile"/><span>Профиль</span>-->
-<!--  </Button>-->
-
-<!--  <Button classes="sidebar-button" onclick={onButtonTheme}>-->
-<!--    <Icon icon={themeIcon}/><span>Сменить тему</span>-->
-<!--  </Button>-->
-
-<!--  <Button classes="sidebar-button" onclick={onButtonLanguage}>-->
-<!--    <Icon icon="translate"/><span>Язык</span>-->
-<!--  </Button>-->
-
-<!--  <Button classes="sidebar-button" onclick={onButtonSettings}>-->
-<!--    <Icon icon="settings"/><span>Настройки</span>-->
-<!--  </Button>-->
-
-<!--  <Button classes="sidebar-button" onclick={onButtonHelp}>-->
-<!--    <Icon icon="question"/><span>Помощь</span>-->
-<!--  </Button>-->
-
   <ItemList items={menuItems} onClick={(menuItem) => menuItem.onClick()}>
     {#snippet listItem({item, icon, onClick})}
       <Icon {icon}/>{item}
     {/snippet}
   </ItemList>
-
-<!--  <div class="sidebar-spacer"></div>-->
 
   <Button classes="sidebar-button sidebar-button--danger" onclick={onButtonSignOut}>
     <Icon icon="close"/>Выйти
@@ -67,8 +45,6 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: var(--ui-spacing);
 
     width: 100%;
     height: 100%;
@@ -78,13 +54,9 @@
     .sidebar .icon {
       padding-right: var(--ui-padding);
     }
-  }
 
-  /* Кнопка-разделитель прижимает «Выйти» к низу панели. */
-  .sidebar-spacer {
-    flex: 1 1 auto;
-  }
-
-  :global {
+    .sidebar ul {
+      flex: 1 1 auto;
+    }
   }
 </style>

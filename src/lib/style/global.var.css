@@ -32,7 +32,7 @@
 
   --color-main-text-primary: var(--color-gray-dark);
   --color-main-text-secondary: var(--color-gray-silver);
-  --color-main-text-placeholder: var(--color-main-shadow);
+  --color-main-text-placeholder: var(--color-text-primary);
 
   /* THEME COLORS */
   --color-text-primary: #444444;
@@ -79,4 +79,5 @@
   --color-text-selection: #1E6EE9;
   --color-ui-background: #444444;
   --color-ui-foreground: #333333;
+  --color-main-text-placeholder: var(--color-text-primary);
 }

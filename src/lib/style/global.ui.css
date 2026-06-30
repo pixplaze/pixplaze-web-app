@@ -25,10 +25,13 @@
   /*outline: black 4px solid;*/
   /*outline-offset: 0;*/
 }
-
+svg,
 .icon {
   display: inline;
   vertical-align: middle;
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: manipulation;
 }
 
 .content-box {

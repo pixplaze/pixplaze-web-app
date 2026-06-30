@@ -11,7 +11,7 @@
   } = $props();
 
   const signInFormService = createSignInFormService({
-    username: '',
+    name: '',
     password: ''
   });
 
@@ -30,17 +30,17 @@
 <form onsubmit={e => {e.preventDefault(); onFormSubmit()}} class="auth-form content-box">
   <h1>Вход</h1>
 
-  <InputValidationWrapper bind:value={fields.username.value}
-                          bind:isValid={fields.username.isValid}
-                          schema={validations.username}>
+  <InputValidationWrapper bind:value={fields.name.value}
+                          bind:isValid={fields.name.isValid}
+                          schema={validations.name}>
     {#snippet children({validationClasses})}
-      <InputAutocompletionWrapper bind:value={fields.username.value} getSuggestions={getUsernameSuggestions}>
+      <InputAutocompletionWrapper bind:value={fields.name.value} getSuggestions={getUsernameSuggestions}>
         {#snippet children({action})}
           <Input id="user-name"
                  label="Имя пользователя"
                  placeholder="notch"
                  classes={validationClasses}
-                 bind:value={fields.username.value}
+                 bind:value={fields.name.value}
                  {action}/>
         {/snippet}
       </InputAutocompletionWrapper>

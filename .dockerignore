@@ -5,3 +5,6 @@ build
 Dockerfile
 .dockerignore
 .gitignore
+.env
+.idea
+.DS_Store

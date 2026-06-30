@@ -1,4 +1,4 @@
-import {check, checkAsync, email, minLength, nonEmpty, pipe, pipeAsync, regex, string} from "valibot";
+import {check, checkAsync, email, maxLength, minLength, nonEmpty, pipe, pipeAsync, regex, string} from "valibot";
 import {voucherService} from "$lib/scripts/service/voucher.service.js";
 
 /**
@@ -16,7 +16,9 @@ export const requiredSchema = (message = 'Поле обязательно для
 
 export const usernameSchema = () => pipe(
     string(),
-    nonEmpty('Имя пользователя обязательно')
+    nonEmpty('Имя пользователя обязательно'),
+    minLength(3, 'Имя пользователя должно быть длиннее 3 символов'),
+    maxLength(32, 'Имя пользователя должно быть короче 32 символов')
 );
 
 export const emailSchema = () => pipe(

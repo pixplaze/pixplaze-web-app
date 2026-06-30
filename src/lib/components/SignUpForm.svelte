@@ -13,7 +13,7 @@
   } = $props();
 
   const signUpFormService = createSignUpFormService({
-    name: {value: '', isValid: true},
+    name: '',
     email: '',
     password: '',
     passwordRepeat: '',
@@ -35,16 +35,23 @@
 <form onsubmit={e => {e.preventDefault(); onFormSubmit()}} class="auth-form content-box">
   <h1>Регистрация</h1>
 
-  <InputAutocompletionWrapper bind:value={fields.name.value} getSuggestions={getUsernameSuggestions}>
-    {#snippet children({action})}
-      <Input id="user-name"
-             label="Имя пользователя"
-             placeholder="notch"
-             bind:value={fields.name.value}
-             {action}
-      />
+  <InputValidationWrapper bind:value={fields.name.value}
+                          bind:isValid={fields.name.isValid}
+                          schema={validations.name}>
+    {#snippet children({validationClasses})}
+      <InputAutocompletionWrapper bind:value={fields.name.value} getSuggestions={getUsernameSuggestions}>
+        {#snippet children({action})}
+          <Input id="user-name"
+                 label="Имя пользователя"
+                 placeholder="notch"
+                 classes={validationClasses}
+                 bind:value={fields.name.value}
+                 {action}
+          />
+        {/snippet}
+      </InputAutocompletionWrapper>
     {/snippet}
-  </InputAutocompletionWrapper>
+  </InputValidationWrapper>
 
   <InputValidationWrapper bind:value={fields.email.value}
                           bind:isValid={fields.email.isValid}
