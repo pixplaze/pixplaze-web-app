@@ -3,12 +3,12 @@ import {createWebSocket} from "$lib/scripts/api/ws.config.js"
 
 const __parseMessages = event => {
   try {
-    return JSON.parse(event.data);
+    return JSON.parse(event.value);
   } catch (err) {
-    if (!(typeof event.data === 'string')) {
+    if (!(typeof event.value === 'string')) {
       throw new Error(err);
     }
-    return [event.data];
+    return [event.value];
   }
 }
 
@@ -23,7 +23,7 @@ export const createCommandPrompt = (host, path) => {
     const messages = __parseMessages(event);
     prompt.push(messages);
 
-    console.log(event.data);
+    console.log(event.value);
     handleOnMessage();
   };
 

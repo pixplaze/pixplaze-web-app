@@ -30,22 +30,22 @@ class SignUpFormService extends FormService {
 
   /** Уведомления по коду приглашения (read-only). */
   get inviteCodeNotices() {
-    return this.store.inviteCodeNotices;
+    return this.formStore.inviteCodeNotices;
   }
 
   /** Закрыть плашку: владелец массива уведомлений — сервис, не компонент Notice. */
   closeInviteCodeNotice(id) {
-    this.store.inviteCodeNotices = this.store.inviteCodeNotices.filter(n => n.id !== id);
+    this.formStore.inviteCodeNotices = this.formStore.inviteCodeNotices.filter(n => n.id !== id);
   }
 
   async showInviteCodeNotice(code) {
     const message = await voucherService.getInviteCodeMessage(code);
-    this.store.inviteCodeNotices = [noticeService.create(message, LEVEL.INFO)];
+    this.formStore.inviteCodeNotices = [noticeService.create(message, LEVEL.INFO)];
   }
 
   /** DTO для запроса регистрации: name → username, passwordRepeat отбрасывается. */
   toRequest() {
-    const {data} = this.store;
+    const {data} = this.formStore;
     return {
       username: data.name.value,
       email: data.email.value,

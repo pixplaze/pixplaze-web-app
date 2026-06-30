@@ -1,6 +1,5 @@
-import {createSignInFormStore} from "$lib/scripts/store/form/signin.form.store.svelte.js";
-import {requiredSchema} from "$lib/scripts/util/validation.util.js";
-import {createFormData, FormService} from "$lib/scripts/service/form/form.service.js";
+import {createFormData, FormService} from '$lib/scripts/service/form/form.service.js';
+import {FormStore} from '$lib/scripts/store/form/form.store.svelte.js';
 
 /**
  * Бизнес-логика формы входа. Переиспользует базовый сервис и общие схемы
@@ -8,18 +7,15 @@ import {createFormData, FormService} from "$lib/scripts/service/form/form.servic
  */
 class SignInFormService extends FormService {
   constructor(data) {
-    super(createSignInFormStore(createFormData(data)), {
-      name: requiredSchema(),
-      password: requiredSchema()
-    });
+    super(new FormStore(createFormData(data)), {});
+    console.log(data);
   }
 
   /** DTO для запроса входа. */
   toRequest() {
-    const {data} = this.store;
     return {
-      username: data.name.value,
-      password: data.password.value
+      username: this.fields.name.value,
+      password: this.fields.password.value
     };
   }
 }

@@ -4,11 +4,11 @@
  */
 export class FormService {
   /**
-   * @param {{data: object, isFormDataValid: boolean}} store реактивный store формы
+   * @param {{data: object, isFormDataValid: boolean}} formSore реактивный store формы
    * @param {Record<string, unknown>} schemas valibot-схемы по имени поля
    */
-  constructor(store, schemas) {
-    this.store = store;
+  constructor(formSore, schemas) {
+    this.formStore = formSore;
     this.schemas = schemas;
   }
 
@@ -17,7 +17,7 @@ export class FormService {
    * Возвращает сам $state-прокси, поэтому доступ вида fields.email.value реактивен.
    */
   get fields() {
-    return this.store.data;
+    return this.formStore.data;
   }
 
   /** Группа valibot-схем валидации по имени поля (статичны, не реактивны). */
@@ -27,7 +27,7 @@ export class FormService {
 
   /** Валидность формы (read-only, реактивно через $derived стора). */
   get isValid() {
-    return this.store.isFormDataValid;
+    return this.formStore.isFormDataValid;
   }
 }
 
@@ -41,8 +41,8 @@ export function createFormData(data) {
     }
 
     if (
-        Object.prototype.hasOwnProperty.call(data[key], 'isValid') ||
-        Object.prototype.hasOwnProperty.call(data[key], 'value')
+        data[key] != null &&
+        ('isValid' in Object(data[key]) || 'value' in Object(data[key]))
     ) {
       formStructure[key] = data[key];
       continue;
@@ -58,7 +58,7 @@ export function createFormData(data) {
 }
 
 export function isPropertyValid(property) {
-  return property.isValid && !!property.value && !!property.value.trim();
+  return property.isValid;
 }
 
 export function isFormDataValid(data) {
