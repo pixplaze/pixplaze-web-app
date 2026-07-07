@@ -5,22 +5,26 @@
     placeholder = '',
     type = 'text',
     maxlength,
-    disabled,
+    preview,
+    disabled = preview,
     classes = '',
     value = $bindable(''),
     action,
     oninput,
-    onenter,
-    onFocus,
-    onBlur
+    onEnter = () => {},
+    onFocus = () => {},
+    onBlur = () => {}
   } = $props();
 
-  let hidden = $derived(!label || label.trim().length === 0);
+  let inputElement;
+  let hidden = $state(!label || label.trim().length === 0);
 
   const onkeydown = (e) => {
     const code = e.code;
     if (code === 'Enter') {
-      onenter('enter event');
+      onEnter('enter event');
+      inputElement.blur();
+      console.log('blurred');
       return;
     }
 
@@ -32,7 +36,7 @@
 
 <label id={`${id}-label`}
        for={id}
-       {hidden}>
+       class:hidden>
   {label}
 </label>
 <input {id}
@@ -41,7 +45,9 @@
        {maxlength}
        {disabled}
        class="ui interactive input {classes}"
+       class:preview
        bind:value
+       bind:this={inputElement}
        use:action
        {oninput}
        {onkeydown}
@@ -49,6 +55,7 @@
        onblur={onBlur}
 />
 
+<!--suppress CssUnusedSymbol -->
 <style>
   .ui.interactive.input {
     border-color: var(--color-ui-border);
@@ -66,7 +73,7 @@
     opacity: .25;
   }
 
-  .ui.interactive.input:disabled {
+  .ui.interactive.input:disabled:not(.preview) {
     /*color: var(--color-ui-shadow);*/
     color: #A0A0A0;
     /*background-color: var(--color-gray-silver);*/
@@ -78,13 +85,24 @@
     cursor: not-allowed;
   }
 
-  :global {
-    .warning + .ui.interactive.input {
-      border: var(--ui-size-border) solid #EFC500;
-    }
+  .ui.interactive.input.preview:disabled {
+    border-color: transparent;
+    box-shadow: none;
+    opacity: 1;
+    -webkit-text-fill-color: var(--color-text-primary);
+  }
 
-    .error + .ui.interactive.input {
-      border: var(--ui-size-border) solid var(--color-red-main);
-    }
+  label {
+    width: 100%; order: -1;
+    display: block;
+    padding-bottom: calc(var(--ui-spacing) / 2);
+  }
+
+  .ui.interactive.input.warning {
+    border: var(--ui-size-border) solid #EFC500;
+  }
+
+  .ui.interactive.input.error {
+    border: var(--ui-size-border) solid var(--color-red-main);
   }
 </style>

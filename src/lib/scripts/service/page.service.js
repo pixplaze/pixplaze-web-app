@@ -47,6 +47,10 @@ class PageService {
     return authService.isAuthenticated;
   }
 
+  isMobileLayout() {
+    return window.innerWidth <= 440;
+  }
+
   /**
    * Нужно ли увести неавторизованного пользователя на страницу входа.
    * Страницы /auth/* исключены, чтобы не зацикливать сам логин.

@@ -8,7 +8,6 @@ import {FormStore} from '$lib/scripts/store/form/form.store.svelte.js';
 class SignInFormService extends FormService {
   constructor(data) {
     super(new FormStore(createFormData(data)), {});
-    console.log(data);
   }
 
   /** DTO для запроса входа. */

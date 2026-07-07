@@ -7,14 +7,32 @@
 
   // Реальный функционал — он уже реализован в сервисах.
   const onButtonTheme = () => pageService.toggleTheme();
-  const onButtonSignOut = () => userService.signOut();
+  const onButtonSignOut = () => {
+    if (pageService.isMobileLayout()) {
+      pageService.toggleAside();
+    }
+    userService.signOut();
+  }
 
-  const onButtonProfile = () => pageService.goToProfile();
+  const onButtonProfile = () => {
+    if (pageService.isMobileLayout()) {
+      pageService.toggleAside();
+    }
+    pageService.goToProfile();
+  }
 
   // Заглушки: функционал ещё не реализован, поэтому ничего не вызываем.
   const onButtonLanguage = () => {};
-  const onButtonSettings = () => {};
-  const onButtonHelp = () => {};
+  const onButtonSettings = () => {
+    if (pageService.isMobileLayout()) {
+      pageService.toggleAside();
+    }
+  };
+  const onButtonHelp = () => {
+    if (pageService.isMobileLayout()) {
+      pageService.toggleAside();
+    }
+  };
 
   const themeIcon = $derived(pageService.currentTheme === 'dark' ? 'sun' : 'moon');
 
@@ -36,7 +54,7 @@
   </ItemList>
 
   <Button classes="sidebar-button sidebar-button--danger" onclick={onButtonSignOut}>
-    <Icon icon="close"/>Выйти
+    выйти<Icon icon="sign-out"/>
   </Button>
 </nav>
 
@@ -51,7 +69,7 @@
   }
 
   :global {
-    .sidebar .icon {
+    .item-list .icon {
       padding-right: var(--ui-padding);
     }
 

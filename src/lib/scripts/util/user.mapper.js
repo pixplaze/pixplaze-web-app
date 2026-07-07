@@ -13,7 +13,7 @@ export function buildUserFromToken(token) {
   if (!token) return null;
   try {
     const jwt = parseJwt(token);
-    return {name: jwt.sub, email: jwt.email, authority: parse(jwt)};
+    return {id: jwt.pid, name: jwt.sub, email: jwt.email, authority: parse(jwt)};
   } catch {
     return null;
   }

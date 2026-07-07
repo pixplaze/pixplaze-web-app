@@ -6,6 +6,7 @@
   import Input from '$lib/components/ui/inputs/Input.svelte';
   import Button from '$lib/components/ui/buttons/Button.svelte';
   import InputAutocompletionWrapper from '$lib/components/ui/inputs/InputAutocompletionWrapper.svelte';
+  import Notice from "$lib/components/ui/Notice.svelte";
 
   const {
     onSubmit
@@ -15,11 +16,6 @@
     name: createValidationField(usernameSchema(), ''),
     password: createValidationField(requiredSchema(), ''),
   });
-
-  // const signInFormService = createSignInFormService({
-  //   name: {value: '', isValid: false},
-  //   password: {value: '', isValid: false}
-  // });
 
   const fields = signInFormService.fields;
 
@@ -45,7 +41,7 @@
              {action}/>
     {/snippet}
   </InputAutocompletionWrapper>
-<!--  <Notice bind:notices={fields.name.validationNotices}/>-->
+  <Notice bind:notices={fields.name.validationNotices}/>
 
   <Input id="user-password"
          label="Пароль"
@@ -53,7 +49,7 @@
          placeholder="********"
          classes={` ${fields.password.validationClasses}`}
          bind:value={fields.password.value}/>
-<!--  <Notice bind:notices={fields.password.validationNotices}/>-->
+  <Notice bind:notices={fields.password.validationNotices}/>
   <Button onclick={onFormSubmit}
           classes="content-line"
           disabled={!signInFormService.isValid}>Войти</Button>

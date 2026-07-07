@@ -6,7 +6,7 @@
   } = $props();
 </script>
 
-<ul>
+<ul class="item-list">
   {#each items as item}
     <li>
       <button class={`${classes}`} onclick={item.onClick}>

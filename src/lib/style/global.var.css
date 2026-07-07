@@ -1,6 +1,13 @@
 @custom-media --mobile (max-width: 440px);
 
 :root {
+  /*         SCALED         */
+  /* --ui-size-block: 64px; */
+  /* --ui-size-shadow: 6px; */
+  /* --ui-size-icon: 40px;  */
+  /* --ui-size-border: 4px; */
+  /* --ui-size-text: 24px;  */
+  /* --ui-size-title: 32px; */
   --ui-size-block: 40px;
   --ui-size-shadow: 4px;
   --ui-size-icon: 24px;
@@ -30,7 +37,7 @@
 
   --color-main-shadow: var(--color-gray-shadow);
 
-  --color-main-text-primary: var(--color-gray-dark);
+  --color-main-text-primary: #333333;
   --color-main-text-secondary: var(--color-gray-silver);
   --color-main-text-placeholder: var(--color-text-primary);
 
@@ -40,7 +47,7 @@
   --color-text-selection: #1E6EE9;
   --color-ui-background: #F6F8FA;
   --color-ui-foreground: #FFFFFF;
-  --color-ui-shadow: rgba(0, 0, 0, 10%);
+  --color-ui-shadow: rgba(0, 0, 0, 15%);
   --color-ui-dark: #1C430E;
   --color-ui-primary: #5CBB3A;
   --color-ui-primary-lighter: #63C83F;
@@ -66,7 +73,7 @@
 }
 
 .themed.light {
-  --color-text-primary: #444444;
+  --color-text-primary: #333333;
   --color-text-secondary: #F6F8FA;
   --color-text-selection: #1E6EE9;
   --color-ui-background: #F6F8FA;

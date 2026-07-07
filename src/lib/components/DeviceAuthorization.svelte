@@ -33,12 +33,12 @@
   const device = authService.createDeviceAuthorization({scope, authorizationDetails, onAuthorized});
   const statusNotices = $derived.by(() => {
     switch (device.pollStatus) {
-      case POLL_STATUS.STARTING: return [noticeService.create("Запрашиваем код...", LEVEL.WARNING)];
-      case POLL_STATUS.PENDING: return [noticeService.create("Ожидаем подтверждения...", LEVEL.INFO)];
-      case POLL_STATUS.AUTHORIZED: return [noticeService.create("Входим...", LEVEL.INFO)];
-      case POLL_STATUS.DENIED: return [noticeService.create("Запрос отклонён.", LEVEL.ERROR)];
-      case POLL_STATUS.EXPIRED: return [noticeService.create("Код истёк.", LEVEL.WARNING)];
-      case POLL_STATUS.ERROR: return [noticeService.create("Не удалось получить код.", LEVEL.ERROR)];
+      case POLL_STATUS.STARTING: return noticeService.create("Запрашиваем код...", LEVEL.WARNING);
+      case POLL_STATUS.PENDING: return noticeService.create("Ожидаем подтверждения...", LEVEL.INFO);
+      case POLL_STATUS.AUTHORIZED: return noticeService.create("Входим...", LEVEL.INFO);
+      case POLL_STATUS.DENIED: return noticeService.create("Запрос отклонён.", LEVEL.ERROR);
+      case POLL_STATUS.EXPIRED: return noticeService.create("Код истёк.", LEVEL.WARNING);
+      case POLL_STATUS.ERROR: return noticeService.create("Не удалось получить код.", LEVEL.ERROR);
     }
   });
   const isNotSucceeded = $derived([POLL_STATUS.DENIED, POLL_STATUS.EXPIRED, POLL_STATUS.ERROR].indexOf(device.pollStatus) !== -1)
@@ -59,7 +59,7 @@
     </div>
   {/if}
 
-  <Notice notices={statusNotices} closeable={false}/>
+  <Notice notice={statusNotices} closeable={false}/>
   {#if isNotSucceeded}
     <Button onclick={onRestart}>Повторить</Button>
   {/if}

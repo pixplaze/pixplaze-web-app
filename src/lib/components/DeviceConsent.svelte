@@ -1,7 +1,8 @@
 <script>
   import Button from "$lib/components/ui/buttons/Button.svelte";
-  import QrCode from "$lib/components/QrCode.svelte";
   import Notice from "./ui/Notice.svelte";
+  import {parseImageBase64} from "$lib/scripts/util/utils.js";
+  import Delimiter from "$lib/components/ui/Delimiter.svelte";
 
   /**
    * UI согласия device-flow (RFC 8628, §5.3–5.4 гайда): показывает, что именно
@@ -24,9 +25,9 @@
   // Человекочитаемый заголовок по типу субъекта (§5.3: USER сюда не попадает —
   // он подтверждается автоматически, но оставляем ветку для полноты).
   const TITLES = {
-    MINECRAFT_PLAYER: 'Авторизация игрока',
-    MINECRAFT_SERVER: 'Авторизация сервера',
-    USER: 'Вход устройства приложения',
+    MINECRAFT_PLAYER: 'авторизация игрока',
+    MINECRAFT_SERVER: 'авторизация сервера',
+    USER: 'вход через приложение',
   };
 
   const details = $derived(info?.details ?? {});
@@ -68,21 +69,11 @@
     return [];
   });
 
-  function parseImageBase64(imageBase64) {
-    if (!imageBase64) {
-      return null;
-    }
-
-    if (imageBase64.startsWith('data:')) {
-      return imageBase64;
-    }
-
-    return `data:image/png;base64,${decodeURIComponent(imageBase64).replace(/ /g, '+')}`;
-  }
-</script>
+  </script>
 
 <div class="device-consent content-box">
-  <h1>{title}</h1>
+<!--  <h1>{title}</h1>-->
+  <Delimiter value={title}/>
 
   <div class="device-subject">
     {#if imageSrc}
@@ -103,7 +94,7 @@
   </div>
 
   {#if notices.length}
-    <Notice {notices} closeable={false}/>
+    <Notice {notices}/>
   {/if}
 
   {#if !isDecided}

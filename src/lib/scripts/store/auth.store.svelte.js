@@ -1,3 +1,5 @@
+import {browser} from "$app/environment";
+
 /**
  * Стор авторизации — единственный источник реактивного состояния токена.
  * Не содержит бизнес-логики и работы с API.
@@ -6,19 +8,26 @@ class AuthStore {
   accessToken = $state('');
 
   constructor() {
-    this.accessToken = localStorage.getItem('accessToken') || '';
+    this.accessToken = browser ? localStorage.getItem('accessToken') : '' || '';
   }
 
   getAccessToken() {
-    return this.accessToken || localStorage.getItem('accessToken');
+    return this.accessToken || browser ? localStorage.getItem('accessToken') : '';
   }
 
   setAccessToken(accessToken) {
+    if (!browser) {
+      return;
+    }
+
     localStorage.setItem('accessToken', accessToken);
     this.accessToken = accessToken;
   }
 
   clearAccessToken() {
+    if (!browser) {
+      return;
+    }
     localStorage.removeItem('accessToken');
     this.accessToken = '';
   }

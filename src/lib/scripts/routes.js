@@ -5,7 +5,7 @@
 export const ROUTES = {
   serversConsole: '/servers/console',
   serversMap: '/servers/map',
-  serversList: '/servers/list',
+  serversList: '/servers',
   serversChat: '/servers/chat',
 
   signIn: '/auth/sign-in',

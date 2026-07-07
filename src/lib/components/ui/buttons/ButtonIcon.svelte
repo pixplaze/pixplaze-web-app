@@ -3,6 +3,7 @@
   import Icon from "$lib/components/ui/Icon.svelte";
 
   let {
+    title,
     icon,
     icons,
     disabled,
@@ -11,7 +12,8 @@
   } = $props();
 </script>
 
-<Button {disabled}
+<Button {title}
+        {disabled}
         classes={`${classes} square`}
         {onclick}>
   <Icon {icon} {icons}/>

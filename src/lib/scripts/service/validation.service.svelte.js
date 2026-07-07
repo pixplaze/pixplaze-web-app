@@ -6,10 +6,12 @@ import {ValidationStore} from "$lib/scripts/store/validation.store.svelte.js";
 class ValidationService {
   #schema;
   #store;
+  #onSuccess = null;
 
-  constructor(schema, value) {
+  constructor(schema, value, onSuccess) {
     this.#schema = schema;
     this.#store = new ValidationStore((value) => this.validate(value), value);
+    this.#onSuccess = onSuccess;
   }
 
   async validate(value) {
@@ -17,6 +19,7 @@ class ValidationService {
       await parseAsync(this.#schema, value);
       this.#store.isValid = true;
       this.#store.validationNotices = [];
+      await this.#onSuccess?.(value);
     } catch (error) {
       this.#store.isValid = false;
       this.#store.validationNotices = error.issues.map(i => noticeService.create(i.message, LEVEL.WARNING));
@@ -46,6 +49,6 @@ class ValidationService {
 
 export const createValidationService = (schema) => new ValidationService(schema);
 
-export const createValidationField = (schema, initialValue = '') => {
-  return new ValidationService(schema, initialValue);
+export const createValidationField = (schema, initialValue = '', onSuccess = value => {}) => {
+  return new ValidationService(schema, initialValue, onSuccess);
 };

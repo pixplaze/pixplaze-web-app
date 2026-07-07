@@ -6,6 +6,7 @@
   import Header from "$lib/components/Header.svelte";
   import ServerRow from "$lib/components/ServerRow.svelte";
   import Sidebar from "$lib/components/Sidebar.svelte";
+  import Backdrop from "$lib/components/ui/Backdrop.svelte";
   import '$lib/style/global.css';
 
   const {children} = $props();
@@ -75,6 +76,7 @@
   </aside>
   <main>
     {@render children()}
+    <Backdrop classes="page-backdrop"/>
   </main>
   <footer></footer>
 </div>
@@ -194,6 +196,16 @@
 
   main {
     grid-area: main;
+    display: flex;
+    flex-direction: column;
+  }
+
+  :global(.page-backdrop) {
+    margin-top: auto;
+    position: relative;
+    z-index: 1;
+    margin-bottom: -160px;
+    transform: translateY(-1px);
   }
 
   footer {
@@ -201,6 +213,7 @@
     content: "";
     background-color: #444444;
     grid-area: footer;
+    padding-top: 160px;
   }
 
   :global {
@@ -254,9 +267,6 @@
       100% {opacity: 100%; transform: translateY(0) }
     }
 
-    main {
-      overflow: hidden;
-    }
 
     /*
       Мобайл — overlay: aside выходит из грида (position: fixed), перекрывая main
@@ -267,7 +277,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      z-index: 1;
+      z-index: 3;
 
       width: 0;
       height: calc(100% - var(--ui-size-block));

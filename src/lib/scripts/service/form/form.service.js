@@ -1,3 +1,5 @@
+import {FormStore} from "$lib/scripts/store/form/form.store.svelte.js";
+
 /**
  * Базовый сервис формы: единый фасад над состоянием (стором) и схемами валидации.
  * Конкретные сервисы передают свой store и набор схем, а также реализуют toRequest().
@@ -55,6 +57,10 @@ export function createFormData(data) {
   }
 
   return formStructure;
+}
+
+export function createForm(data) {
+  return new FormService(new FormStore(createFormData(data)), {});
 }
 
 export function isPropertyValid(property) {

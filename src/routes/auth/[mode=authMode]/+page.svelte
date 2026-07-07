@@ -65,7 +65,7 @@
   {/if}
   {#if showSignIn}
     <section class="auth-pane redirect">
-      <Delimiter value="или сканировать с авторизованного устройства" classes="content-line"/>
+      <Delimiter value="или" classes="content-line"/>
       <DeviceAuthorization {onAuthorized}/>
     </section>
   {/if}
@@ -95,7 +95,8 @@
   }
 
   .auth-pane {
-    flex: 1 1 440px;
+    /*flex: 1 1 440px;*/
+    flex: 1 1 auto;
     box-sizing: border-box;
     margin-bottom: var(--ui-spacing);
   }
@@ -120,9 +121,11 @@
     margin-bottom: var(--ui-spacing);
   }
 
-  /*:global {*/
-  /*  .auth button.button {*/
-  /*    display: -moz-grid-group;*/
-  /*  }*/
-  /*}*/
+  :global {
+    @media screen and (min-width: 880px) {
+      .auth-pane.redirect > .delimiter {
+        display: none;
+      }
+    }
+  }
 </style>

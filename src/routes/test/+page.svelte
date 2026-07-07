@@ -26,8 +26,7 @@
     />
     <Input id="test-input"
            placeholder="введи текст, пидор"
-           bind:value
-           onenter={(e) => console.log(e)}/>
+           bind:value/>
     <p>{value}</p>
 
     <ButtonIcon icon="close" onclick={() => hearts > 0 ? hearts-- : hearts}/>

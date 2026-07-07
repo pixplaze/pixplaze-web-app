@@ -60,6 +60,7 @@ export function createDeviceAuthorizationService(store) {
         // Токены выданы: access — в стор; refresh — в HttpOnly-куке (выставил сервер).
         if (result.tokens?.access_token) {
           authStore.setAccessToken(result.tokens.access_token);
+
         }
         store.pollStatus = POLL_STATUS.AUTHORIZED;
         // Императивно, синхронно — до Svelte-flush'а и возможного размонтирования владельца.

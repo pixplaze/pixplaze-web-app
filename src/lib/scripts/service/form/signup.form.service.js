@@ -7,35 +7,29 @@ import {
   passwordSchema,
   usernameSchema
 } from "$lib/scripts/util/validation.util.js";
+import {createValidationField} from "$lib/scripts/service/validation.service.svelte.js";
 import {voucherService} from "$lib/scripts/service/voucher.service.js";
 import {noticeService} from "$lib/scripts/service/notice.service.js";
 import {LEVEL} from "$lib/scripts/util/notice.util.js";
 
-/**
- * Бизнес-логика формы регистрации: набор схем валидации, формирование DTO
- * и побочные эффекты (сообщение по коду приглашения). Общий доступ к состоянию
- * и схемам предоставляет FormService.
- */
 class SignUpFormService extends FormService {
-  constructor(data) {
-    const store = createSignUpFormStore(createFormData(data));
-    super(store, {
-      name: usernameSchema(),
-      email: emailSchema(),
-      password: passwordSchema(),
-      passwordRepeat: passwordRepeatSchema(() => store.data.password.value),
-      inviteCode: inviteCodeSchema()
-    });
+  constructor(inviteCode) {
+    const name = createValidationField(usernameSchema(), '');
+    const email = createValidationField(emailSchema(), '');
+    const password = createValidationField(passwordSchema(), '');
+    const passwordRepeat = createValidationField(
+      passwordRepeatSchema(() => password.value), ''
+    );
+    const code = createValidationField(inviteCodeSchema(), inviteCode ?? '', v => this.showInviteCodeNotice(v));
+
+    const store = createSignUpFormStore(
+      createFormData({ name, email, password, passwordRepeat, inviteCode: code })
+    );
+    super(store, {});
   }
 
-  /** Уведомления по коду приглашения (read-only). */
   get inviteCodeNotices() {
     return this.formStore.inviteCodeNotices;
-  }
-
-  /** Закрыть плашку: владелец массива уведомлений — сервис, не компонент Notice. */
-  closeInviteCodeNotice(id) {
-    this.formStore.inviteCodeNotices = this.formStore.inviteCodeNotices.filter(n => n.id !== id);
   }
 
   async showInviteCodeNotice(code) {
@@ -43,7 +37,6 @@ class SignUpFormService extends FormService {
     this.formStore.inviteCodeNotices = [noticeService.create(message, LEVEL.INFO)];
   }
 
-  /** DTO для запроса регистрации: name → username, passwordRepeat отбрасывается. */
   toRequest() {
     const {data} = this.formStore;
     return {
@@ -55,4 +48,4 @@ class SignUpFormService extends FormService {
   }
 }
 
-export const createSignUpFormService = (data) => new SignUpFormService(data);
+export const createSignUpFormService = (inviteCode) => new SignUpFormService(inviteCode);

@@ -52,6 +52,7 @@ class ApiClient {
       response.status === 401 &&
       !options._retry &&
       endpoint !== '/auth/sign-in' &&
+      endpoint !== '/auth/sign-out' &&
       this.unauthorizedHandler
     ) {
       options._retry = true;

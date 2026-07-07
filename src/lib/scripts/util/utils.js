@@ -1,6 +1,20 @@
+/**
+ * ISO-строка с сервера (без суффикса и с микросекундами) → читаемая локальная дата.
+ * Обрезаем до миллисекунд и добавляем Z — бэкенд отдаёт UTC без суффикса.
+ */
+export function formatDate(isoString) {
+  if (!isoString) return '';
+  const normalized = isoString.slice(0, 23) + 'Z';
+  return new Date(normalized).toLocaleString(undefined, {
+    year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
 export const random = {
   choice: arr => arr[Math.floor(Math.random() * arr.length)]
 }
+
 export const sequence = () => {
   let i = 0;
   const inc = () => {
@@ -20,7 +34,7 @@ export const createIdEnricher = () => {
 }
 
 export const classIf = (className, condition) => {
-  return condition ? className : '';
+  return (condition === undefined && className) || condition ? className : '';
 }
 
 /**
@@ -122,3 +136,23 @@ export function createDistinctDebounce(callback, delay) {
 }
 
 
+export function parseImageBase64(imageBase64) {
+  if (!imageBase64) {
+    return null;
+  }
+
+  if (imageBase64.startsWith('data:')) {
+    return imageBase64;
+  }
+
+  return `data:image/png;base64,${decodeURIComponent(imageBase64).replace(/ /g, '+')}`;
+}
+
+export const formatNumber = number => {
+  const n = number / 1000;
+  if (n > 1) {
+    return Math.trunc(n) + 'K';
+  }
+
+  return number;
+}

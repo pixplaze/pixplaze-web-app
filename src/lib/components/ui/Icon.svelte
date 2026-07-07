@@ -2,12 +2,14 @@
   let {
     icon,
     icons = [icon],
+    frame,
     classes = [],
     size = 24
   } = $props();
 </script>
 
 <svg aria-hidden="true"
+     viewBox={frame}
      class={`icon ${classes}`}>
   {#each icons as icon}
     <use href={`/icons/sprite.svg#icon-${icon}`}/>
@@ -16,8 +18,8 @@
 
 <style>
   svg {
-    width: var(--ui-size-icon);
-    height: var(--ui-size-icon);
+    width: var(--icon-size, var(--ui-size-icon));
+    height: var(--icon-size, var(--ui-size-icon));
   }
   use {
     shape-rendering: optimizeSpeed;

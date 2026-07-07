@@ -13,20 +13,13 @@ class AuthService {
     // Состояние процесса обновления токена
     this.isRefreshing = false;
     this.refreshSubscribers = [];
+    this.authorizedEventSubscribers = [];
+    // this.unauthorizedEventSubscribers = [];
+    //
+    this.addAuthorizedEventHandler((token) => authStore.setAccessToken(token))
 
     // Регистрируем обработку 401 в низкоуровневом клиенте
     api.setUnauthorizedHandler(() => this.handleUnauthorized());
-  }
-
-  // Подписка на завершение обновления токена
-  subscribeTokenRefresh(cb) {
-    this.refreshSubscribers.push(cb);
-  }
-
-  // Уведомление всех ожидающих запросов о новом токене
-  onTokenRefreshed(token) {
-    this.refreshSubscribers.forEach((cb) => cb(token));
-    this.refreshSubscribers = [];
   }
 
   /**
@@ -36,7 +29,7 @@ class AuthService {
   async handleUnauthorized() {
     // Если обновление уже идёт — ждём его результата
     if (this.isRefreshing) {
-      return new Promise((resolve) => this.subscribeTokenRefresh(resolve));
+      return this.addRefreshedEventHandler(token => token);
     }
 
     this.isRefreshing = true;
@@ -44,12 +37,13 @@ class AuthService {
     try {
       const newAccessToken = await this.refresh();
       this.isRefreshing = false;
-      this.onTokenRefreshed(newAccessToken);
+      this.#handleAuthorizedEvent(newAccessToken);
+      this.#handleRefreshedEvent(newAccessToken);
       return newAccessToken;
     } catch (refreshError) {
-      console.error(refreshError);
       this.isRefreshing = false;
-      await this.signOut(); // Если рефреш не удался — выходим
+      this.#rejectRefreshedEvent(refreshError);
+      await this.signOut();
       throw refreshError;
     }
   }
@@ -64,7 +58,9 @@ class AuthService {
       body: JSON.stringify(signInData),
     });
     const data = await res.json();
-    if (res.ok && data.accessToken) authStore.setAccessToken(data.accessToken);
+    if (res.ok && data.accessToken) {
+      this.#handleAuthorizedEvent(data.accessToken);
+    }
     return data.accessToken;
   }
 
@@ -73,15 +69,16 @@ class AuthService {
       body: JSON.stringify(signUpData),
     });
     const data = await res.json();
-    if (res.ok && data.accessToken) authStore.setAccessToken(data.accessToken);
+    if (res.ok && data.accessToken) {
+      this.#handleAuthorizedEvent(data.accessToken);
+    }
     return data.accessToken;
   }
 
   async signOut() {
     await api.post('/auth/sign-out');
     authStore.clearAccessToken();
-    // Навигацию не делаем здесь: очистка токена сама уведёт на /auth/sign-in
-    // через реактивный guard в корневом +layout.svelte.
+    // this.#handleUnauthorizedEvent();
   }
 
   async refresh() {
@@ -93,12 +90,11 @@ class AuthService {
     if (!res.ok) throw new Error('Refresh session failed');
 
     const data = await res.json();
-    authStore.setAccessToken(data.accessToken);
+    if (res.ok && data.accessToken) {
+      // this.#handleAuthorizedEvent(data.accessToken);
+    }
     return data.accessToken;
   }
-
-  // --- Фабричный фасад device-flow (RFC 8628). DCF и DAF — два независимых процесса,
-  //     каждый создаётся отдельным экземпляром на владельца (без синглтона). ---
 
   /**
    * Создать Device-Consent-Flow (DCF) — подтверждение входа стороннего устройства
@@ -116,6 +112,47 @@ class AuthService {
    */
   createDeviceAuthorization(config) {
     return createDeviceAuthorizationFlow(config);
+  }
+
+  #handleAuthorizedEvent(token) {
+    this.authorizedEventSubscribers.forEach(handler => handler(token));
+  }
+
+  addAuthorizedEventHandler(onAuthorized) {
+    if (this.authorizedEventSubscribers.indexOf(onAuthorized) !== -1) {
+      return;
+    }
+
+    this.authorizedEventSubscribers.push(onAuthorized);
+  }
+  //
+  // #handleUnauthorizedEvent() {
+  //   this.unauthorizedEventSubscribers.forEach(handler => handler());
+  // }
+  //
+  // addUnauthorizedEventHandler(onUnauthorized) {
+  //   if (this.unauthorizedEventSubscribers.indexOf(onUnauthorized) !== -1) {
+  //     return;
+  //   }
+  //
+  //   this.unauthorizedEventSubscribers.push(onUnauthorized);
+  // }
+
+  // Подписка на завершение обновления токена
+  addRefreshedEventHandler(onRefreshed) {
+    return new Promise((resolve, reject) => {
+      this.refreshSubscribers.push({ resolve, reject });
+    }).then(onRefreshed);
+  }
+
+  #handleRefreshedEvent(token) {
+    this.refreshSubscribers.forEach(({ resolve }) => resolve(token));
+    this.refreshSubscribers = [];
+  }
+
+  #rejectRefreshedEvent(error) {
+    this.refreshSubscribers.forEach(({ reject }) => reject(error));
+    this.refreshSubscribers = [];
   }
 }
 

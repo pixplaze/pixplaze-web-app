@@ -1,15 +1,18 @@
 import {authStore} from "$lib/scripts/store/auth.store.svelte.js";
 
-/**
- * Generic-реактивная обвязка без бизнес-логики: знает только, что пользователь
- * выводится из access-токена через переданную функцию-маппер. Что именно считать
- * (парсинг JWT, форма user) — забота сервиса, который впрыскивает mapTokenToUser.
- *
- * @param {(token: string) => *} mapTokenToUser
- */
-export function createUserStore(mapTokenToUser) {
-  const user = $derived.by(() => mapTokenToUser(authStore.accessToken));
+export function createUserStore(handler) {
+  let user = $state(null);
+  // const username = $derived(user?.name || 'Профиль');
+
+  $effect.root(() => {
+    $effect(async () => {
+      user = await handler(authStore.accessToken);
+      console.log(user);
+    });
+  });
+
   return {
-    get user() { return user; }
+    get user() { return user; },
+    // get username() { return username; }
   };
 }
