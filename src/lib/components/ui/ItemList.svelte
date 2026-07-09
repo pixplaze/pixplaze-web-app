@@ -9,8 +9,7 @@
 <ul class="item-list">
   {#each items as item}
     <li>
-      <button class={`${classes}`} onclick={item.onClick}>
-        <!--{item}-->
+      <button class={classes} onclick={item.onClick}>
         {@render listItem(item, onClick)}
       </button>
     </li>

@@ -1,4 +1,17 @@
-import {check, checkAsync, email, maxLength, minLength, nonEmpty, pipe, pipeAsync, regex, string} from "valibot";
+import {
+  check,
+  checkAsync,
+  email,
+  ip,
+  maxLength,
+  minLength,
+  nonEmpty,
+  pipe,
+  pipeAsync,
+  regex,
+  string,
+  trim, union
+} from "valibot";
 import {voucherService} from "$lib/scripts/service/voucher.service.js";
 
 /**
@@ -49,4 +62,15 @@ export const inviteCodeSchema = () => pipeAsync(
     string(),
     minLength(8, 'Код приглашения должен состоять из 8 символов'),
     checkAsync((code) => voucherService.isInviteCodeValid(code), 'Неверный код приглашения')
+);
+// Регулярное выражение для проверки хоста/домена (например, mc.server.net)
+const HOST_REGEX = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}$/;
+
+export const hostSchema = () => pipe(
+    string('Адрес должен быть строкой'),
+    trim(),
+    union([
+      pipe(string(), ip()),
+      pipe(string(), regex(HOST_REGEX))
+    ], 'Введите корректный IP-адрес или доменное имя (например, mc.server.net)')
 );

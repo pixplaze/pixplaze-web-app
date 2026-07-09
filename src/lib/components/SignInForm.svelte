@@ -7,24 +7,27 @@
   import Button from '$lib/components/ui/buttons/Button.svelte';
   import InputAutocompletionWrapper from '$lib/components/ui/inputs/InputAutocompletionWrapper.svelte';
   import Notice from "$lib/components/ui/Notice.svelte";
+  import {noticeService} from "$lib/scripts/service/notice.service.js";
+  import {LEVEL} from "$lib/scripts/util/notice.util.js";
 
   const {
     onSubmit
   } = $props();
 
-  const signInFormService = createSignInFormService({
+  const form = createSignInFormService({
     name: createValidationField(usernameSchema(), ''),
     password: createValidationField(requiredSchema(), ''),
   });
 
-  const fields = signInFormService.fields;
+  const fields = form.fields;
 
-  function onFormSubmit() {
-    if (!signInFormService.isValid) {
-      return;
+  async function onFormSubmit() {
+    if (!form.isValid) return;
+    try {
+      await onSubmit(form.toRequest());
+    } catch (e) {
+      form.pushNotice(noticeService.create(e.message, LEVEL.ERROR));
     }
-
-    onSubmit(signInFormService.toRequest());
   }
 </script>
 
@@ -36,8 +39,9 @@
       <Input id="user-name"
              label="Имя пользователя"
              placeholder="notch"
-             classes={fields.name.validationClasses}
+             classes={[fields.name.validationClasses, form.level].filter(Boolean).join(' ')}
              bind:value={fields.name.value}
+             oninput={() => form.clearNotices()}
              {action}/>
     {/snippet}
   </InputAutocompletionWrapper>
@@ -47,12 +51,14 @@
          label="Пароль"
          type="password"
          placeholder="********"
-         classes={` ${fields.password.validationClasses}`}
-         bind:value={fields.password.value}/>
+         classes={[fields.password.validationClasses, form.level].filter(Boolean).join(' ')}
+         bind:value={fields.password.value}
+         oninput={() => form.clearNotices()}/>
   <Notice bind:notices={fields.password.validationNotices}/>
+  <Notice bind:notices={form.notices} onClose={() => {form.clear(); form.clearNotices();}}/>
   <Button onclick={onFormSubmit}
           classes="content-line"
-          disabled={!signInFormService.isValid}>Войти</Button>
+          disabled={!form.isValid}>Войти</Button>
 </form>
 
 <style>

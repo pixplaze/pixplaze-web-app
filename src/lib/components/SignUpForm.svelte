@@ -5,21 +5,25 @@
   import Button from '$lib/components/ui/buttons/Button.svelte';
   import Notice from '$lib/components/ui/Notice.svelte';
   import InputAutocompletionWrapper from '$lib/components/ui/inputs/InputAutocompletionWrapper.svelte';
+  import {noticeService} from '$lib/scripts/service/notice.service.js';
+  import {LEVEL} from '$lib/scripts/util/notice.util.js';
 
   const {
     inviteCode,
     onSubmit
   } = $props();
 
-  const signUpFormService = createSignUpFormService(inviteCode);
-  const fields = signUpFormService.fields;
+  const form = createSignUpFormService(inviteCode);
+  const fields = form.fields;
 
-  function onFormSubmit() {
-    if (!signUpFormService.isValid) {
-      return;
+  async function onFormSubmit() {
+    if (!form.isValid) return;
+    form.clearNotices();
+    try {
+      await onSubmit(form.toRequest());
+    } catch (e) {
+      form.pushNotice(noticeService.create(e.message, LEVEL.ERROR));
     }
-
-    onSubmit(signUpFormService.toRequest());
   }
 </script>
 
@@ -31,8 +35,9 @@
       <Input id="user-name"
              label="Имя пользователя"
              placeholder="notch"
-             classes={fields.name.validationClasses}
+             classes={[fields.name.validationClasses, form.level].filter(Boolean).join(' ')}
              bind:value={fields.name.value}
+             oninput={() => form.clearNotices()}
              {action}/>
     {/snippet}
   </InputAutocompletionWrapper>
@@ -43,8 +48,9 @@
       <Input id="user-email"
              label="Электронная почта"
              placeholder="notch@email.com"
-             classes={fields.email.validationClasses}
+             classes={[fields.email.validationClasses, form.level].filter(Boolean).join(' ')}
              bind:value={fields.email.value}
+             oninput={() => form.clearNotices()}
              {action}/>
     {/snippet}
   </InputAutocompletionWrapper>
@@ -54,27 +60,31 @@
          label="Пароль"
          type="password"
          placeholder="********"
-         classes={fields.password.validationClasses}
-         bind:value={fields.password.value}/>
+         classes={[fields.password.validationClasses, form.level].filter(Boolean).join(' ')}
+         bind:value={fields.password.value}
+         oninput={() => form.clearNotices()}/>
   <Notice bind:notices={fields.password.validationNotices}/>
 
   <Input id="user-password-repeat"
          label="Повторите пароль"
          type="password"
          placeholder="********"
-         classes={fields.passwordRepeat.validationClasses}
-         bind:value={fields.passwordRepeat.value}/>
+         classes={[fields.passwordRepeat.validationClasses, form.level].filter(Boolean).join(' ')}
+         bind:value={fields.passwordRepeat.value}
+         oninput={() => form.clearNotices()}/>
   <Notice bind:notices={fields.passwordRepeat.validationNotices}/>
 
   <Input id="user-invite-code"
          label="Код приглашения"
          maxlength="8"
          disabled={!!inviteCode}
-         classes={fields.inviteCode.validationClasses}
-         bind:value={fields.inviteCode.value}/>
-  <Notice notices={signUpFormService.inviteCodeNotices}/>
+         classes={[fields.inviteCode.validationClasses, form.level].filter(Boolean).join(' ')}
+         bind:value={fields.inviteCode.value}
+         oninput={() => form.clearNotices()}/>
+  <Notice notices={form.inviteCodeNotices}/>
 
-  <Button onclick={onFormSubmit} disabled={!signUpFormService.isValid}>Зарегистрироваться</Button>
+  <Notice bind:notices={form.notices}/>
+  <Button onclick={onFormSubmit} disabled={!form.isValid}>Зарегистрироваться</Button>
 </form>
 
 <style>

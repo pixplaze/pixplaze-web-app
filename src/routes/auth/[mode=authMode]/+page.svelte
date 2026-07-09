@@ -42,18 +42,14 @@
 
   const onSignIn = async (data) => {
     const accessToken = await authService.signIn(data);
-    if (accessToken) {
-      onAuthorized();
-    }
-    return accessToken;
+    if (!accessToken) throw new Error('Неверные учётные данные');
+    onAuthorized();
   };
 
   const onSignUp = async (data) => {
     const accessToken = await authService.signUp(data);
-    if (accessToken) {
-      onAuthorized();
-    }
-    return accessToken;
+    if (!accessToken) throw new Error('Не удалось создать аккаунт');
+    onAuthorized();
   };
 </script>
 

@@ -2,17 +2,12 @@
   import Rating from '$lib/components/Rating.svelte';
   import ButtonIcon from '$lib/components/ui/buttons/ButtonIcon.svelte';
   import MinecraftText from '$lib/components/ui/minecraft/MinecraftText.svelte';
-  import {formatNumber} from '$lib/scripts/util/utils.js';
-  import {createDistinctDebounce} from '$lib/scripts/util/utils.js';
+  import {copyToClipboard, createDistinctDebounce} from '$lib/scripts/util/utils.js';
   import {api} from '$lib/scripts/api/api.config.js';
 
   let {
     server
   } = $props();
-
-  const copyAddressToClipboard = async () => {
-    await navigator.clipboard.writeText(server.host);
-  };
 
   const rateServer = createDistinctDebounce((rating) => {
     console.log(server);
@@ -30,28 +25,39 @@
       <div class="description">
         <h2>{server.name}</h2>
         <p>{server.host}</p>
-        <MinecraftText text={server.motd} classes="motd" trim={true}/>
+<!--        <MinecraftText text={server.motd} classes="motd" trim={true}/>-->
         <Rating value={server.rating} onVoted={(rating) => rateServer.run(rating)}/>
       </div>
       <div class="buttons">
-        <ButtonIcon icon="more"/>
-        <ButtonIcon icon="copy" onclick={copyAddressToClipboard}/>
-        <ButtonIcon icons={["star", "star-filled"]}/>
+        <ButtonIcon icon="more" classes="transparent"/>
+        <ButtonIcon icon="copy" classes="transparent" onclick={() => copyToClipboard(server.host)}/>
+        <ButtonIcon icons={["star", "star-filled"]} classes="transparent"/>
       </div>
     </div>
   </div>
 
   {#if server.state || server.core || server.core?.version || server.state.players}
-    <div class="server-state">
-      <span class="state-info version">
-        {server.core?.version}
-      </span>
-      <span class="state-info online">
-        {#if server.state.players}
-          {formatNumber(server.state.players.online)}/{formatNumber(server.state.players.max)}
-        {/if}
-      </span>
+    <div class="server-state"
+         style="height: auto!important;
+                min-height: var(--ui-size-block);
+                padding: 10px;
+                background-color: #444444;
+                justify-content: center;
+                text-align: center;
+                border: var(--ui-size-border) solid #333333;"
+    >
+      <MinecraftText text={server.motd} classes="motd" trim={true}/>
     </div>
+<!--    <div class="server-state">-->
+<!--      <span class="state-info version">-->
+<!--        {server.core?.version}-->
+<!--      </span>-->
+<!--      <span class="state-info online">-->
+<!--        {#if server.state.players}-->
+<!--          {formatNumber(server.state.players.online)}/{formatNumber(server.state.players.max)}-->
+<!--        {/if}-->
+<!--      </span>-->
+<!--    </div>-->
   {/if}
 </div>
 <style>
@@ -83,6 +89,7 @@
     height: 100%;
     padding-bottom: var(--ui-size-shadow);
     border: var(--ui-size-border) solid var(--color-ui-border1);
+    border-left: none;
     box-shadow: inset 0 calc(-1 * var(--ui-size-shadow)) 0 0 var(--color-ui-shadow);
   }
 
@@ -135,7 +142,7 @@
         font-size: 12px;
       }
 
-      button.ui.interactive {
+      button.button.square.ui.interactive {
         background-color: transparent;
         color: var(--color-text-primary);
         border-color: transparent;

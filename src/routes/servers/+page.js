@@ -1,4 +1,4 @@
-import {api, apiConfig} from "$lib/scripts/api/api.config.js";
+import {api} from "$lib/scripts/api/api.config.js";
 
 export const ssr = true
 

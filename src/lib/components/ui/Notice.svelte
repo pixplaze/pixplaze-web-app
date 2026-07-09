@@ -11,7 +11,7 @@
     closeable = true,
     autoCloseAfter,
     classes = "",
-    onClose
+    onClose = () => {}
   } = $props();
 
   const enrichWithId = createIdEnricher();
@@ -26,12 +26,8 @@
   });
 
   const close = (id) => {
-    if (onClose) {
-      // Владелец массива (например, форма) сам решает, как удалить уведомление.
-      onClose(id);
-      return;
-    }
-    notices = [..._notices.filter(n => n.id !== id)];
+    onClose(id);
+    _notices = [..._notices.filter(n => n.id !== id)];
   }
 
 </script>

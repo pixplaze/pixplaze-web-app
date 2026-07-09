@@ -9,5 +9,6 @@ export class FormStore {
   constructor(data) {
     this.data = $state(data);
     this.isFormDataValid = $derived(isFormDataValid(this.data));
+    this.formNotices = $state([]);
   }
 }

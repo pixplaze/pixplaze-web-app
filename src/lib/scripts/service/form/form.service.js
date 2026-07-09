@@ -1,4 +1,5 @@
 import {FormStore} from "$lib/scripts/store/form/form.store.svelte.js";
+import {maxLevel} from "$lib/scripts/service/notice.service.js";
 
 /**
  * Базовый сервис формы: единый фасад над состоянием (стором) и схемами валидации.
@@ -7,11 +8,25 @@ import {FormStore} from "$lib/scripts/store/form/form.store.svelte.js";
 export class FormService {
   /**
    * @param {{data: object, isFormDataValid: boolean}} formSore реактивный store формы
-   * @param {Record<string, unknown>} schemas valibot-схемы по имени поля
    */
-  constructor(formSore, schemas) {
+  constructor(formSore) {
     this.formStore = formSore;
-    this.schemas = schemas;
+  }
+
+  pushNotice(notice) {
+    this.formStore.formNotices.push(notice);
+  }
+
+  clearNotices() {
+    this.formStore.formNotices = [];
+  }
+
+  get notices() {
+    return this.formStore.formNotices;
+  }
+
+  get level() {
+    return maxLevel(this.formStore.formNotices);
   }
 
   /**
@@ -20,11 +35,6 @@ export class FormService {
    */
   get fields() {
     return this.formStore.data;
-  }
-
-  /** Группа valibot-схем валидации по имени поля (статичны, не реактивны). */
-  get validations() {
-    return this.schemas;
   }
 
   /** Валидность формы (read-only, реактивно через $derived стора). */
@@ -59,8 +69,12 @@ export function createFormData(data) {
   return formStructure;
 }
 
-export function createForm(data) {
-  return new FormService(new FormStore(createFormData(data)), {});
+export function createFormStore(data) {
+  return new FormStore(createFormData(data));
+}
+
+export function createFormService(data) {
+  return new FormService(createFormStore(data));
 }
 
 export function isPropertyValid(property) {

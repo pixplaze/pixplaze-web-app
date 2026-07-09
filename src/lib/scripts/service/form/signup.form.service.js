@@ -25,7 +25,7 @@ class SignUpFormService extends FormService {
     const store = createSignUpFormStore(
       createFormData({ name, email, password, passwordRepeat, inviteCode: code })
     );
-    super(store, {});
+    super(store);
   }
 
   get inviteCodeNotices() {
