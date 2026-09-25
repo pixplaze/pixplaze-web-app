@@ -156,6 +156,7 @@ export const formatNumber = number => {
 
   return number;
 }
+
 export const copyToClipboard = async (value) => {
   if (navigator.clipboard) {
     await navigator.clipboard.writeText(value);
@@ -170,3 +171,7 @@ export const copyToClipboard = async (value) => {
   document.execCommand('copy');
   document.body.removeChild(el);
 };
+
+export const required = name => {
+  throw new Error(`Property '${name}' is required!`);
+}

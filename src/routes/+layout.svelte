@@ -198,8 +198,8 @@
     grid-area: main;
     display: flex;
     flex-direction: column;
-    overflow-x: clip;
-    touch-action: pan-y;
+    /*overflow-x: clip;*/
+    /*touch-action: pan-y;*/
   }
 
   :global(.page-backdrop) {
@@ -224,8 +224,8 @@
     }
 
     html, body {
-      overflow-x: hidden;
-      overscroll-behavior-x: none;
+      /*overflow-x: hidden;*/
+      /*overscroll-behavior-x: none;*/
     }
 
     body, #app {

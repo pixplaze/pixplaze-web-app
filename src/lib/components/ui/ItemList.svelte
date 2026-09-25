@@ -10,7 +10,7 @@
   {#each items as item}
     <li>
       <button class={classes} onclick={item.onClick}>
-        {@render listItem(item, onClick)}
+        {@render listItem(item, item.onClick)}
       </button>
     </li>
   {/each}

@@ -2,10 +2,13 @@ import {LEVEL} from "$lib/scripts/util/notice.util.js";
 import {createDebounce} from "$lib/scripts/util/utils.js";
 import {untrack} from "svelte";
 
+const isEmpty = (v) => v === '' || v === null || v === undefined;
+
 export class ValidationStore {
-  constructor(validateFn, initialValue = '') {
-    this.value = $state(initialValue);
-    this.isValid = $state(false);
+  constructor(validateFn, initial = '') {
+    this.initial = initial;
+    this.value = $state(initial);
+    this.isValid = $state(!isEmpty(initial));
     this.validationNotices = $state([]);
     this.validationClasses = $derived(computeClasses(this.validationNotices));
 
@@ -15,7 +18,7 @@ export class ValidationStore {
       const currentValue = this.value;
 
       await untrack(async () => {
-        if (!currentValue) {
+        if (isEmpty(currentValue)) {
           debounced.cancel();
           this.validationNotices = [];
           this.isValid = false;

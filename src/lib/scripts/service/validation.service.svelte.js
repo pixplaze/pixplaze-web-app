@@ -26,6 +26,10 @@ class ValidationService {
     }
   }
 
+  clear() {
+    this.#store.value = this.#store.initial;
+  }
+
   set value(value) {
     this.#store.value = value;
   }

@@ -10,7 +10,7 @@
     notices = $bindable(notice ? [notice] : []),
     closeable = true,
     autoCloseAfter,
-    classes = "",
+    classes = '',
     onClose = () => {}
   } = $props();
 
@@ -50,9 +50,9 @@
 <style>
   .notice {
     display: flex;
+    box-sizing: border-box;
     justify-content: space-between;
     align-items: center;
-    padding-left: 10px;
   }
 
   .notice.info {
@@ -70,51 +70,37 @@
     background-color: #ED0808;
   }
 
+  .notice-content {
+    text-align: justify;
+    padding: 5px 10px;
+    color: white;
+  }
+
   :global {
     .notice-content>svg {
       margin-right: 5px;
     }
-    .notice > button.button.tiny {
-      margin: calc(-1*var(--ui-size-border));
-      height: auto;
-      align-self: stretch;
-    }
 
-    .notice.warning {
-      > button.button.tiny {
-        &:hover {
-          /*border: var(--ui-size-border) solid #EFC500;*/
-          background-color: #ffdf4e;
-        }
+    .notice.warning > button.button.tiny {
+      &:hover {
+        background-color: #FFDF4E;
+      }
 
-        &:active {
-          border: var(--ui-size-border) solid #ffdf4e;
-          background-color: #EFC500;
-        }
+      &:active {
+        border: var(--ui-size-border) solid #FFDF4E;
+        background-color: #EFC500;
       }
     }
 
-    .notice.error {
-      > button.button.tiny {
-        &:hover {
-          /*border: var(--ui-size-border) solid #EFC500;*/
-          background-color: #FF0000;
-        }
+    .notice.error > button.button.tiny {
+      &:hover {
+        background-color: #FF0000;
+      }
 
-        &:active {
-          border: var(--ui-size-border) solid #FF0000;
-          background-color: var(--color-red-main);
-        }
+      &:active {
+        border: var(--ui-size-border) solid #FF0000;
+        background-color: var(--color-red-main);
       }
     }
-  }
-
-  p, svg {
-    color: white;
-  }
-
-  p {
-    padding-top: 5px;
-    padding-bottom: 5px;
   }
 </style>

@@ -54,6 +54,12 @@
       margin: 0;
     }
 
+    &.tiny {
+      height: auto;
+      margin: calc(-1 * var(--ui-size-border));
+      align-self: stretch;
+    }
+
     &.transparent {
       background-color: transparent;
       border-color: transparent;

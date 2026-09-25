@@ -1,6 +1,8 @@
 <script>
+  import {required} from "$lib/scripts/util/utils.js";
+
   let {
-    id = '',
+    id = required('id'),
     label = '',
     placeholder = '',
     type = 'text',
@@ -13,7 +15,8 @@
     oninput,
     onEnter = () => {},
     onFocus = () => {},
-    onBlur = () => {}
+    onBlur = () => {},
+    ...rest
   } = $props();
 
   let inputElement;
@@ -44,6 +47,7 @@
        {type}
        {maxlength}
        {disabled}
+       {...rest}
        class="ui interactive input {classes}"
        class:preview
        bind:value
@@ -92,10 +96,24 @@
     -webkit-text-fill-color: var(--color-text-primary);
   }
 
+  /* hide native browser spinner */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
   label {
-    width: 100%; order: -1;
+    /*width: 100%;*/
+    order: -1;
     display: block;
     padding-bottom: calc(var(--ui-spacing) / 2);
+    text-wrap: nowrap;
   }
 
   .ui.interactive.input.warning {

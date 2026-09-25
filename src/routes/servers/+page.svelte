@@ -4,6 +4,7 @@
   import {api} from '$lib/scripts/api/api.config.js';
   import {createDebounce} from '$lib/scripts/util/utils.js';
   import ServerBidForm from "$lib/components/ServerBidForm.svelte";
+  import Loader from "$lib/components/ui/Loader.svelte";
 
   let {data} = $props();
 
@@ -39,28 +40,40 @@
 </script>
 
 <section class="server-search">
-  <Input placeholder="Поиск серверов..." bind:value={searchQuery}/>
+  <h1>Поиск Minecraft серверов</h1>
+  <Input id="servers-search" placeholder="Поиск серверов..." bind:value={searchQuery}/>
+  <Loader loading={true}/>
 </section>
 <section class="server-bid-pane">
+  <h1>Подключить сервер</h1>
   <ServerBidForm/>
 </section>
 <section class="servers-pane">
-  {#each servers as server}
-    <ServerCard {server}/>
-  {/each}
+  <h1>Список Minecraft серверов</h1>
+  <div class="server-list">
+    {#each servers as server}
+      <ServerCard {server}/>
+    {/each}
+  </div>
 </section>
 
 <style>
-  .server-search {
+  section {
     padding-top: var(--ui-spacing);
   }
+  section > * {
+    padding-bottom: var(--ui-spacing);
+  }
 
-  .servers-pane {
+  .server-list {
     box-sizing: border-box;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr));
     gap: var(--ui-spacing);
     width: 100%;
+  }
+
+  .server-bid-pane {
     padding-top: var(--ui-spacing);
   }
 </style>

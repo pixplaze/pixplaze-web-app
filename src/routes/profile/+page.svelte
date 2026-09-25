@@ -13,8 +13,6 @@
   import OnlineIndicator from "$lib/components/ui/OnlineIndicator.svelte";
   import ButtonGroup from "$lib/components/ui/buttons/ButtonGroup.svelte";
   import Delimiter from "$lib/components/ui/Delimiter.svelte";
-  import Checkbox from "$lib/components/ui/inputs/Checkbox.svelte";
-  import Radio from "$lib/components/ui/inputs/Radio.svelte";
   import ProfileForm from "$lib/components/ProfileForm.svelte";
 
   const userCode = page.url.searchParams.get('userCode');
@@ -150,7 +148,6 @@
       display: block;
       /*padding-left: var(--ui-spacing);*/
       border-left: var(--ui-size-border) solid transparent;
-      display: block;
       padding-bottom: calc(var(--ui-spacing) / 2);
     }
   }

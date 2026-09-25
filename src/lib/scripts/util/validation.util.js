@@ -66,11 +66,11 @@ export const inviteCodeSchema = () => pipeAsync(
 // Регулярное выражение для проверки хоста/домена (например, mc.server.net)
 const HOST_REGEX = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}$/;
 
-export const hostSchema = () => pipe(
-    string('Адрес должен быть строкой'),
+export const hostSchema = (message) => pipe(
+    string(),
     trim(),
     union([
       pipe(string(), ip()),
       pipe(string(), regex(HOST_REGEX))
-    ], 'Введите корректный IP-адрес или доменное имя (например, mc.server.net)')
+    ], message)
 );
