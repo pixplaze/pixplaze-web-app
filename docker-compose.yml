@@ -1,7 +1,8 @@
 services:
   app:
-    image: pixplaze-web-app
-    build: .
+    # Образ собирается scripts/build-image.sh и переносится готовым (docker save/load) — см. README.
+    # Тег — из version.env: docker compose --env-file .env --env-file version.env up -d
+    image: pixplaze-web-app:${PIXPLAZE_TAG:-latest}
     container_name: pixplaze-web-app
     ports:
       - "3000:3000"

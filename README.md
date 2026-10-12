@@ -43,9 +43,11 @@ SVG из `resources/icons` собираются в `static/icons/sprite.svg` п�
 ## Сборка образа
 
 ```shell
-docker build --platform linux/amd64 -t pixplaze-web-app:latest --load .
-docker save pixplaze-web-app:latest | gzip > pixplaze-web-app.tar.gz
+scripts/build-image.sh             # PLATFORM=linux/arm64 — для другой архитектуры
 ```
+
+Собирает образ `pixplaze-web-app:<версия>` (версия — из `package.json`) и кладёт в `dist` всё для
+переноса: архив образа, `version.env` (`PIXPLAZE_TAG=<версия>`) и копию `docker-compose.yml`.
 
 Образ собирается из рабочей копии: незакоммиченные правки попадут в него. `.git` входит в контекст
 сборки ради версии и в итоговый образ не попадает.
@@ -53,18 +55,20 @@ docker save pixplaze-web-app:latest | gzip > pixplaze-web-app.tar.gz
 ## Запуск на удалённой машине
 
 ```shell
-scp pixplaze-web-app.tar.gz docker-compose.yml user@remote:/opt/pixplaze/app/
+scp dist/* user@remote:/opt/pixplaze/app/
 ```
 
-В `docker-compose.yml` задать `PUBLIC_PIXPLAZE_WEB_API_URL` — публичный адрес API.
+Рядом на удалённой машине — `.env` стенда с `PUBLIC_PIXPLAZE_WEB_API_URL`, публичным адресом API
+(не локальный `.env`: в нём адрес для разработки).
 
 ```shell
 cd /opt/pixplaze/app
-gunzip -c pixplaze-web-app.tar.gz | docker load
-docker compose up -d --no-build    # иначе compose соберёт образ по build: .
+gunzip -c pixplaze-web-app-<версия>.tar.gz | docker load
+docker compose --env-file .env --env-file version.env up -d
 ```
 
-Приложение слушает `3000`, compose публикует его на `80`.
+Без `version.env` compose возьмёт тег `latest`. Приложение слушает `3000`, compose публикует его
+на `3000`.
 
 ## Эксплуатация
 
