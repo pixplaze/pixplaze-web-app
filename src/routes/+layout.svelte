@@ -84,7 +84,9 @@
   #layout {
     min-height: -webkit-fill-available;
     display: grid;
-    grid-template-columns: auto 1fr;
+    /* minmax(0, 1fr), а не 1fr (= minmax(auto, 1fr)): колонка main не растягивается
+       по ширине содержимого и не выталкивает страницу за окно при открытой панели */
+    grid-template-columns: auto minmax(0, 1fr);
     grid-template-rows: auto 1fr;
 
     grid-template-areas: 'header header header'
@@ -195,6 +197,7 @@
 
   main {
     grid-area: main;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     /*overflow-x: clip;*/

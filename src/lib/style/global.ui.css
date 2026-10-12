@@ -1,12 +1,15 @@
+/* Скрыто визуально, доступно скринридерам. !important — чтобы стили компонентов
+   (например, label { width: 100% } в Input) не растягивали элемент за край страницы. */
 .hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  border: 0;
-  clip: rect(0 0 0 0);
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+  clip-path: inset(50%) !important;
 }
 
 .ui.interactive {
