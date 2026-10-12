@@ -7,7 +7,7 @@ import {
   passwordSchema,
   usernameSchema
 } from "$lib/scripts/util/validation.util.js";
-import {createValidationField} from "$lib/scripts/service/validation.service.svelte.js";
+import {createDependentValidationField, createValidationField} from "$lib/scripts/service/validation.service.svelte.js";
 import {voucherService} from "$lib/scripts/service/voucher.service.js";
 import {noticeService} from "$lib/scripts/service/notice.service.js";
 import {LEVEL} from "$lib/scripts/util/notice.util.js";
@@ -17,8 +17,8 @@ class SignUpFormService extends FormService {
     const name = createValidationField(usernameSchema(), '');
     const email = createValidationField(emailSchema(), '');
     const password = createValidationField(passwordSchema(), '');
-    const passwordRepeat = createValidationField(
-      passwordRepeatSchema(() => password.value), ''
+    const passwordRepeat = createDependentValidationField(
+      passwordRepeatSchema(() => password.value), () => password.value
     );
     const code = createValidationField(inviteCodeSchema(), inviteCode ?? '', v => this.showInviteCodeNotice(v));
 

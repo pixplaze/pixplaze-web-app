@@ -9,7 +9,7 @@ class UserService {
   constructor() {
     // authService.addAuthorizedEventHandler((token) => this.#handleAuthorizedEvent(token));
     // authService.addUnauthorizedEventHandler(() => this.#handleUnauthorizedEvent());
-    this.#store = createUserStore(token => this.#handleAuthorizedEvent(token));
+    this.#store = createUserStore(buildUserFromToken, user => this.#withProfile(user));
 
     const existingToken = authStore.getAccessToken();
     // this.#handleAuthorizedEvent(existingToken).then();
@@ -34,19 +34,19 @@ class UserService {
   }
 
   get username() {
-    console.log('username retrieved')
     return this.#store.user?.name || 'Профиль';
   }
 
-  async #handleAuthorizedEvent(token) {
-    if (!token) return null;
-    const user = buildUserFromToken(token);
-    const res = await api.get('/profiles/' + user.id);
-    if (!res.ok) return user;
-    const info = await res.json();
-    const {profile, ...extra} = info;
-    // console.log('user enriched...');
-    return {...user, ...profile, ...extra};
+  /** Пользователь из токена, дополненный профилем; при ошибке — как был. */
+  async #withProfile(user) {
+    try {
+      const res = await api.get('/profiles/' + user.id);
+      if (!res.ok) return user;
+      const {profile, ...extra} = await res.json();
+      return {...user, ...profile, ...extra};
+    } catch {
+      return user;
+    }
   }
 }
 

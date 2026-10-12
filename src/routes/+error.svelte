@@ -5,14 +5,10 @@
 
   console.error(page.error);
   const getMessageByCode = c => {
-    switch (c) {
-      case 404:
-        return 'То, что вы пытаетесь найти, унёс Эндермен...';
-      case 500:
-        return 'Кажется, что-то отвалилось...';
-      default:
-        return 'Что-то пошло не так...'
-    }
+    if (c === 404) return 'То, что вы пытаетесь найти, унёс Эндермен...';
+    if (c >= 500) return 'Кажется, что-то отвалилось...';
+
+    return 'Что-то совсем худо!'
   }
 </script>
 
@@ -20,7 +16,7 @@
   <section id="art">
     {#if page.status === 404}
       <ArtEnderman404/>
-    {:else if page.status === 500}
+    {:else if page.status >= 500}
       <ArtAlex500/>
     {:else}
       <p>Неизвестная ошибка!</p>

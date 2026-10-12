@@ -1,17 +1,17 @@
 import {api} from '$lib/scripts/api/api.config.js';
-
-/** Сообщение из ErrorResponse API; если тело не JSON — сам текст. */
-export async function errorMessage(res) {
-  const text = await res.text();
-  try {
-    return JSON.parse(text).message ?? text;
-  } catch {
-    return text;
-  }
-}
+import {mapServer} from '$lib/scripts/util/server.mapper.js';
 
 /** Заявки на регистрацию серверов: свои — для пользователя, все — для админа. */
 class ServerBidService {
+  /**
+   * Подать заявку на подключение сервера.
+   * @returns {Promise<{inviteCode: string, preview: object}>} код заявки и превью карточки
+   */
+  async submit(request) {
+    const bid = await api.json(await api.post('/servers/bids', {body: JSON.stringify(request)}));
+    return {inviteCode: bid.inviteCode, preview: mapServer(bid.preview)};
+  }
+
   /** Заявки текущего пользователя, новые первыми. */
   fetchMine() {
     return this.#get('/servers/bids');
@@ -33,14 +33,11 @@ class ServerBidService {
   }
 
   async #get(endpoint) {
-    const res = await api.get(endpoint);
-    if (!res.ok) throw new Error(await errorMessage(res));
-    return res.json();
+    return api.json(await api.get(endpoint));
   }
 
   async #post(endpoint) {
-    const res = await api.post(endpoint);
-    if (!res.ok) throw new Error(await errorMessage(res));
+    await api.ensureOk(await api.post(endpoint));
   }
 }
 

@@ -1,5 +1,5 @@
 <script>
-  import {createValidationField} from '$lib/scripts/service/validation.service.svelte.js';
+  import {createDependentValidationField, createValidationField} from '$lib/scripts/service/validation.service.svelte.js';
   import {emailSchema, passwordRepeatSchema, passwordSchema, usernameSchema} from '$lib/scripts/util/validation.util.js';
   import PreviewInput from '$lib/components/ui/PreviewInput.svelte';
   import Notice from '$lib/components/ui/Notice.svelte';
@@ -9,7 +9,7 @@
   const name = createValidationField(usernameSchema(), user.name);
   const email = createValidationField(emailSchema(), user.email);
   const password = createValidationField(passwordSchema(), '');
-  const passwordRepeat = createValidationField(passwordRepeatSchema(() => password.value), '');
+  const passwordRepeat = createDependentValidationField(passwordRepeatSchema(() => password.value), () => password.value);
 
   let isPasswordEdit = $state(false);
 </script>

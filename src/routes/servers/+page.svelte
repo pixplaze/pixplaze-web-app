@@ -1,31 +1,33 @@
 <script>
   import ServerCard from '$lib/components/ServerCard.svelte';
   import Input from '$lib/components/ui/inputs/Input.svelte';
-  import {api} from '$lib/scripts/api/api.config.js';
   import {createDebounce} from '$lib/scripts/util/utils.js';
   import ServerBidForm from "$lib/components/ServerBidForm.svelte";
   import Loader from "$lib/components/ui/Loader.svelte";
-  import {mapServer} from '$lib/scripts/util/server.mapper.js';
+  import {serverService} from '$lib/scripts/service/server.service.js';
+  import {appNotificationService} from '$lib/scripts/service/app.notification.service.js';
 
   let {data} = $props();
 
-  let servers = $state(data.servers.map(mapServer));
+  let servers = $state(data.servers);
   let searchQuery = $state('');
 
   const searchDebounce = createDebounce(async (query, signal) => {
-    const res = await api.get(`/servers?search=${encodeURIComponent(query.trim())}`, {signal});
-    if (res.ok) {
-      servers = (await res.json()).map(mapServer);
-    }
+    servers = await serverService.search(query, signal);
   }, 300);
 
   $effect(() => {
     if (!searchQuery.trim()) {
       searchDebounce.cancel();
-      servers = data.servers.map(mapServer);
+      servers = data.servers;
       return;
     }
-    searchDebounce.run(searchQuery);
+    searchDebounce.run(searchQuery).catch((e) => {
+      // Отменённый устаревший запрос (ввод продолжился) — не ошибка
+      if (e.name !== 'AbortError') {
+        appNotificationService.error('Не удалось выполнить поиск');
+      }
+    });
   });
 </script>
 

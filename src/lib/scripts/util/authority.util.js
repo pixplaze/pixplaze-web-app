@@ -25,7 +25,7 @@ const role = {
       case 'RMCS':
       case 'MINECRAFT_SERVER':
         return role.MINECRAFT_SERVER;
-      default: throw new Error(`No such role: '${code}'!`);
+      default: return null;
     }
   }
 }
@@ -51,10 +51,19 @@ const source = {
 }
 }
 
+/** Роль по коду; неизвестную (бэкенд новее фронта) пропускаем, а не роняем разбор токена. */
+const knownRole = (code) => {
+  const known = role.of(code);
+  if (!known) {
+    console.warn(`Unknown role code: ${code}`);
+  }
+  return known;
+}
+
 export const parse = (jwt) => {
   return {
     source: jwt.src,
     target: jwt.aud,
-    roles: jwt.rls.map(i => role.of(i))
+    roles: (jwt.rls ?? []).map(knownRole).filter(Boolean)
   }
 }

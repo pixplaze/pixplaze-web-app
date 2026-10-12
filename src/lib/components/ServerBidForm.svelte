@@ -1,6 +1,5 @@
 <script>
   import {copyToClipboard} from '$lib/scripts/util/utils.js';
-  import {api} from '$lib/scripts/api/api.config.js';
   import {noticeService} from '$lib/scripts/service/notice.service.js';
   import {LEVEL} from '$lib/scripts/util/notice.util.js';
   import {ServerBidFormService} from '$lib/scripts/service/form/serverbid.form.service.js';
@@ -9,8 +8,7 @@
   import Button from '$lib/components/ui/buttons/Button.svelte';
   import ButtonIcon from '$lib/components/ui/buttons/ButtonIcon.svelte';
   import Checkbox from '$lib/components/ui/inputs/Checkbox.svelte';
-  import {mapServer} from '$lib/scripts/util/server.mapper.js';
-  import {errorMessage} from '$lib/scripts/service/server.bid.service.js';
+  import {serverBidService} from '$lib/scripts/service/server.bid.service.js';
 
   const {
     onSubmit = () => {}
@@ -33,11 +31,9 @@
     if (!form.isValid) return;
     try {
       const request = form.toRequest();
-      const res = await api.post('/servers/bids', {body: JSON.stringify(request)});
-      if (!res.ok) throw new Error(await errorMessage(res));
-      const bid = await res.json();
+      const bid = await serverBidService.submit(request);
       inviteCode = bid.inviteCode;
-      preview = mapServer(bid.preview);
+      preview = bid.preview;
       codeForIntegration = request.isIntegration;
       await onSubmit(request);
     } catch (e) {

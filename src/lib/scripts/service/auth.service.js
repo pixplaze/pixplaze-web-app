@@ -23,29 +23,35 @@ class AuthService {
   }
 
   /**
-   * Вызывается клиентом при ответе 401. Возвращает новый access-токен,
-   * по которому исходный запрос будет повторён.
+   * Вызывается клиентом при ответе 401. Возвращает новый access-токен, по которому
+   * исходный запрос будет повторён, или null — тогда клиент отдаёт исходный ответ 401.
+   * Отказ сервера в refresh (сессия истекла/отозвана) — выход; сетевая ошибка — токен
+   * не трогаем, следующий запрос попробует обновить его снова.
    */
   async handleUnauthorized() {
     // Если обновление уже идёт — ждём его результата
     if (this.isRefreshing) {
-      return this.addRefreshedEventHandler(token => token);
+      return this.addRefreshedEventHandler();
     }
 
     this.isRefreshing = true;
+    let newAccessToken = null;
 
     try {
-      const newAccessToken = await this.refresh();
+      newAccessToken = await this.refresh();
+      if (newAccessToken) {
+        this.#handleAuthorizedEvent(newAccessToken);
+      } else {
+        await this.signOut();
+      }
+    } catch {
+      // Сеть недоступна: сессию не завершаем
+    } finally {
       this.isRefreshing = false;
-      this.#handleAuthorizedEvent(newAccessToken);
       this.#handleRefreshedEvent(newAccessToken);
-      return newAccessToken;
-    } catch (refreshError) {
-      this.isRefreshing = false;
-      this.#rejectRefreshedEvent(refreshError);
-      await this.signOut();
-      throw refreshError;
     }
+
+    return newAccessToken;
   }
 
   /** Авторизован ли пользователь (read-only, реактивно через authStore). */
@@ -76,24 +82,32 @@ class AuthService {
   }
 
   async signOut() {
-    await api.post('/auth/sign-out');
-    authStore.clearAccessToken();
-    // this.#handleUnauthorizedEvent();
+    try {
+      await api.post('/auth/sign-out');
+    } catch {
+      // Сервер недоступен — локально выходим всё равно
+    } finally {
+      authStore.clearAccessToken();
+    }
   }
 
+  /**
+   * Обновить access-токен по refresh-куке.
+   * @returns {Promise<string|null>} новый токен или null, если сервер отказал
+   * @throws {TypeError} при сетевой ошибке (сервер недоступен)
+   */
   async refresh() {
     const res = await fetch(`${apiConfig.url}/auth/refresh`, {
       method: 'POST',
       credentials: 'include', // Обязательно для отправки куки
     });
 
-    if (!res.ok) throw new Error('Refresh session failed');
-
-    const data = await res.json();
-    if (res.ok && data.accessToken) {
-      // this.#handleAuthorizedEvent(data.accessToken);
+    if (!res.ok) {
+      return null;
     }
-    return data.accessToken;
+
+    const data = await res.json().catch(() => ({}));
+    return data.accessToken || null;
   }
 
   /**
@@ -138,20 +152,13 @@ class AuthService {
   //   this.unauthorizedEventSubscribers.push(onUnauthorized);
   // }
 
-  // Подписка на завершение обновления токена
-  addRefreshedEventHandler(onRefreshed) {
-    return new Promise((resolve, reject) => {
-      this.refreshSubscribers.push({ resolve, reject });
-    }).then(onRefreshed);
+  // Подписка на завершение обновления токена: резолвится новым токеном или null
+  addRefreshedEventHandler() {
+    return new Promise(resolve => this.refreshSubscribers.push(resolve));
   }
 
   #handleRefreshedEvent(token) {
-    this.refreshSubscribers.forEach(({ resolve }) => resolve(token));
-    this.refreshSubscribers = [];
-  }
-
-  #rejectRefreshedEvent(error) {
-    this.refreshSubscribers.forEach(({ reject }) => reject(error));
+    this.refreshSubscribers.forEach(resolve => resolve(token));
     this.refreshSubscribers = [];
   }
 }

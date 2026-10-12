@@ -1,32 +1,23 @@
 import {LEVEL} from "$lib/scripts/util/notice.util.js";
-import {createDebounce} from "$lib/scripts/util/utils.js";
 import {untrack} from "svelte";
 
-const isEmpty = (v) => v === '' || v === null || v === undefined;
-
+/**
+ * Состояние поля с валидацией. При каждом изменении {@link value} сразу зовёт
+ * {@link onChange}: проверку и показ результата решает сервис. Если задан
+ * {@link dependsOn}, его изменение тоже вызывает onChange с текущим значением.
+ */
 export class ValidationStore {
-  constructor(validateFn, initial = '') {
+  constructor(onChange, initial = '', dependsOn = null) {
     this.initial = initial;
     this.value = $state(initial);
-    this.isValid = $state(!isEmpty(initial));
+    this.isValid = $state(false);
     this.validationNotices = $state([]);
     this.validationClasses = $derived(computeClasses(this.validationNotices));
 
-    const debounced = createDebounce(validateFn, 1000);
-
-    $effect(async () => {
+    $effect(() => {
       const currentValue = this.value;
-
-      await untrack(async () => {
-        if (isEmpty(currentValue)) {
-          debounced.cancel();
-          this.validationNotices = [];
-          this.isValid = false;
-          return;
-        }
-
-        await debounced.run(currentValue);
-      });
+      dependsOn?.();
+      untrack(() => onChange(currentValue));
     });
   }
 }
@@ -36,6 +27,3 @@ function computeClasses(notices) {
       .filter((v, i, s) => s.indexOf(v) === i && v !== LEVEL.INFO)
       .join(' ');
 }
-
-export const createValidationStore = (validateFn, initialValue = '') =>
-    new ValidationStore(validateFn, initialValue);

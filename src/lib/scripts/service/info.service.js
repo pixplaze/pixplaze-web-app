@@ -1,5 +1,4 @@
 import {api} from '$lib/scripts/api/api.config.js';
-import {errorMessage} from '$lib/scripts/service/server.bid.service.js';
 
 /**
  * Служебная информация о приложении (GET /info/* в web-api).
@@ -11,9 +10,7 @@ class InfoService {
   appVersion = __APP_VERSION__;
 
   async fetchApiVersion() {
-    const res = await api.get('/info/version');
-    if (!res.ok) throw new Error(await errorMessage(res));
-    return res.json();
+    return api.json(await api.get('/info/version'));
   }
 }
 

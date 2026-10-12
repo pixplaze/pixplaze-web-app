@@ -4,7 +4,8 @@
   import MinecraftText from '$lib/components/ui/minecraft/MinecraftText.svelte';
   import {copyToClipboard, createDistinctDebounce} from '$lib/scripts/util/utils.js';
   import {formatNumber} from '$lib/scripts/util/utils.js';
-  import {api} from '$lib/scripts/api/api.config.js';
+  import {serverService} from '$lib/scripts/service/server.service.js';
+  import {appNotificationService} from '$lib/scripts/service/app.notification.service.js';
 
   let {
     server
@@ -18,10 +19,15 @@
     setTimeout(() => copied = false, 1500);
   };
 
-  const rateServer = createDistinctDebounce((rating) => {
-    console.log(server);
-    api.post(`/servers/rate/${server.id}?rating=${rating}`);
-  }, 1000);
+  const rateServer = createDistinctDebounce((rating) => serverService.rate(server.id, rating), 1000);
+
+  const onVoted = (rating) => {
+    rateServer.run(rating).catch((e) => {
+      if (e.name !== 'AbortError') {
+        appNotificationService.error('Не удалось сохранить оценку');
+      }
+    });
+  };
 
   </script>
 
@@ -35,7 +41,7 @@
         <h2>{server.name}</h2>
         <p>{server.host}</p>
         <MinecraftText text={server.motd} classes="motd" trim={true}/>
-        <Rating value={server.rating} onVoted={(rating) => rateServer.run(rating)}/>
+        <Rating value={server.rating} {onVoted}/>
       </div>
       <div class="buttons">
         <ButtonIcon icon="more" classes="transparent"/>

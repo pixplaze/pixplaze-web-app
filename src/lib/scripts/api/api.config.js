@@ -27,7 +27,12 @@ class ApiClient {
     this.unauthorizedHandler = handler;
   }
 
-  async request(endpoint, options = {}) {
+  /**
+   * @param {string} endpoint путь относительно {@link baseUrl}
+   * @param {RequestInit & {fetch?: typeof fetch}} [options] `fetch` — реализация запроса,
+   *        например `fetch` из `load` SvelteKit: ответ SSR переиспользуется при гидрации
+   */
+  async request(endpoint, {fetch: doFetch = fetch, ...options} = {}) {
     const url = `${this.baseUrl}${endpoint}`;
 
     // Добавляем заголовки по умолчанию
@@ -45,7 +50,7 @@ class ApiClient {
     // Важно для работы с HttpOnly Cookie (Refresh Token)
     options.credentials = 'include';
 
-    const response = await fetch(url, options);
+    const response = await doFetch(url, options);
 
     // Обработка 401 (Токен истёк) — делегируем разрешение токена сервису
     if (
@@ -61,11 +66,31 @@ class ApiClient {
       if (newAccessToken) {
         // Повторяем исходный запрос с новым токеном
         options.headers['Authorization'] = `Bearer ${newAccessToken}`;
-        return await fetch(url, options);
+        return await doFetch(url, options);
       }
     }
 
     return response;
+  }
+
+  /**
+   * Тело успешного ответа как JSON.
+   * @throws {Error} при `!res.ok` — с сообщением из ErrorResponse API
+   */
+  async json(res) {
+    await this.ensureOk(res);
+    return res.json();
+  }
+
+  /**
+   * Проверка ответа без тела (POST-действия и т.п.).
+   * @throws {Error} при `!res.ok` — с сообщением из ErrorResponse API
+   */
+  async ensureOk(res) {
+    if (!res.ok) {
+      throw new Error(await errorMessage(res));
+    }
+    return res;
   }
 
   async get(endpoint, options = {}) {
@@ -82,6 +107,16 @@ class ApiClient {
 
   async delete(endpoint, options = {}) {
     return await this.request(endpoint, {method: 'DELETE', ...options})
+  }
+}
+
+/** Сообщение из ErrorResponse API; если тело не JSON — сам текст, если пусто — статус. */
+async function errorMessage(res) {
+  const text = await res.text();
+  try {
+    return JSON.parse(text).message ?? text;
+  } catch {
+    return text || `HTTP ${res.status}`;
   }
 }
 
