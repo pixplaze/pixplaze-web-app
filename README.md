@@ -1,38 +1,72 @@
-# create-svelte
+# Pixplaze Web App
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Веб-клиент Pixplaze: вход и регистрация, профиль, листинг серверов, заявки на подключение,
+подтверждение OAuth 2.0 Device Flow. Работает поверх [pixplaze-web-api](../pixplaze-web-api).
 
-## Creating a project
+## Стек
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **SvelteKit 2**, **Svelte 5**, **Vite 8**, `adapter-node`; SPA (`ssr = false`)
+- PostCSS (nesting, custom media), Valibot, SVGO (спрайт иконок)
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## Требования
 
-# create a new project in my-app
-npm create svelte@latest my-app
+- **Машина сборки:** Node.js 24, npm, Docker. Git нужен для версии сборки (см. ниже).
+- **Удалённая машина:** Docker + Docker Compose.
+
+## Конфигурация
+
+| Переменная                    | Назначение                                                                    |
+|-------------------------------|-------------------------------------------------------------------------------|
+| `PUBLIC_PIXPLAZE_WEB_API_URL` | адрес API, по которому ходит **браузер** (не `localhost` на стенде), с CORS |
+
+Читается в рантайме: локально — из `.env`, в контейнере — из `environment` в `docker-compose.yml`.
+Образ от адреса API не зависит.
+
+## Версия сборки
+
+В боковой панели перед «выйти» — таблица версий APP и API: коммит, тег, время сборки.
+Версия APP вшивается при сборке (`vite.config.js`): коммит и тег — из git, при отсутствии тега
+на коммите — `version` из `package.json`. Версия API — `GET /info/version`.
+
+Повышать версию: `npm version <x.y.z> --no-git-tag-version` — обновит `package.json` и `package-lock.json`
+без коммита и тега.
+
+## Локальный запуск
+
+```shell
+npm ci
+npm run dev        # http://localhost:5173, доступен в LAN
 ```
 
-## Developing
+SVG из `resources/icons` собираются в `static/icons/sprite.svg` при старте и при изменении иконок.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Сборка образа
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```shell
+docker build --platform linux/amd64 -t pixplaze-web-app:latest --load .
+docker save pixplaze-web-app:latest | gzip > pixplaze-web-app.tar.gz
 ```
 
-## Building
+Образ собирается из рабочей копии: незакоммиченные правки попадут в него. `.git` входит в контекст
+сборки ради версии и в итоговый образ не попадает.
 
-To create a production version of your app:
+## Запуск на удалённой машине
 
-```bash
-npm run build
+```shell
+scp pixplaze-web-app.tar.gz docker-compose.yml user@remote:/opt/pixplaze/app/
 ```
 
-You can preview the production build with `npm run preview`.
+В `docker-compose.yml` задать `PUBLIC_PIXPLAZE_WEB_API_URL` — публичный адрес API.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+```shell
+cd /opt/pixplaze/app
+gunzip -c pixplaze-web-app.tar.gz | docker load
+docker compose up -d --no-build    # иначе compose соберёт образ по build: .
+```
+
+Приложение слушает `3000`, compose публикует его на `80`.
+
+## Эксплуатация
+
+- Ошибка CORS — origin фронта не совпадает с `PIXPLAZE_WEB_APP_URL` в `.env` API.
+- `ORIGIN` (adapter-node) — публичный адрес приложения, в compose закомментирован.

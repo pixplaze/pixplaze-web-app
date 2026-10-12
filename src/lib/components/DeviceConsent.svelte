@@ -34,7 +34,7 @@
 
   const title = $derived(TITLES[info?.type] ?? 'Подтверждение входа устройства');
 
-  const imageBase64 = $derived(details.skinHeadBase64 ?? details.icon ?? null);
+  const imageBase64 = $derived(details.skinHeadBase64 ?? details.iconBase64 ?? null);
   const imageSrc = $derived(parseImageBase64(imageBase64));
   // Голова скина — пиксель-арт: рисуем без сглаживания.
   const isPixelated = $derived(!!details.skinHeadBase64);

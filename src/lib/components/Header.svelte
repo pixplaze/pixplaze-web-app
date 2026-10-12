@@ -7,7 +7,8 @@
     onButtonMap,
     onButtonSearch,
     onButtonChat,
-    onButtonFavorite
+    onButtonFavorite,
+    showFavorite = false
   } = $props();
 </script>
 
@@ -29,9 +30,14 @@
                 classes={"transparent"}
                 onclick={onButtonConsole}/>
   </nav>
-  <ButtonIcon icon={"star"}
-              classes="transparent"
-              onclick={onButtonFavorite}/>
+  {#if showFavorite}
+    <ButtonIcon icon={"star"}
+                classes="transparent"
+                onclick={onButtonFavorite}/>
+  {:else}
+    <!-- Место кнопки сохраняем, чтобы навигация не съезжала при входе и выходе. -->
+    <div class="header-placeholder"></div>
+  {/if}
 </div>
 
 <style>
@@ -48,5 +54,9 @@
 
   nav {
     display: flex;
+  }
+
+  .header-placeholder {
+    flex: 0 0 var(--ui-size-block);
   }
 </style>

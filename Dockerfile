@@ -3,6 +3,9 @@ FROM node:24-alpine AS builder
 
 WORKDIR /app
 
+# git нужен vite.config.js для версии сборки (коммит, тег); .git входит в контекст.
+RUN apk add --no-cache git
+
 # Сначала только манифесты — кэш слоя npm не инвалидируется при правках кода.
 COPY package*.json ./
 RUN npm ci

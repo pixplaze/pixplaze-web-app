@@ -7,6 +7,8 @@ export const ROUTES = {
   serversMap: '/servers/map',
   serversList: '/servers',
   serversChat: '/servers/chat',
+  // Заявки на регистрацию серверов: свои — пользователю, все — админу.
+  serversBids: '/servers/bids',
 
   signIn: '/auth/sign-in',
   // Параметризованный маршрут авторизации: '/auth/sign-in' | '/auth/sign-up'.

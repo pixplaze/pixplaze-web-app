@@ -5,19 +5,9 @@
   import {createDebounce} from '$lib/scripts/util/utils.js';
   import ServerBidForm from "$lib/components/ServerBidForm.svelte";
   import Loader from "$lib/components/ui/Loader.svelte";
+  import {mapServer} from '$lib/scripts/util/server.mapper.js';
 
   let {data} = $props();
-
-  const mapServer = s => ({
-    id: s.id,
-    name: s.name,
-    host: s.host,
-    image: s.iconBase64,
-    motd: s.motd,
-    core: s.core,
-    state: s.state,
-    rating: s.rating
-  });
 
   let servers = $state(data.servers.map(mapServer));
   let searchQuery = $state('');

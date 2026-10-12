@@ -4,7 +4,7 @@
   import {goto, replaceState} from "$app/navigation";
   import {page} from "$app/state";
   import Header from "$lib/components/Header.svelte";
-  import ServerRow from "$lib/components/ServerRow.svelte";
+  import FavoriteServerList from "$lib/components/FavoriteServerList.svelte";
   import Sidebar from "$lib/components/Sidebar.svelte";
   import Backdrop from "$lib/components/ui/Backdrop.svelte";
   import '$lib/style/global.css';
@@ -55,16 +55,15 @@
             {onButtonSearch}
             {onButtonChat}
             {onButtonFavorite}
+            showFavorite={pageService.isAuthenticated}
     />
-    <!--{#if isFavoriteServersExpanded}-->
-    <div class="favorite-servers-menu debug">
-      <div class="favorite-servers" class:expanded={pageService.isFavoriteServersExpanded}>
-        {#each Array(40) as _, i}
-          <ServerRow name={`Сервер ${i + 1}`}/>
-        {/each}
+    {#if pageService.isAuthenticated}
+      <div class="favorite-servers-menu debug">
+        <div class="favorite-servers" class:expanded={pageService.isFavoriteServersExpanded}>
+          <FavoriteServerList expanded={pageService.isFavoriteServersExpanded}/>
+        </div>
       </div>
-    </div>
-    <!--{/if}-->
+    {/if}
   </header>
   <aside class:expanded={pageService.isAsideExpanded} class="debug">
     <div class="aside-host">

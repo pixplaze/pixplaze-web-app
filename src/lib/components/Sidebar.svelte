@@ -4,6 +4,7 @@
   import {pageService} from "$lib/scripts/service/page.service.js";
   import {userService} from "$lib/scripts/service/user.service.js";
   import ItemList from "$lib/components/ui/ItemList.svelte";
+  import AppVersion from "$lib/components/AppVersion.svelte";
 
   // Реальный функционал — он уже реализован в сервисах.
   const onButtonTheme = () => pageService.toggleTheme();
@@ -19,6 +20,13 @@
       pageService.toggleAside();
     }
     pageService.goToProfile();
+  }
+
+  const onButtonBids = () => {
+    if (pageService.isMobileLayout()) {
+      pageService.toggleAside();
+    }
+    pageService.goToServersBids();
   }
 
   // Заглушки: функционал ещё не реализован, поэтому ничего не вызываем.
@@ -38,6 +46,8 @@
 
   const menuItems = $derived([
     {item: userService.username, icon: 'profile', onClick: onButtonProfile},
+    // Админ видит все заявки, остальные — свои: страница выбирает вид по роли.
+    {item: 'Заявки', icon: 'plugin', onClick: onButtonBids},
     {item: 'Настройки', icon: 'settings', onClick: onButtonSettings},
     {item: 'Помощь', icon: 'question', onClick: onButtonHelp},
     {item: 'Сменить тему', icon: themeIcon, onClick: onButtonTheme},
@@ -52,6 +62,8 @@
       <Icon {icon}/>{item}
     {/snippet}
   </ItemList>
+
+  <AppVersion/>
 
   <Button classes="sidebar-button sidebar-button--danger" onclick={onButtonSignOut}>
     выйти<Icon icon="sign-out"/>
@@ -75,6 +87,13 @@
 
     .sidebar ul {
       flex: 1 1 auto;
+    }
+
+    .app-version {
+      border: var(--ui-size-border) solid var(--color-ui-shadow);
+      /* border-top: var(--ui-size-border) solid var(--color-ui-shadow); */
+      border-top: none;
+      border-bottom: none;
     }
   }
 </style>

@@ -106,6 +106,7 @@ class PageService {
   goToServersMap()     { this.navigate(ROUTES.serversMap); }
   goToServersList()    { this.navigate(ROUTES.serversList); }
   goToServersChat()    { this.navigate(ROUTES.serversChat); }
+  goToServersBids()    { this.navigate(ROUTES.serversBids); }
   goToProfile()        { this.navigate(ROUTES.profile); }
 
   /** Отразить активную форму авторизации в URL без добавления записи в историю. */

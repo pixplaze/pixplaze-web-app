@@ -109,7 +109,7 @@
   }
 
   label {
-    /*width: 100%;*/
+    width: 100%;
     order: -1;
     display: block;
     padding-bottom: calc(var(--ui-spacing) / 2);
