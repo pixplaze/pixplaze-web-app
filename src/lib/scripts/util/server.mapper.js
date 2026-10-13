@@ -18,6 +18,19 @@ export function gameAddress(hosts) {
   return formatAddress(host.address, host.port);
 }
 
+/**
+ * Адрес `address:port` записи нужного типа из `hosts`: MAP — веб-карта, API — плагин Pixplaze
+ * (консоль и чат).
+ *
+ * @param {{address: string, port: number, type: string}[] | null | undefined} hosts
+ * @param {'MAP' | 'API'} type
+ * @returns {string | null} адрес или null, если сервер такой записи не объявил
+ */
+export function hostAddress(hosts, type) {
+  const host = hosts?.find(h => h.type === type);
+  return host ? `${host.address}:${host.port}` : null;
+}
+
 const BID_STATUS_LABELS = {
   PENDING: 'На рассмотрении',
   APPROVED: 'Подтверждена',
@@ -46,6 +59,7 @@ export const mapServer = s => ({
   id: s.id,
   name: s.name,
   host: gameAddress(s.hosts),
+  hosts: s.hosts ?? [],
   image: s.iconBase64,
   motd: s.motd,
   core: s.core,

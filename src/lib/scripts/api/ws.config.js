@@ -39,7 +39,10 @@ export const createWebSocket = (host, path, type) => {
       connection.onerror = config.onerror;
     },
     close() {
-      invokeIfConnectionOpened(connection.close);
+      // До open() вместо подключения — пустой объект, после close() — null: закрывать нечего
+      if (connection instanceof WebSocket) {
+        connection.close();
+      }
       connection = null;
     },
     send(data) {

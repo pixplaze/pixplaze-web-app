@@ -10,27 +10,16 @@
   } = $props();
 
   const dropdown = new HoverDropdown(0);
-  let suggestions = $derived(
-    getSuggestions(value).map(suggestion => ({
-      item: suggestion,
-      onClick: () => selectSuggestion(suggestion)
-    }))
-  );
+  const suggestions = $derived(getSuggestions(value));
   let isVisible = $derived(suggestions.length > 0 && (dropdown.isInFocus || dropdown.isMouseInside));
-
-  function selectSuggestion(suggestion) {
-    value = suggestion;
-  }
 </script>
 
 <div class="dropdown-container">
   {@render children({action: dropdown.trigger})}
   {#if isVisible}
     <div use:dropdown.menu class="dropdown-inner">
-      <ItemList items={suggestions} classes="dropdown-item" onClick={(menuItem) => menuItem.onClick()}>
-        {#snippet listItem({item: suggestion, onClick})}
-          {suggestion}
-        {/snippet}
+      <ItemList items={suggestions} onselect={(suggestion) => value = suggestion}>
+        {#snippet children(suggestion)}{suggestion}{/snippet}
       </ItemList>
     </div>
   {/if}

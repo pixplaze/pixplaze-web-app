@@ -1,11 +1,9 @@
 <script>
   import {onMount} from 'svelte';
-  import {authService} from '$lib/scripts/service/auth.service.js';
-  import {POLL_STATUS} from '$lib/scripts/service/device.authorization.service.js';
+  import {DeviceAuthorizationFlow, POLL_STATUS} from './DeviceAuthorization.svelte.js';
   import QrCode from '$lib/components/QrCode.svelte';
   import Button from '$lib/components/ui/buttons/Button.svelte';
-  import {LEVEL} from '$lib/scripts/util/notice.util.js';
-  import {noticeService} from "$lib/scripts/service/notice.service.js";
+  import {createNotice, LEVEL} from '$lib/scripts/util/notice.util.js';
   import Notice from "$lib/components/ui/Notice.svelte";
 
   /**
@@ -13,9 +11,9 @@
    * показывает его + QR на `verification_uri_complete` и поллит token-эндпоинт до выдачи
    * токенов. Подтверждение приходит со стороннего (уже авторизованного) устройства.
    *
-   * Свой экземпляр DAF на компонент (`authService.createDeviceAuthorization()`); здесь —
-   * UI и привязка lifecycle (старт в onMount, стоп при размонтировании). `onAuthorized`
-   * передаётся в `startLogin` и зовётся ИМПЕРАТИВНО в момент прихода токенов — поэтому
+   * Свой экземпляр DAF на компонент ({@link DeviceAuthorizationFlow}); здесь — UI и
+   * привязка lifecycle (старт в onMount, стоп при размонтировании). `onAuthorized`
+   * передаётся во флоу и зовётся ИМПЕРАТИВНО в момент прихода токенов — поэтому
    * срабатывает даже если компонент размонтируется фактом авторизации.
    *
    * @param {{scope?: string, authorizationDetails?: object, onAuthorized?: Function}} props
@@ -30,25 +28,25 @@
 
   // Конфиг флоу — снимок пропсов на создание (живёт сколько экземпляр); он статичен.
   // svelte-ignore state_referenced_locally
-  const device = authService.createDeviceAuthorization({scope, authorizationDetails, onAuthorized});
+  const device = new DeviceAuthorizationFlow({scope, authorizationDetails, onAuthorized});
   const statusNotices = $derived.by(() => {
     switch (device.pollStatus) {
-      case POLL_STATUS.STARTING: return noticeService.create("Запрашиваем код...", LEVEL.WARNING);
-      case POLL_STATUS.PENDING: return noticeService.create("Ожидаем подтверждения...", LEVEL.INFO);
-      case POLL_STATUS.AUTHORIZED: return noticeService.create("Входим...", LEVEL.INFO);
-      case POLL_STATUS.DENIED: return noticeService.create("Запрос отклонён.", LEVEL.ERROR);
-      case POLL_STATUS.EXPIRED: return noticeService.create("Код истёк.", LEVEL.WARNING);
-      case POLL_STATUS.ERROR: return noticeService.create("Не удалось получить код.", LEVEL.ERROR);
+      case POLL_STATUS.STARTING: return createNotice("Запрашиваем код...", LEVEL.WARNING);
+      case POLL_STATUS.PENDING: return createNotice("Ожидаем подтверждения...", LEVEL.INFO);
+      case POLL_STATUS.AUTHORIZED: return createNotice("Входим...", LEVEL.INFO);
+      case POLL_STATUS.DENIED: return createNotice("Запрос отклонён.", LEVEL.ERROR);
+      case POLL_STATUS.EXPIRED: return createNotice("Код истёк.", LEVEL.WARNING);
+      case POLL_STATUS.ERROR: return createNotice("Не удалось получить код.", LEVEL.ERROR);
     }
   });
   const isNotSucceeded = $derived([POLL_STATUS.DENIED, POLL_STATUS.EXPIRED, POLL_STATUS.ERROR].indexOf(device.pollStatus) !== -1)
 
   onMount(() => {
-    device.startLogin();
-    return () => device.stopLogin();
+    device.start();
+    return () => device.stop();
   });
 
-  const onRestart = () => device.restartLogin();
+  const onRestart = () => device.restart();
 </script>
 
 <div class="device-auth content-box">

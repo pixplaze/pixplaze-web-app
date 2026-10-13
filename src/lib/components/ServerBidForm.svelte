@@ -1,20 +1,19 @@
 <script>
   import {copyToClipboard} from '$lib/scripts/util/utils.js';
-  import {noticeService} from '$lib/scripts/service/notice.service.js';
-  import {LEVEL} from '$lib/scripts/util/notice.util.js';
-  import {ServerBidFormService} from '$lib/scripts/service/form/serverbid.form.service.js';
+  import {createNotice, LEVEL} from '$lib/scripts/util/notice.util.js';
+  import {ServerBidForm} from './ServerBidForm.svelte.js';
   import Input from '$lib/components/ui/inputs/Input.svelte';
   import Notice from '$lib/components/ui/Notice.svelte';
   import Button from '$lib/components/ui/buttons/Button.svelte';
   import ButtonIcon from '$lib/components/ui/buttons/ButtonIcon.svelte';
   import Checkbox from '$lib/components/ui/inputs/Checkbox.svelte';
-  import {serverBidService} from '$lib/scripts/service/server.bid.service.js';
+  import {bidsApi} from '$lib/scripts/api/bids.api.js';
 
   const {
     onSubmit = () => {}
   } = $props();
 
-  const form = new ServerBidFormService();
+  const form = new ServerBidForm();
 
   let inviteCode = $state('');
   let preview = $state(null);
@@ -31,13 +30,13 @@
     if (!form.isValid) return;
     try {
       const request = form.toRequest();
-      const bid = await serverBidService.submit(request);
+      const bid = await bidsApi.submit(request);
       inviteCode = bid.inviteCode;
       preview = bid.preview;
       codeForIntegration = request.isIntegration;
       await onSubmit(request);
     } catch (e) {
-      form.pushNotice(noticeService.create(e.message, LEVEL.ERROR));
+      form.pushNotice(createNotice(e.message, LEVEL.ERROR));
     }
   }
 </script>

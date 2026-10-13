@@ -39,6 +39,9 @@
       prompt.send(formattedInput());
     });
     prompt.open();
+
+    // Уход со страницы или смена активного сервера — закрываем подключение
+    return () => prompt.close();
   });
 
   function focus() {

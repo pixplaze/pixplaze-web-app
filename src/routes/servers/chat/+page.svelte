@@ -1,9 +1,5 @@
 <script>
-  import {error} from "@sveltejs/kit";
-
-  export function load({ url }) {
-    if (url.searchParams.get('error') === '500') {
-      throw error(500, 'Internal Server Error');
-    }
-  }
+  import ActiveServerGate from '$lib/components/ActiveServerGate.svelte';
 </script>
+
+<ActiveServerGate type="API" unsupported="Чат недоступен: на сервере не установлен плагин Pixplaze"/>

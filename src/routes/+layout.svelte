@@ -1,7 +1,8 @@
 <script>
-  import {pageService} from "$lib/scripts/service/page.service.js";
+  import {ui} from "$lib/scripts/ui.svelte.js";
+  import {navigation} from "$lib/scripts/navigation.js";
+  import {auth} from '$lib/scripts/auth.svelte.js';
   import {onMount} from "svelte";
-  import {goto, replaceState} from "$app/navigation";
   import {page} from "$app/state";
   import Header from "$lib/components/Header.svelte";
   import FavoriteServerList from "$lib/components/FavoriteServerList.svelte";
@@ -12,15 +13,12 @@
 
   const {children} = $props();
 
-  // Прокидываем SvelteKit-навигатор в page.service — единственная точка связи с $app.
-  pageService.setNavigator({goto, replaceState});
-
-  const onButtonAside = () => pageService.toggleAside();
-  const onButtonConsole = () => pageService.goToServersConsole();
-  const onButtonMap = () => pageService.goToServersMap();
-  const onButtonSearch = () => pageService.goToServersList();
-  const onButtonChat = () => pageService.goToServersChat();
-  const onButtonFavorite = () => pageService.toggleFavoriteServers();
+  const onButtonAside = () => ui.toggleAside();
+  const onButtonConsole = () => navigation.goToServersConsole();
+  const onButtonMap = () => navigation.goToServersMap();
+  const onButtonSearch = () => navigation.goToServersList();
+  const onButtonChat = () => navigation.goToServersChat();
+  const onButtonFavorite = () => ui.toggleFavorites();
 
   const onButtonProfile = () => {}
   const onButtonLanguage = () => {}
@@ -33,7 +31,7 @@
     токен old → new, не обнуляя его, поэтому ротация редирект не вызывает.
   */
   $effect(() => {
-    pageService.enforceAuth(page.url.pathname, page.url.search);
+    navigation.enforceAuth(page.url.pathname, page.url.search);
   });
 
   onMount(() => {
@@ -48,7 +46,7 @@
   });
 </script>
 
-<div id="layout" class={`container themed ${pageService.currentTheme}`}>
+<div id="layout" class={`container themed ${ui.theme}`}>
   <header>
     <Header {onButtonAside}
             {onButtonConsole}
@@ -56,18 +54,18 @@
             {onButtonSearch}
             {onButtonChat}
             {onButtonFavorite}
-            showFavorite={pageService.isAuthenticated}
+            showFavorite={auth.isAuthenticated}
     />
-    {#if pageService.isAuthenticated}
+    {#if auth.isAuthenticated}
       <div class="favorite-servers-menu debug">
-        <div class="favorite-servers" class:expanded={pageService.isFavoriteServersExpanded}>
-          <FavoriteServerList expanded={pageService.isFavoriteServersExpanded}/>
+        <div class="favorite-servers" class:expanded={ui.favoritesExpanded}>
+          <FavoriteServerList expanded={ui.favoritesExpanded}/>
         </div>
       </div>
     {/if}
     <AppNotifications/>
   </header>
-  <aside class:expanded={pageService.isAsideExpanded} class="debug">
+  <aside class:expanded={ui.asideExpanded} class="debug">
     <div class="aside-host">
       <Sidebar {onButtonProfile}
                {onButtonLanguage}
@@ -134,7 +132,7 @@
     width: 100%;
     max-height: calc(10 * var(--ui-size-block));
 
-    overflow-y: scroll;
+    overflow-y: auto;
     background-color: var(--color-ui-secondary);
     box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);
 
@@ -202,7 +200,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    /*overflow-x: clip;*/
+    overflow-x: clip;
     /*touch-action: pan-y;*/
   }
 

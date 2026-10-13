@@ -3,24 +3,49 @@
   import Notice from "./ui/Notice.svelte";
   import {parseImageBase64} from "$lib/scripts/util/utils.js";
   import Delimiter from "$lib/components/ui/Delimiter.svelte";
+  import {onMount} from "svelte";
+  import {DeviceConsentFlow} from "./DeviceConsent.svelte.js";
 
   /**
-   * UI согласия device-flow (RFC 8628, §5.3–5.4 гайда): показывает, что именно
-   * подтверждает пользователь (DeviceAuthorizationInfo), и даёт решение
-   * «Разрешить/Запретить». Картинка субъекта (иконка сервера / голова скина игрока)
-   * рисуется из base64 в `details`.
-   *
-   * Состояние передаётся простыми флагами от страницы-владельца:
-   * `busy` — запрос в полёте, `done` — итог ('approved'|'denied'|null), `failed` — ошибка.
+   * Согласие device-flow (RFC 8628, §5.3–5.4 гайда): по `userCode` загружает, что именно
+   * подтверждает пользователь (DeviceAuthorizationInfo), и даёт решение «Разрешить/Запретить».
+   * Картинка субъекта (иконка сервера / голова скина игрока) рисуется из base64 в `details`.
+   * Флоу ведёт сам ({@link DeviceConsentFlow}); `onDecided(done)` — после решения
+   * ('approved' | 'denied'), например чтобы владелец убрал userCode из адреса.
    */
   const {
-    info,
-    busy = false,
-    done = null,
-    failed = false,
-    onAllow,
-    onDeny,
+    userCode,
+    onDecided = () => {},
   } = $props();
+
+  // svelte-ignore state_referenced_locally
+  const consent = new DeviceConsentFlow(userCode);
+  const info = $derived(consent.info);
+  const busy = $derived(consent.busy);
+  const done = $derived(consent.done);
+  const failed = $derived(consent.failed);
+
+  onMount(() => consent.resolve());
+
+  const decide = async (allow) => {
+    await consent.decide(allow);
+    if (consent.done) {
+      onDecided(consent.done);
+    }
+  };
+  const onAllow = () => decide(true);
+  const onDeny = () => decide(false);
+
+  // Пока панель не открыта: загрузка или ошибка загрузки.
+  const loadNotices = $derived.by(() => {
+    if (failed) {
+      return [{level: 'error', message: 'Не удалось подтвердить вход устройства. Попробуйте снова.'}];
+    }
+    if (busy) {
+      return [{level: 'info', message: 'Подтверждаем вход устройства…'}];
+    }
+    return [];
+  });
 
   // Человекочитаемый заголовок по типу субъекта (§5.3: USER сюда не попадает —
   // он подтверждается автоматически, но оставляем ветку для полноты).
@@ -71,6 +96,11 @@
 
   </script>
 
+{#if !info}
+  {#if loadNotices.length}
+    <Notice notices={loadNotices} closeable={false} classes="content-box"/>
+  {/if}
+{:else}
 <div class="device-consent content-box">
 <!--  <h1>{title}</h1>-->
   <Delimiter value={title}/>
@@ -104,6 +134,7 @@
     </div>
   {/if}
 </div>
+{/if}
 
 <style>
   .device-consent > * {

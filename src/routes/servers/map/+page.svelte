@@ -1,11 +1,14 @@
 <script>
-  const {
-    mapAddress = "http://185.23.80.106:50020"
-  } = $props();
+  import ActiveServerGate from '$lib/components/ActiveServerGate.svelte';
 </script>
 
-<iframe src={mapAddress}
-        title="Server Map"
-        width="100%"
-        height="100%">
-</iframe>
+<ActiveServerGate type="MAP" unsupported="Карта недоступна: на сервере не установлен плагин Pixplaze">
+  {#snippet children(address)}
+    <!-- Схема — как у страницы: http-карту на https-странице браузер заблокирует -->
+    <iframe src={`${location.protocol}//${address}`}
+            title="Server Map"
+            width="100%"
+            height="100%">
+    </iframe>
+  {/snippet}
+</ActiveServerGate>

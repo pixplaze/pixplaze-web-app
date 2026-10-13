@@ -1,19 +1,19 @@
 <script>
-  import {getEmailSuggestions, getUsernameSuggestions} from '$lib/scripts/service/autocomplition.js';
-  import {createSignUpFormService} from '$lib/scripts/service/form/signup.form.service.js';
+  import {getEmailSuggestions} from '$lib/scripts/util/email.util.js';
+  import {SignUpForm} from './SignUpForm.svelte.js';
   import Input from '$lib/components/ui/inputs/Input.svelte';
   import Button from '$lib/components/ui/buttons/Button.svelte';
   import Notice from '$lib/components/ui/Notice.svelte';
   import InputAutocompletionWrapper from '$lib/components/ui/inputs/InputAutocompletionWrapper.svelte';
-  import {noticeService} from '$lib/scripts/service/notice.service.js';
-  import {LEVEL} from '$lib/scripts/util/notice.util.js';
+  import {createNotice, LEVEL} from '$lib/scripts/util/notice.util.js';
 
   const {
     inviteCode,
     onSubmit
   } = $props();
 
-  const form = createSignUpFormService(inviteCode);
+  // svelte-ignore state_referenced_locally
+  const form = new SignUpForm(inviteCode);
   const fields = form.fields;
 
   async function onFormSubmit() {
@@ -22,7 +22,7 @@
     try {
       await onSubmit(form.toRequest());
     } catch (e) {
-      form.pushNotice(noticeService.create(e.message, LEVEL.ERROR));
+      form.pushNotice(createNotice(e.message, LEVEL.ERROR));
     }
   }
 </script>
@@ -30,17 +30,12 @@
 <form onsubmit={e => {e.preventDefault(); onFormSubmit()}} class="auth-form content-box">
   <h1>Регистрация</h1>
 
-  <InputAutocompletionWrapper bind:value={fields.name.value} getSuggestions={getUsernameSuggestions}>
-    {#snippet children({action})}
-      <Input id="user-name"
-             label="Имя пользователя"
-             placeholder="notch"
-             classes={[fields.name.validationClasses, form.level].filter(Boolean).join(' ')}
-             bind:value={fields.name.value}
-             oninput={() => form.clearNotices()}
-             {action}/>
-    {/snippet}
-  </InputAutocompletionWrapper>
+  <Input id="user-name"
+         label="Имя пользователя"
+         placeholder="notch"
+         classes={[fields.name.validationClasses, form.level].filter(Boolean).join(' ')}
+         bind:value={fields.name.value}
+         oninput={() => form.clearNotices()}/>
   <Notice bind:notices={fields.name.validationNotices}/>
 
   <InputAutocompletionWrapper bind:value={fields.email.value} getSuggestions={getEmailSuggestions}>

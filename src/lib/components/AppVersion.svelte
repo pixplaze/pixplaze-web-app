@@ -1,12 +1,14 @@
 <script>
-  import {infoService} from '$lib/scripts/service/info.service.js';
+  import {infoApi} from '$lib/scripts/api/info.api.js';
 
-  const app = infoService.appVersion;
+  /* global __APP_VERSION__ */
+  // Версия web-app вшивается на сборке (vite.config.js), та же форма, что у GET /info/version
+  const app = __APP_VERSION__;
   let apiVersion = $state(null);
 
   $effect(() => {
     // API недоступен — колонка API остаётся с прочерками.
-    infoService.fetchApiVersion().then((v) => apiVersion = v).catch(() => {});
+    infoApi.fetchVersion().then((v) => apiVersion = v).catch(() => {});
   });
 
   // Тега нет — показываем версию из pom.xml / package.json.

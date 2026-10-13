@@ -1,18 +1,15 @@
 import {
   check,
-  checkAsync,
   email,
   ip,
   maxLength,
   minLength,
   nonEmpty,
   pipe,
-  pipeAsync,
   regex,
   string,
   trim, union
 } from "valibot";
-import {voucherService} from "$lib/scripts/service/voucher.service.js";
 
 /**
  * Переиспользуемые valibot-схемы валидации полей форм.
@@ -58,11 +55,6 @@ export const passwordRepeatSchema = (getPassword) => pipe(
     check((repeat) => repeat === getPassword(), 'Пароли должны совпадать')
 );
 
-export const inviteCodeSchema = () => pipeAsync(
-    string(),
-    minLength(8, 'Код приглашения должен состоять из 8 символов'),
-    checkAsync((code) => voucherService.isInviteCodeValid(code), 'Неверный код приглашения')
-);
 // Регулярное выражение для проверки хоста/домена (например, mc.server.net)
 const HOST_REGEX = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}$/;
 

@@ -1,7 +1,7 @@
 <script>
   import {page} from '$app/state';
-  import {pageService} from '$lib/scripts/service/page.service.js';
-  import {authService} from "$lib/scripts/service/auth.service.js";
+  import {navigation} from '$lib/scripts/navigation.js';
+  import {auth} from '$lib/scripts/auth.svelte.js';
   import {ROUTES} from '$lib/scripts/routes.js';
   import SignInForm from '$lib/components/SignInForm.svelte';
   import SignUpForm from '$lib/components/SignUpForm.svelte';
@@ -19,8 +19,8 @@
   const showSignUp = $derived(mode === 'sign-up');
 
   onMount(() => {
-    if (pageService.isAuthenticated && userCode) {
-      pageService.navigate(`${ROUTES.profile}${page.url.search}`);
+    if (auth.isAuthenticated && userCode) {
+      navigation.goTo(`${ROUTES.profile}${page.url.search}`);
     }
   })
 
@@ -30,24 +30,24 @@
       return;
     }
     mode = next;
-    pageService.setAuthMode(next, page.url.search);
+    navigation.setAuthMode(next, page.url.search);
   }
 
   // После успешного входа (паролем или device-flow QR): если это был линк подтверждения
   // (?userCode=...) — уводим в /profile, сохраняя query, чтобы там подтвердить устройство;
   // иначе — на главную. Подтверждение (DCF) живёт на /profile, не здесь.
   const onAuthorized = () => {
-    pageService.navigate(userCode ? `${ROUTES.profile}${page.url.search}` : ROUTES.home);
+    navigation.goTo(userCode ? `${ROUTES.profile}${page.url.search}` : ROUTES.home);
   };
 
   const onSignIn = async (data) => {
-    const accessToken = await authService.signIn(data);
+    const accessToken = await auth.signIn(data);
     if (!accessToken) throw new Error('Неверные учётные данные');
     onAuthorized();
   };
 
   const onSignUp = async (data) => {
-    const accessToken = await authService.signUp(data);
+    const accessToken = await auth.signUp(data);
     if (!accessToken) throw new Error('Не удалось создать аккаунт');
     onAuthorized();
   };

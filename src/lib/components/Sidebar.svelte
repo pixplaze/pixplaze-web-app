@@ -1,51 +1,39 @@
 <script>
   import Button from "$lib/components/ui/buttons/Button.svelte";
   import Icon from "$lib/components/ui/Icon.svelte";
-  import {pageService} from "$lib/scripts/service/page.service.js";
-  import {userService} from "$lib/scripts/service/user.service.js";
+  import {ui} from "$lib/scripts/ui.svelte.js";
+  import {navigation} from "$lib/scripts/navigation.js";
+  import {currentUser} from "$lib/scripts/user.svelte.js";
+  import {auth} from '$lib/scripts/auth.svelte.js';
   import ItemList from "$lib/components/ui/ItemList.svelte";
   import AppVersion from "$lib/components/AppVersion.svelte";
 
   // Реальный функционал — он уже реализован в сервисах.
-  const onButtonTheme = () => pageService.toggleTheme();
+  const onButtonTheme = () => ui.toggleTheme();
   const onButtonSignOut = () => {
-    if (pageService.isMobileLayout()) {
-      pageService.toggleAside();
-    }
-    userService.signOut();
+    ui.closeAsideOnMobile();
+    auth.signOut();
   }
 
   const onButtonProfile = () => {
-    if (pageService.isMobileLayout()) {
-      pageService.toggleAside();
-    }
-    pageService.goToProfile();
+    ui.closeAsideOnMobile();
+    navigation.goToProfile();
   }
 
   const onButtonBids = () => {
-    if (pageService.isMobileLayout()) {
-      pageService.toggleAside();
-    }
-    pageService.goToServersBids();
+    ui.closeAsideOnMobile();
+    navigation.goToServersBids();
   }
 
   // Заглушки: функционал ещё не реализован, поэтому ничего не вызываем.
   const onButtonLanguage = () => {};
-  const onButtonSettings = () => {
-    if (pageService.isMobileLayout()) {
-      pageService.toggleAside();
-    }
-  };
-  const onButtonHelp = () => {
-    if (pageService.isMobileLayout()) {
-      pageService.toggleAside();
-    }
-  };
+  const onButtonSettings = () => ui.closeAsideOnMobile();
+  const onButtonHelp = () => ui.closeAsideOnMobile();
 
-  const themeIcon = $derived(pageService.currentTheme === 'dark' ? 'sun' : 'moon');
+  const themeIcon = $derived(ui.theme === 'dark' ? 'sun' : 'moon');
 
   const menuItems = $derived([
-    {item: userService.username, icon: 'profile', onClick: onButtonProfile},
+    {item: currentUser.name, icon: 'profile', onClick: onButtonProfile},
     // Админ видит все заявки, остальные — свои: страница выбирает вид по роли.
     {item: 'Заявки', icon: 'plugin', onClick: onButtonBids},
     {item: 'Настройки', icon: 'settings', onClick: onButtonSettings},
@@ -57,10 +45,8 @@
 </script>
 
 <nav class="sidebar">
-  <ItemList items={menuItems} onClick={(menuItem) => menuItem.onClick()}>
-    {#snippet listItem({item, icon, onClick})}
-      <Icon {icon}/>{item}
-    {/snippet}
+  <ItemList items={menuItems} onselect={(menuItem) => menuItem.onClick()}>
+    {#snippet children({item, icon})}<Icon {icon}/>{item}{/snippet}
   </ItemList>
 
   <AppVersion/>
@@ -81,7 +67,7 @@
   }
 
   :global {
-    .item-list .icon {
+    .sidebar .item-list .icon {
       padding-right: var(--ui-padding);
     }
 

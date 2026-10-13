@@ -1,9 +1,7 @@
 <script>
-  import {onMount} from 'svelte';
   import {page} from '$app/state';
-  import {authService} from '$lib/scripts/service/auth.service.js';
   import {replaceState} from "$app/navigation";
-  import {userService} from "$lib/scripts/service/user.service.js";
+  import {currentUser} from "$lib/scripts/user.svelte.js";
   import {formatDate, parseImageBase64} from "$lib/scripts/util/utils.js";
   import {LEVEL} from "$lib/scripts/util/notice.util.js";
   import Notice from '$lib/components/ui/Notice.svelte';
@@ -16,42 +14,12 @@
   import ProfileForm from "$lib/components/ProfileForm.svelte";
 
   const userCode = page.url.searchParams.get('userCode');
-  const consent = authService.createDeviceConsent();
-  const showDeviceConsent = $derived(!!consent.info);
-  const user = $derived(userService.user);
+  const user = $derived(currentUser.value);
 
   let radioChoice = $state('email_val');
 
-  onMount(() => consent.resolveConsent(userCode));
-
-  const onAllow = async () => {
-    await consent.decideConsent(true);
-    replaceState(page.url.pathname, {});
-  };
-  const onDeny = async () => {
-    await consent.decideConsent(false);
-    replaceState(page.url.pathname, {});
-  };
-
-  // Баннер статуса подтверждения (когда панель согласия ещё/уже не показывается).
-  const deviceNotices = $derived.by(() => {
-    if (showDeviceConsent) {
-      return [];
-    }
-    if (consent.failed) {
-      return [{level: 'error', message: 'Не удалось подтвердить вход устройства. Попробуйте снова.'}];
-    }
-    if (consent.busy) {
-      return [{level: 'info', message: 'Подтверждаем вход устройства…'}];
-    }
-    if (consent.done === 'approved') {
-      return [{level: 'info', message: 'Вход устройства подтверждён — вернитесь к устройству.'}];
-    }
-    if (consent.done === 'denied') {
-      return [{level: 'warning', message: 'Вход устройства отклонён.'}];
-    }
-    return [];
-  });
+  // Решение принято — убираем userCode из адреса, чтобы обновление страницы не повторяло запрос
+  const onDecided = () => replaceState(page.url.pathname, {});
 </script>
 
 <div class="profile">
@@ -98,20 +66,9 @@
     {/if}
   </section>
 
-  {#if deviceNotices.length}
+  {#if userCode}
     <section class="profile-pane">
-      <Notice notices={deviceNotices} closeable={false} classes="content-box"/>
-    </section>
-  {/if}
-
-  {#if showDeviceConsent}
-    <section class="profile-pane">
-      <DeviceConsent info={consent.info}
-                     busy={consent.busy}
-                     done={consent.done}
-                     failed={consent.failed}
-                     {onAllow}
-                     {onDeny}/>
+      <DeviceConsent {userCode} {onDecided}/>
     </section>
   {/if}
 </div>

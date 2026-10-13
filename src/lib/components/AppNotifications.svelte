@@ -1,12 +1,12 @@
 <script>
   import Notice from '$lib/components/ui/Notice.svelte';
-  import {appNotificationService} from '$lib/scripts/service/app.notification.service.js';
+  import {notifications} from '$lib/scripts/notifications.svelte.js';
 </script>
 
 <!-- Внутри <header>: на десктопе выпадает вниз, на мобильном (шапка снизу) растёт вверх. -->
 <div class="app-notifications" role="status" aria-live="polite">
-  <Notice notices={appNotificationService.notifications}
-          onClose={(id) => appNotificationService.close(id)}/>
+  <Notice notices={notifications.items}
+          onClose={(id) => notifications.close(id)}/>
 </div>
 
 <style>

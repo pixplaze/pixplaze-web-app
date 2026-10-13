@@ -4,11 +4,17 @@
   import MinecraftText from '$lib/components/ui/minecraft/MinecraftText.svelte';
   import {copyToClipboard, createDistinctDebounce} from '$lib/scripts/util/utils.js';
   import {formatNumber} from '$lib/scripts/util/utils.js';
-  import {serverService} from '$lib/scripts/service/server.service.js';
-  import {appNotificationService} from '$lib/scripts/service/app.notification.service.js';
+  import {serversApi} from '$lib/scripts/api/servers.api.js';
+  import {notifications} from '$lib/scripts/notifications.svelte.js';
 
+  /**
+   * favorite — сервер в избранном; null — избранное недоступно (гость), звезда скрыта.
+   * onFavorite — клик по звезде; что делать, решает владелец карточки.
+   */
   let {
-    server
+    server,
+    favorite = null,
+    onFavorite
   } = $props();
 
   let copied = $state(false);
@@ -19,12 +25,12 @@
     setTimeout(() => copied = false, 1500);
   };
 
-  const rateServer = createDistinctDebounce((rating) => serverService.rate(server.id, rating), 1000);
+  const rateServer = createDistinctDebounce((rating) => serversApi.rate(server.id, rating), 1000);
 
   const onVoted = (rating) => {
     rateServer.run(rating).catch((e) => {
       if (e.name !== 'AbortError') {
-        appNotificationService.error('Не удалось сохранить оценку');
+        notifications.error('Не удалось сохранить оценку');
       }
     });
   };
@@ -46,7 +52,10 @@
       <div class="buttons">
         <ButtonIcon icon="more" classes="transparent"/>
         <ButtonIcon icon={copied ? 'arrow-ok' : 'copy'} classes="transparent {copied ? 'copied' : ''}" onclick={onCopy}/>
-        <ButtonIcon icons={["star", "star-filled"]} classes="transparent"/>
+        {#if favorite !== null}
+          <ButtonIcon icons={favorite ? ['star-filled'] : ['star', 'star-filled']}
+                      classes="transparent" onclick={() => onFavorite?.(server)}/>
+        {/if}
       </div>
     </div>
   </div>

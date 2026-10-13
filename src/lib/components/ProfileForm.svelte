@@ -1,15 +1,17 @@
 <script>
-  import {createDependentValidationField, createValidationField} from '$lib/scripts/service/validation.service.svelte.js';
+  import {Field} from '$lib/scripts/forms/field.svelte.js';
   import {emailSchema, passwordRepeatSchema, passwordSchema, usernameSchema} from '$lib/scripts/util/validation.util.js';
   import PreviewInput from '$lib/components/ui/PreviewInput.svelte';
   import Notice from '$lib/components/ui/Notice.svelte';
 
   let { user } = $props();
 
-  const name = createValidationField(usernameSchema(), user.name);
-  const email = createValidationField(emailSchema(), user.email);
-  const password = createValidationField(passwordSchema(), '');
-  const passwordRepeat = createDependentValidationField(passwordRepeatSchema(() => password.value), () => password.value);
+  // svelte-ignore state_referenced_locally
+  const name = new Field(usernameSchema(), {initial: user.name});
+  // svelte-ignore state_referenced_locally
+  const email = new Field(emailSchema(), {initial: user.email});
+  const password = new Field(passwordSchema());
+  const passwordRepeat = new Field(passwordRepeatSchema(() => password.value), {dependsOn: password});
 
   let isPasswordEdit = $state(false);
 </script>

@@ -1,19 +1,20 @@
 import {createPrompt} from "$lib/scripts/prompt.js";
 import {createWebSocket} from "$lib/scripts/api/ws.config.js"
 
-const __parseMessages = event => {
+/** Текст сообщения сокета (`event.data`): JSON-массив строк — как есть, иначе — одна строка. */
+const __parseMessages = ({data}) => {
   try {
-    return JSON.parse(event.value);
-  } catch (err) {
-    if (!(typeof event.value === 'string')) {
-      throw new Error(err);
-    }
-    return [event.value];
+    const parsed = JSON.parse(data);
+    if (Array.isArray(parsed)) return parsed;
+  } catch {
+    // Не JSON — обычная строка
   }
+  return [String(data)];
 }
 
 export const createCommandPrompt = (host, path) => {
-  const ws = createWebSocket(host, path, 'ws');
+  // Схема — как у страницы: ws:// с https-страницы браузер заблокирует
+  const ws = createWebSocket(host, path, location.protocol === 'https:' ? 'wss' : 'ws');
   const prompt = createPrompt([], {
     messagesCapacity: 100,
     historyCapacity: 20,
@@ -22,8 +23,6 @@ export const createCommandPrompt = (host, path) => {
   ws.onmessage = event => {
     const messages = __parseMessages(event);
     prompt.push(messages);
-
-    console.log(event.value);
     handleOnMessage();
   };
 
