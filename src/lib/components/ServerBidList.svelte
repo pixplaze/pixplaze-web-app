@@ -84,10 +84,6 @@
     gap: var(--ui-spacing);
   }
 
-  .bid-meta, .bid-address {
-    color: var(--color-text-secondary);
-  }
-
   .bid-code {
     display: flex;
     align-items: center;
