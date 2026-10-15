@@ -21,8 +21,7 @@ const mockFavoriteServers = (count) => {
 export const favoritesApi = {
   /** Избранные серверы как модели карточки ({@link mapServer}). */
   async fetchMine() {
-    // return (await api.json(await api.get('/servers/favorite'))).map(mapServer);
-    return mockFavoriteServers(20);
+    return (await api.json(await api.get('/servers/favorite'))).map(mapServer);
   },
 
   async add(serverId) {

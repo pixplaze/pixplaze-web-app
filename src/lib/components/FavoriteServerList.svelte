@@ -38,13 +38,12 @@
         <span class="server-name">{server.name}</span>
       {/snippet}
       {#snippet actions(server)}
-        {#if favorites.isPending(server.id)}
+        {#if favorites.isPendingRemove(server.id)}
           <Button classes="transparent undo-button" onclick={() => favorites.undo(server.id)}>отменить</Button>
         {:else}
-          <ButtonIcon classes="" icon="more"/>
-          <ButtonIcon classes="" icon={copiedId === server.id ? 'arrow-ok' : 'copy'}
-                      onclick={() => onCopy(server)}/>
-          <ButtonIcon classes="" icon="star-filled" onclick={() => favorites.removeLater(server.id)}/>
+          <ButtonIcon classes="transparent" icon="more"/>
+          <ButtonIcon classes="transparent" icon={copiedId === server.id ? 'arrow-ok' : 'copy'} onclick={() => onCopy(server)}/>
+          <ButtonIcon classes="transparent" icon="star-filled" onclick={() => favorites.removeLater(server.id)}/>
         {/if}
       {/snippet}
     </ItemList>
@@ -90,5 +89,6 @@
 
   .favorite-server-list :global(.undo-button) {
     padding: 0 var(--ui-padding);
+    width: calc(3 * var(--ui-size-block));
   }
 </style>

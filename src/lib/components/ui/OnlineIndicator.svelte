@@ -4,10 +4,11 @@
 
   let {
     online,
+    classes
   } = $props();
 </script>
 
-<Icon icon="indicator" classes={`online-indicator ${classIf('online', online)}`}/>
+<Icon icon="indicator" classes={`online-indicator ${classIf('online', online)} ${classes}`}/>
 
 <style>
   :global {

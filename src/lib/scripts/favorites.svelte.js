@@ -21,7 +21,7 @@ class Favorites {
   #loading = $state(false);
   #error = $state(null);
   /** id серверов, ожидающих удаления. */
-  #pending = new SvelteSet();
+  #pendingRemove = new SvelteSet();
   #timers = new Map();
   #latest = createLatest();
   #userId = $derived(buildUserFromToken(token.value)?.id ?? null);
@@ -55,12 +55,12 @@ class Favorites {
 
   /** В избранном ли сервер; ожидающий удаления — уже нет. */
   has(serverId) {
-    return !this.#pending.has(serverId) && this.#servers.some(s => s.id === serverId);
+    return !this.#pendingRemove.has(serverId) && this.#servers.some(s => s.id === serverId);
   }
 
   /** Ожидает ли сервер удаления (можно {@link undo}). */
-  isPending(serverId) {
-    return this.#pending.has(serverId);
+  isPendingRemove(serverId) {
+    return this.#pendingRemove.has(serverId);
   }
 
   async load() {
@@ -82,7 +82,7 @@ class Favorites {
 
   /** Добавить сервер (модель карточки); ожидающий удаления — просто вернуть. */
   async add(server) {
-    if (this.isPending(server.id)) {
+    if (this.isPendingRemove(server.id)) {
       this.undo(server.id);
       return;
     }
@@ -119,8 +119,8 @@ class Favorites {
 
   /** Убрать сервер через {@link UNDO_DELAY}; до этого его можно вернуть {@link undo}. */
   removeLater(serverId) {
-    if (this.#pending.has(serverId)) return;
-    this.#pending.add(serverId);
+    if (this.#pendingRemove.has(serverId)) return;
+    this.#pendingRemove.add(serverId);
     this.#timers.set(serverId, setTimeout(() => this.remove(serverId), UNDO_DELAY));
   }
 
@@ -128,7 +128,7 @@ class Favorites {
   undo(serverId) {
     clearTimeout(this.#timers.get(serverId));
     this.#timers.delete(serverId);
-    this.#pending.delete(serverId);
+    this.#pendingRemove.delete(serverId);
   }
 
   #drop(serverId) {
@@ -137,7 +137,7 @@ class Favorites {
 
   #onUser(userId) {
     // Выход или другой аккаунт: отложенные удаления прежнего пользователя не отправляем
-    for (const serverId of [...this.#pending]) this.undo(serverId);
+    for (const serverId of [...this.#pendingRemove]) this.undo(serverId);
     this.#latest.invalidate();
     this.#servers = [];
     this.#error = null;

@@ -102,7 +102,6 @@
   {/if}
 {:else}
 <div class="device-consent content-box">
-<!--  <h1>{title}</h1>-->
   <Delimiter value={title}/>
 
   <div class="device-subject">

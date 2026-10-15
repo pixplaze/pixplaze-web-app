@@ -58,8 +58,18 @@ export class Field {
     this.#validate(this.#value);
   }
 
+  /** Значение отличается от исходного. */
+  get isChanged() {
+    return this.#value !== this.#initial;
+  }
+
   clear() {
     this.value = this.#initial;
+  }
+
+  /** Сделать текущее значение исходным (например, после сохранения). */
+  commit() {
+    this.#initial = this.#value;
   }
 
   async #validate(value) {

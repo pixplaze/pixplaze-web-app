@@ -39,6 +39,15 @@ class Auth {
     }
   }
 
+  /**
+   * Обновить access-токен вне ответа 401 — например, после изменения профиля, чтобы токен
+   * принёс новые имя и email. Идёт через ту же очередь, что и обновление по 401.
+   * @returns {Promise<string|null>} access-токен или null
+   */
+  refresh() {
+    return this.#handleUnauthorized();
+  }
+
   #accept(accessToken) {
     if (accessToken) {
       token.set(accessToken);

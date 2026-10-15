@@ -101,6 +101,10 @@ class ApiClient {
     return await this.request(endpoint, {method: 'POST', ...options})
   }
 
+  async patch(endpoint, options = {}) {
+    return await this.request(endpoint, {method: 'PATCH', ...options})
+  }
+
   async put(endpoint, options = {}) {
     return await this.request(endpoint, {method: 'PUT', ...options})
   }

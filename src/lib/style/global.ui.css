@@ -65,3 +65,7 @@ svg,
 /* BUTTON TYPE */
 
 /* INPUT TYPE */
+
+.attached {
+  margin: calc(-1 * var(--ui-size-border))!important;
+}

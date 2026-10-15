@@ -31,6 +31,6 @@
     margin: 0;
     padding: var(--ui-spacing);
     text-align: center;
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
   }
 </style>
