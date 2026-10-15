@@ -5,7 +5,8 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"favicon": "node scripts/generate-favicon.js"
 	},
 	"devDependencies": {
 		"@csstools/postcss-global-data": "^4.0.0",

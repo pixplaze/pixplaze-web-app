@@ -4,7 +4,9 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1 user-scalable=no" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<!-- ICO — для браузеров без SVG-иконок; sizes="32x32", а не "any": иначе Chrome предпочтёт ICO вместо SVG -->
+		<link rel="icon" href="%sveltekit.assets%/favicon.ico" sizes="32x32" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
 <!--		<link rel="stylesheet" href="%sveltekit.assets%/style/global.css">-->
 		%sveltekit.head%
 	</head>
