@@ -226,8 +226,8 @@
     }
 
     html, body {
-      /*overflow-x: hidden;*/
-      /*overscroll-behavior-x: none;*/
+      overflow-x: hidden;
+      overscroll-behavior-x: none;
     }
 
     body, #app {
