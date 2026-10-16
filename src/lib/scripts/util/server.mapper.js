@@ -64,5 +64,6 @@ export const mapServer = s => ({
   motd: s.motd,
   core: s.core,
   state: s.state,
-  rating: s.rating
+  rating: s.rating,
+  language: s.language ?? 'RU'
 });

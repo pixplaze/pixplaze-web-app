@@ -9,7 +9,7 @@
   let tokens = $derived(parseMinecraftText(text, trim));
   const parseColorStyle = color => {
     if (color === '#FFFFFF') {
-      return 'var(--color-text-primary)';
+      return 'var(--color-text-secondary)';
     }
 
     return color;

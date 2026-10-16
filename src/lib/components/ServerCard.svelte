@@ -6,6 +6,7 @@
   import {formatNumber} from '$lib/scripts/util/utils.js';
   import {serversApi} from '$lib/scripts/api/servers.api.js';
   import {notifications} from '$lib/scripts/notifications.svelte.js';
+  import Icon from "$lib/components/ui/Icon.svelte";
 
   /**
    * favorite — сервер в избранном; null — избранное недоступно (гость), звезда скрыта.
@@ -37,8 +38,8 @@
 
   </script>
 
-<div class="server-card-wrapper">
-  <div class="ui box server-card">
+<div class="server-card">
+  <div class="ui box server-card-box">
     <img src={server.image}
          alt="Server Icon"
          class="server-icon pixel-art">
@@ -46,7 +47,7 @@
       <div class="description">
         <h2>{server.name}</h2>
         <p>{server.host}</p>
-        <MinecraftText text={server.motd} classes="motd" trim={true}/>
+<!--        <MinecraftText text={server.motd} classes="motd" trim={true}/>-->
         <Rating value={server.rating} {onVoted}/>
       </div>
       <div class="buttons">
@@ -60,27 +61,31 @@
     </div>
   </div>
 
-  {#if server.state || server.core || server.core?.version || server.state.players}
-<!--    <div class="server-state"-->
-<!--         style="height: auto!important;-->
-<!--                min-height: var(&#45;&#45;ui-size-block);-->
-<!--                padding: 10px;-->
-<!--                background-color: #444444;-->
-<!--                justify-content: center;-->
-<!--                text-align: center;-->
-<!--                border: var(&#45;&#45;ui-size-border) solid #333333;"-->
-<!--    >-->
-<!--      <MinecraftText text={server.motd} classes="motd" trim={true}/>-->
-<!--    </div>-->
-    <div class="server-state">
-      <span class="state-info version">
-        {server.core?.version}
-      </span>
-      <span class="state-info online">
-        {#if server.state.players}
-          {formatNumber(server.state.players.online)}/{formatNumber(server.state.players.max)}
-        {/if}
-      </span>
+  {#if server.state && server.core && server.core?.version && server.state.players}
+    <div class="server-state-box">
+      <div class="server-status">
+        <span title="Онлайн" class="status-info online">
+          <Icon icon="people"/>
+          {#if server.state.players}
+            {formatNumber(server.state.players.online)}/{formatNumber(server.state.players.max)}
+          {/if}
+        </span>
+        <span title="Пинг" class="status-info ping">
+          <Icon icon="ping"/>
+          {server.state.ping}
+        </span>
+        <span title="Версия" class="status-info version">
+          <Icon icon="version"/>
+          {server.core?.version}
+        </span>
+        <span title="Язык" class="status-info language">
+          <Icon icon="translate"/>
+          {server.language}
+        </span>
+      </div>
+      <div class="server-motd">
+        <MinecraftText text={server.motd} classes="motd" trim={true}/>
+      </div>
     </div>
   {/if}
 </div>
@@ -90,14 +95,16 @@
     overflow: hidden;
   }
 
-  .server-card {
+  .server-card-box {
     display: flex;
     flex-direction: row;
     box-sizing: border-box;
+    position: relative;
+    z-index: 1;
     overflow: hidden;
     min-width: 256px;
     height: 128px;
-    box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);
+    box-shadow: 0 6px 0 0 var(--color-ui-shadow);
   }
 
   .server-icon {
@@ -130,29 +137,60 @@
     /*max-width: 100px;*/
   }
 
-  .server-state {
+  .server-state-box {
     box-sizing: border-box;
     display: flex;
+    flex-wrap: wrap;
+    height: auto!important;
+    min-height: var(--ui-size-block);
     justify-content: space-between;
-    align-items: center;
-    height: var(--ui-size-block);
+    user-select: none;
 
-    margin-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-
-    background-color: var(--color-ui-primary);
-    border: var(--ui-size-border) solid var(--color-ui-border);
+    /*background-color: var(--color-ui-primary);*/
+    background-color: #444444;
+    border: var(--ui-size-border) solid #333333;
+    /*border: var(--ui-size-border) solid var(--color-ui-border);*/
     box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);
   }
 
-  .state-info {
+  .server-status {
+    display: grid;
+    /* Одна колонка, пока рядом motd; одна на строке — колонок столько, сколько влезает */
+    grid-template-columns: repeat(auto-fit, minmax(7em, 1fr));
+    column-gap: var(--ui-spacing);
+    flex-grow: 1;
+    padding: 10px;
+    padding-right: var(--ui-padding);
+    margin-top: auto;
+    margin-bottom: auto;
+    user-select: none;
+    /*border: var(--ui-size-border) solid #333333;*/
+    /*margin: calc(-1 * var(--ui-size-border));*/
+  }
+
+  .status-info {
+    text-wrap: nowrap;
     color: var(--color-text-secondary);
     font-family: "Minecraft", "Arial", "sans-serif";
+    /*cursor: default;*/
+  }
+
+  .server-motd {
+    box-sizing: border-box;
+    display: flex;
+    /* Забирает весь остаток строки, чтобы статус рядом с ним не растягивался */
+    flex: 9999 0;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    min-width: 50%;
+    border: var(--ui-size-border) solid #333333;
+    margin: calc(-1 * var(--ui-size-border));
   }
 
   :global {
-    .server-card {
+    .server-card-box {
       .rating {
         position: absolute;
         bottom: 0;
@@ -192,6 +230,14 @@
           background-color: var(--color-ui-border1);
         }
       }
+    }
+
+    .server-status {
+      vertical-align: middle;
+    }
+
+    .server-status .icon {
+      margin-right: 10px;
     }
   }
 </style>
