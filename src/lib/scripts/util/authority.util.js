@@ -2,9 +2,10 @@ const role = {
   USER: {name: 'USER', code: 'RUSR'},
   ADMIN: {name: 'ADMIN', code: 'RADM'},
   SYSTEM: {name: 'SYSTEM', code: 'RSYS'},
-  MINECRAFT_PLAYER: {name: 'MINECRAFT_PLAYER', code: 'RMCP'},
-  MINECRAFT_OPERATOR: {name: 'MINECRAFT_OPERATOR', code: 'RMCO'},
-  MINECRAFT_SERVER: {name: 'MINECRAFT_SERVER', code: 'RMCS'},
+  MINECRAFT_PLAYER: {name: 'MINECRAFT_PLAYER', code: 'RMPL'},
+  MINECRAFT_OPERATOR: {name: 'MINECRAFT_OPERATOR', code: 'RMOP'},
+  MINECRAFT_OWNER: {name: 'MINECRAFT_OWNER', code: 'RMOW'},
+  MINECRAFT_SERVER: {name: 'MINECRAFT_SERVER', code: 'RMSV'},
   of: (code) => {
     switch (code) {
       case 'RUSR':
@@ -16,13 +17,16 @@ const role = {
       case 'RSYS':
       case 'SYSTEM':
         return role.SYSTEM;
-      case 'RMCP':
+      case 'RMPL':
       case 'MINECRAFT_PLAYER':
         return role.MINECRAFT_PLAYER;
-      case 'RMCO':
+      case 'RMOP':
       case 'MINECRAFT_OPERATOR':
         return role.MINECRAFT_OPERATOR;
-      case 'RMCS':
+      case 'RMOW':
+      case 'MINECRAFT_OWNER':
+        return role.MINECRAFT_OWNER;
+      case 'RMSV':
       case 'MINECRAFT_SERVER':
         return role.MINECRAFT_SERVER;
       default: return null;
@@ -34,6 +38,7 @@ const source = {
   APPLICATION_AUTHORIZED_DEVICE: 'AAD',
   MINECRAFT_AUTHORIZED_DEVICE: 'MAD',
   NOT_AUTHORIZED_DEVICE: 'NAD',
+  SYSTEM_AUTHORIZED_DEVICE: 'SAD',
   of: (code) => {
     switch (code) {
       case 'AAD':
@@ -42,6 +47,9 @@ const source = {
       case 'MAD':
       case 'MINECRAFT_AUTHORIZED_DEVICE':
         return source.MINECRAFT_AUTHORIZED_DEVICE;
+      case 'SAD':
+      case 'SYSTEM_AUTHORIZED_DEVICE':
+        return source.SYSTEM_AUTHORIZED_DEVICE;
       case 'NAD':
       case 'NOT_AUTHORIZED_DEVICE':
         return source.NOT_AUTHORIZED_DEVICE;

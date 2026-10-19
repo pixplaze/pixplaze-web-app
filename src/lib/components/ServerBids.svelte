@@ -6,15 +6,16 @@
   import Radio from '$lib/components/ui/inputs/Radio.svelte';
   import Button from '$lib/components/ui/buttons/Button.svelte';
   import {currentUser} from '$lib/scripts/user.svelte.js';
+  import {permissions} from '$lib/scripts/permissions.svelte.js';
   import {ServerBids} from './ServerBids.svelte.js';
 
-  // Вид выбирается по роли: админ — все заявки с решениями, остальные — свои.
+  // Вид выбирается по праву: кто одобряет заявки — все заявки с решениями, остальные — свои.
   const user = $derived(currentUser.value);
-  const isAdmin = $derived(user?.authority?.roles?.some(role => role.name === 'ADMIN') ?? false);
+  const isAdmin = $derived(permissions.can(permissions.catalog.SYS_SERVERS_BIDS_APPROVE));
 
   const bids = new ServerBids();
 
-  // Профиль (и роли) приходит асинхронно — вид задаём, когда он появился.
+  // Профиль и каталог прав приходят асинхронно — вид задаём, когда они появились.
   $effect(() => {
     if (user) bids.setAdmin(isAdmin);
   });

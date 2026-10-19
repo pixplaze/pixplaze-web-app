@@ -18,7 +18,17 @@ function normalizeHex(raw) {
   return '#' + clean.substring(1).toLowerCase();
 }
 
-export function parseMinecraftText(text, trim) {
+/** Коды с `§` и `&` — для MOTD и описаний, где `&` пишут вместо `§`. */
+const CODES_WITH_AMPERSAND = /([§&]x(?:[§&][0-9a-fA-F]){6}|&#[0-9a-fA-F]{6}|[§&][0-9a-fk-orR])/g;
+/** Только `§` — для консоли и чата: там `&` — обычный символ текста (`&c` в сообщении игрока). */
+const CODES_SECTION_ONLY = /(§x(?:§[0-9a-fA-F]){6}|§[0-9a-fk-orR])/g;
+
+/**
+ * @param {string} text
+ * @param {boolean} trim
+ * @param {{ampersand?: boolean}} [options] ampersand — понимать `&` как код форматирования (по умолчанию да)
+ */
+export function parseMinecraftText(text, trim, {ampersand = true} = {}) {
   if (!text) return [];
 
   const tokens = [];
@@ -30,13 +40,11 @@ export function parseMinecraftText(text, trim) {
   let isStrikethrough = false;
   let isObfuscated = false;
 
-  // Регулярное выражение теперь ловит и §, и & для:
-  // 1. Каноничных HEX-кодов: ([§&]x(?:[§&][0-9a-fA-F]){6})
-  // 2. Альтернативных HEX-кодов: (&#[0-9a-fA-F]{6})
-  // 3. Обычных кодов форматирования: ([§&][0-9a-fk-orR])
-  const regex = /([§&]x(?:[§&][0-9a-fA-F]){6}|&#[0-9a-fA-F]{6}|[§&][0-9a-fk-orR])/g;
-
-  const parts = text.split(regex);
+  // Регулярное выражение ловит:
+  // 1. Каноничные HEX-коды: ([§&]x(?:[§&][0-9a-fA-F]){6})
+  // 2. Альтернативные HEX-коды: (&#[0-9a-fA-F]{6})
+  // 3. Обычные коды форматирования: ([§&][0-9a-fk-orR])
+  const parts = text.split(ampersand ? CODES_WITH_AMPERSAND : CODES_SECTION_ONLY);
 
   // Текст до первого управляющего кода
   if (!trim && parts[0] || (trim && parts[0].replace(/\s/g, '').trim().length !== 0)) {

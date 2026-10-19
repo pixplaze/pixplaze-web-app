@@ -1,5 +1,8 @@
 import {api, apiConfig} from '$lib/scripts/api/client.js';
 
+/** Ошибка решения: подтверждаемый игрок привязан к другому профилю. */
+export const GRANT_LINKED_TO_ANOTHER_PROFILE = 'linked_to_another_profile';
+
 /** OAuth 2.0 Device Flow (RFC 8628): запрашивающая сторона и сторона подтверждения. */
 export const oauthApi = {
   /** §3.1: POST /auth/oauth/authorize, form-urlencoded, без авторизации. */
@@ -72,6 +75,10 @@ export const oauthApi = {
     });
 
     if (!res.ok) {
+      // 409 — игрок привязан к другому профилю: подтвердить его может только тот профиль
+      if (res.status === 409) {
+        throw new Error(GRANT_LINKED_TO_ANOTHER_PROFILE);
+      }
       const data = await res.json().catch(() => ({}));
       throw new Error(data.error || 'device_grant_failed');
     }

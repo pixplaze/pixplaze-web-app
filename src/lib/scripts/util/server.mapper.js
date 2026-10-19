@@ -7,6 +7,18 @@ export function formatAddress(address, port) {
 }
 
 /**
+ * Где игрок в сети — продолжение фразы «в сети на …»: «Hypixel (mc.hypixel.net)», без адреса — только
+ * название; сервер, которого web-api ещё не знает, — «сервере #id».
+ * @param {{id: number, name?: string, hosts?: {address: string, port: number, type: string}[]}} server
+ *        краткие сведения о сервере (`MinecraftServerInfo.brief`)
+ */
+export function formatServerWhere(server) {
+  const name = server.name ?? `сервере #${server.id}`;
+  const address = gameAddress(server.hosts);
+  return address ? `${name} (${address})` : name;
+}
+
+/**
  * Игровой адрес сервера: запись HOST из `hosts`, отформатированная {@link formatAddress}.
  *
  * @param {{address: string, port: number, type: string}[] | null | undefined} hosts
@@ -33,7 +45,7 @@ export function hostAddress(hosts, type) {
 
 const BID_STATUS_LABELS = {
   PENDING: 'На рассмотрении',
-  APPROVED: 'Подтверждена',
+  ACTIVE: 'Подтверждена',
   REJECTED: 'Отклонена',
   EXPIRED: 'Истекла'
 };
@@ -42,13 +54,12 @@ const BID_STATUS_LABELS = {
 export const mapBid = b => ({
   id: b.id,
   name: b.name,
-  address: formatAddress(b.host, b.port),
-  plugin: b.integration === 'PLUGIN',
+  // У закрытой заявки адреса может не быть: его занял другой сервер
+  address: b.host ? formatAddress(b.host, b.port) : null,
   status: b.status,
   statusLabel: BID_STATUS_LABELS[b.status] ?? b.status,
   pending: b.status === 'PENDING',
   code: b.inviteCode,
-  owner: b.ownerUsername,
   applicant: b.applicant,
   createdAt: b.createdAt,
   expiresAt: b.expiresAt

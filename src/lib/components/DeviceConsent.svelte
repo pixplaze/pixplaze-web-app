@@ -5,6 +5,7 @@
   import Delimiter from "$lib/components/ui/Delimiter.svelte";
   import {onMount} from "svelte";
   import {DeviceConsentFlow} from "./DeviceConsent.svelte.js";
+  import {createNotice, LEVEL} from "$lib/scripts/util/notice.util.js";
 
   /**
    * Согласие device-flow (RFC 8628, §5.3–5.4 гайда): по `userCode` загружает, что именно
@@ -24,6 +25,7 @@
   const busy = $derived(consent.busy);
   const done = $derived(consent.done);
   const failed = $derived(consent.failed);
+  const linkedToAnotherProfile = $derived(consent.linkedToAnotherProfile);
 
   onMount(() => consent.resolve());
 
@@ -65,11 +67,24 @@
   const isPixelated = $derived(!!details.skinHeadBase64);
 
   // Пары «поле → значение» для отображения (только непустые, без секретов).
+  // Коды форматирования Minecraft (§a, §l…) в MOTD — для строки без оформления.
+  const plain = (text) => typeof text === 'string' ? text.replace(/§[0-9a-fk-orx]/gi, '').trim() : text;
+  const yesNo = (value) => value === undefined || value === null ? undefined : (value ? 'да' : 'нет');
   const rows = $derived([
+    ['Сервер', details.name ?? details.server],
     ['Хост', details.host],
+    ['Владелец', details.owner],
+    // IP, с которого пришёл запрос: если он не ваш — запрос прислал чужой сервер
+    ['IP запроса', details.requesterIp],
+    ['MOTD', plain(details.motd)],
+    ['Ядро', details.core],
+    ['Лицензия', yesNo(details.isLicense)],
+    ['Игроки', details.players],
+    ['Операторы', details.operators?.length ? details.operators.join(', ') : undefined],
     ['Игрок', details.username],
     ['UUID', details.uuid],
-    ['Оператор', details.isOperator === undefined ? undefined : (details.isOperator ? 'да' : 'нет')],
+    ['IP игрока', details.ipAddress],
+    ['Оператор', yesNo(details.isOperator)],
     ['Источник', info?.source],
     ['Зоны', info?.targets?.length ? info.targets.join(', ') : undefined],
     ['Права', info?.permissions?.length ? info.permissions.join(', ') : undefined],
@@ -79,17 +94,26 @@
 
   // Уведомления статуса для Notice (массив; пустой — ничего не показываем).
   const notices = $derived.by(() => {
+    if (linkedToAnotherProfile) {
+      return [createNotice('Этот игрок привязан к другому профилю: подтвердить вход может только он.', LEVEL.ERROR)];
+    }
     if (failed) {
-      return [{level: 'error', message: 'Не удалось обработать запрос. Попробуйте снова.'}];
+      return [createNotice('Не удалось обработать запрос. Попробуйте снова.', LEVEL.ERROR)];
     }
     if (busy) {
-      return [{level: 'info', message: 'Отправляем решение…'}];
+      return [createNotice('Отправляем решение…', LEVEL.INFO)];
     }
     if (done === 'approved') {
-      return [{level: 'info', message: 'Доступ разрешён — вернитесь к устройству.'}];
+      if (info?.type === 'MINECRAFT_PLAYER') {
+        return [createNotice('Игрок авторизован — вернитесь в игру.', LEVEL.INFO)]
+      }
+      if (info?.type === 'MINECRAFT_SERVER') {
+        return [createNotice('Сервер авторизован — вернитесь в игру.', LEVEL.INFO)];
+      }
+      return [createNotice('Устройство авторизовано — вернитесь к устройству.', LEVEL.INFO)];
     }
     if (done === 'denied') {
-      return [{level: 'warning', message: 'Доступ запрещён.'}];
+      return [createNotice('Доступ запрещён.', LEVEL.WARNING)];
     }
     return [];
   });

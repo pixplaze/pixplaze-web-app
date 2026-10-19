@@ -2,21 +2,39 @@
   import {page} from '$app/state';
   import {replaceState} from "$app/navigation";
   import {currentUser} from "$lib/scripts/user.svelte.js";
-  import {formatDate, parseImageBase64} from "$lib/scripts/util/utils.js";
+  import {formatDate} from "$lib/scripts/util/utils.js";
   import {LEVEL} from "$lib/scripts/util/notice.util.js";
   import Notice from '$lib/components/ui/Notice.svelte';
   import DeviceConsent from '$lib/components/DeviceConsent.svelte';
   import BoxRow from '$lib/components/ui/BoxRow.svelte';
-  import ButtonIcon from "$lib/components/ui/buttons/ButtonIcon.svelte";
-  import OnlineIndicator from "$lib/components/ui/OnlineIndicator.svelte";
-  import Delimiter from "$lib/components/ui/Delimiter.svelte";
   import ProfileForm from "$lib/components/ProfileForm.svelte";
+  import ProfilePlayers from "$lib/components/ProfilePlayers.svelte";
+  import FriendsPanel from "$lib/components/FriendsPanel.svelte";
+  import Checkbox from "$lib/components/ui/inputs/Checkbox.svelte";
+  import {profilesApi} from "$lib/scripts/api/profiles.api.js";
+  import {notifications} from "$lib/scripts/notifications.svelte.js";
 
   const userCode = page.url.searchParams.get('userCode');
   const user = $derived(currentUser.value);
 
   // Решение принято — убираем userCode из адреса, чтобы обновление страницы не повторяло запрос
   const onDecided = () => replaceState(page.url.pathname, {});
+
+  /** Настройка «скрывать мой онлайн»: сохраняется сразу при переключении. */
+  let onlineHidden = $state(false);
+  $effect(() => {
+    onlineHidden = !!user?.isOnlineHidden;
+  });
+
+  async function setOnlineHidden(hidden) {
+    try {
+      await profilesApi.update(user.id, {isOnlineHidden: hidden});
+      notifications.info(hidden ? 'Друзья не видят ваш онлайн' : 'Друзья видят ваш онлайн');
+    } catch (error) {
+      onlineHidden = !hidden;
+      notifications.error(`Не удалось сохранить настройку: ${error.message}`);
+    }
+  }
 </script>
 
 <div class="profile">
@@ -29,27 +47,24 @@
       <BoxRow>
         <span>{formatDate(user.createdAt)}</span>
       </BoxRow>
+
+      <Checkbox id="online-hidden" bind:checked={() => onlineHidden, (hidden) => {
+        onlineHidden = hidden;
+        setOnlineHidden(hidden);
+      }}>
+        <span>Скрывать мой онлайн от друзей</span>
+      </Checkbox>
     {:else}
       <Notice notice={{level: LEVEL.ERROR, message: "Не удалось загрузить данные профиля"}}/>
     {/if}
   </section>
 
   <section class="profile-pane">
-    {#if user?.players && user?.players.length !== 0 }
-      <Delimiter value="персонажи"/>
-      <div class="consent-block">
-        {#each user?.players as player}
-          <div class="consent">
-            <img src={parseImageBase64(player.skinHeadBase64)} alt="" class="consent-icon pixel-art attached">
-            <p class="consent-text">
-              {player.username}
-            </p>
-            <OnlineIndicator online={Math.random() > .8} classes="attached"/>
-            <ButtonIcon title="Подробнее" icon="more" classes="consent-button attached"/>
-            <ButtonIcon title="Отвязать игрока" icon="unlink" classes="consent-button attached"/>
-          </div>
-        {/each}
-      </div>
+    {#if user?.id}
+      {#key user.id}
+        <ProfilePlayers profileId={user.id}/>
+        <FriendsPanel profileId={user.id}/>
+      {/key}
     {/if}
   </section>
 
@@ -98,64 +113,5 @@
 
   span {
     font-family: "Minecraft", "Arial", "sans-serif";
-  }
-
-  .consent-block {
-    padding: var(--ui-padding);
-    border: var(--color-text-primary) solid var(--ui-size-border);
-    background-color: #444444;
-    box-shadow: inset 4px 4px 0 0 var(--color-ui-shadow);
-  }
-
-  .consent-block > .consent {
-    margin-bottom: var(--ui-spacing);
-  }
-
-  .consent-block > .consent:last-child {
-    margin-bottom: 0;
-  }
-
-  .consent {
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    color: var(--color-text-secondary);
-    border: var(--ui-size-border) solid #333333;
-    background-color: #666666;
-
-    /*box-shadow: inset 0 calc(-1 * var(--ui-size-shadow)) 0 0 var(--color-ui-shadow);*/
-  }
-
-  p.consent-text {
-    font-family: "Minecraft", "Arial", "sans-serif";
-    padding-left: var(--ui-padding);
-    color: var(--color-text-secondary);
-    margin-right: auto;
-  }
-
-  img.consent-icon {
-    display: block;
-    box-sizing: border-box;
-    width: var(--ui-size-block);
-    height: var(--ui-size-block);
-    border: var(--ui-size-border) solid #333333;
-  }
-
-  :global {
-
-    button.button.consent-button {
-      border: var(--ui-size-border) solid #333333;
-      background-color: #666666;
-      box-shadow: inset 0 calc(-1 * var(--ui-size-shadow)) 0 0 var(--color-ui-shadow);
-    }
-
-    button.button.consent-button:hover {
-      background-color: #888888;
-    }
-
-    button.button.consent-button:active {
-      border-color: #666666;
-      background-color: #444444;
-    }
   }
 </style>

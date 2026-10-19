@@ -4,8 +4,7 @@
   import {copyToClipboard} from '$lib/scripts/util/utils.js';
 
   /**
-   * Список заявок. В режиме `admin` показывает, кто подал заявку, и кнопки решения по открытым:
-   * подтвердить можно только заявку без плагина — заявку с плагином подтверждает сам плагин.
+   * Список заявок. В режиме `admin` показывает, кто подал заявку, и кнопки решения по открытым.
    */
   const {
     bids = [],
@@ -28,7 +27,9 @@
         <h2>{bid.name}</h2>
         <span class="bid-status bid-status--{bid.status.toLowerCase()}">{bid.statusLabel}</span>
       </div>
-      <p class="bid-address">{bid.address} · {bid.plugin ? 'с плагином' : 'без плагина'}{bid.owner ? ` · владелец ${bid.owner}` : ''}</p>
+      {#if bid.address}
+        <p class="bid-address">{bid.address}</p>
+      {/if}
       {#if admin}
         <p class="bid-meta">Подал: {bid.applicant ?? '—'}</p>
       {/if}
@@ -40,17 +41,11 @@
         <ButtonIcon icon="copy" classes="transparent" onclick={() => copyToClipboard(bid.code)}/>
       </div>
       {#if bid.pending && !admin}
-        <p class="bid-meta">
-          {bid.plugin
-              ? 'Укажите код в конфиге плагина и перезапустите сервер, затем подтвердите регистрацию по ссылке, которую выведет плагин.'
-              : 'Добавьте код в MOTD сервера: принадлежность подтвердится автоматически при проверке сервера.'}
-        </p>
+        <p class="bid-meta">Добавьте код в MOTD сервера. Без плагина регистрация подтвердится при ближайшей проверке сервера; с плагином перезапустите сервер и подтвердите регистрацию по ссылке, которую он выведет. После регистрации код можно убрать.</p>
       {/if}
       {#if admin && bid.pending}
         <div class="bid-actions">
-          {#if !bid.plugin}
-            <Button disabled={busyId === bid.id} onclick={() => onApprove(bid)}>Подтвердить</Button>
-          {/if}
+          <Button disabled={busyId === bid.id} onclick={() => onApprove(bid)}>Подтвердить</Button>
           <Button disabled={busyId === bid.id} onclick={() => onReject(bid)}>Отклонить</Button>
         </div>
       {/if}
@@ -96,6 +91,6 @@
   }
 
   .bid-status--pending { color: var(--color-ui-warning-border); }
-  .bid-status--approved { color: var(--color-green-main); }
+  .bid-status--active { color: var(--color-green-main); }
   .bid-status--rejected, .bid-status--expired { color: var(--color-text-secondary); }
 </style>

@@ -4,6 +4,7 @@
   import {auth} from '$lib/scripts/auth.svelte.js';
   import {onMount} from "svelte";
   import {page} from "$app/state";
+  import {ROUTES} from "$lib/scripts/routes.js";
   import Header from "$lib/components/Header.svelte";
   import FavoriteServerList from "$lib/components/FavoriteServerList.svelte";
   import Sidebar from "$lib/components/Sidebar.svelte";
@@ -12,6 +13,10 @@
   import '$lib/style/global.css';
 
   const {children} = $props();
+
+  /** Страницы на весь экран без хедера (чат, карта): без подложки и футера, иначе под ними остаётся прокрутка. */
+  const FULLSCREEN_ROUTES = [ROUTES.serversChat, ROUTES.serversMap];
+  const fullscreen = $derived(FULLSCREEN_ROUTES.includes(page.url.pathname));
 
   const onButtonAside = () => ui.toggleAside();
   const onButtonConsole = () => navigation.goToServersConsole();
@@ -75,9 +80,13 @@
   </aside>
   <main>
     {@render children()}
-    <Backdrop classes="page-backdrop"/>
+    {#if !fullscreen}
+      <Backdrop classes="page-backdrop"/>
+    {/if}
   </main>
-  <footer></footer>
+  {#if !fullscreen}
+    <footer></footer>
+  {/if}
 </div>
 
 <style>

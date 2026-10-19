@@ -22,5 +22,26 @@ export const serversApi = {
 
   async rate(serverId, rating) {
     await api.ensureOk(await api.post(`/servers/rate/${serverId}?rating=${rating}`));
+  },
+
+  /**
+   * Обмен токена профиля на токен доступа к плагину сервера.
+   * @returns {Promise<{accessToken: string, expiresIn: number}>} `expiresIn` — секунды
+   * @throws {PluginAccessDeniedError} 403 — у профиля на сервере нет ни одной роли
+   */
+  async exchangePluginToken(serverId) {
+    const res = await api.post(`/servers/${serverId}/token`);
+    if (res.status === 403) {
+      throw new PluginAccessDeniedError(serverId);
+    }
+    return api.json(res);
   }
 };
+
+/** У профиля нет доступа к плагину сервера (403 обмена или код закрытия 4403 сокета). */
+export class PluginAccessDeniedError extends Error {
+  constructor(serverId) {
+    super(`No access to server ${serverId}`);
+    this.serverId = serverId;
+  }
+}

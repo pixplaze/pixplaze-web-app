@@ -4,26 +4,34 @@ import {SvelteSet} from 'svelte/reactivity';
 import {token} from '$lib/scripts/api/token.svelte.js';
 import {favoritesApi} from '$lib/scripts/api/favorites.api.js';
 import {buildUserFromToken} from '$lib/scripts/util/user.mapper.js';
-import {activeServer} from '$lib/scripts/activeServer.svelte.js';
 import {notifications} from '$lib/scripts/notifications.svelte.js';
 import {createLatest} from '$lib/scripts/util/latest.util.js';
 
 /** Сколько строка ждёт отмены, прежде чем сервер уйдёт из избранного. */
 export const UNDO_DELAY = 5000;
 
+/** Паузы повтора первой загрузки: удваивается от первой до последней. */
+const RETRY_DELAY_MIN = 1000;
+const RETRY_DELAY_MAX = 30000;
+
 /**
  * Избранные серверы текущего пользователя. Загружаются при входе (и смене аккаунта),
- * перечитываются по {@link load}. Удаление из списка отложенное: сервер ждёт {@link UNDO_DELAY},
+ * перечитываются по {@link load}. Пока список не загружен ни разу, неудачная загрузка повторяется
+ * (web-api мог перезапускаться: до прогрева он отвечает 503), иначе активный сервер не узнает данных. Удаление из списка отложенное: сервер ждёт {@link UNDO_DELAY},
  * его можно вернуть {@link undo}; запрос уходит по истечении задержки.
  */
 class Favorites {
   #servers = $state([]);
   #loading = $state(false);
+  /** Список текущего пользователя загружен хотя бы раз. */
+  #loaded = $state(false);
   #error = $state(null);
   /** id серверов, ожидающих удаления. */
   #pendingRemove = new SvelteSet();
   #timers = new Map();
   #latest = createLatest();
+  #retryTimer = null;
+  #retryDelay = RETRY_DELAY_MIN;
   #userId = $derived(buildUserFromToken(token.value)?.id ?? null);
 
   constructor() {
@@ -48,6 +56,11 @@ class Favorites {
     return this.#loading;
   }
 
+  /** Загружен ли список хотя бы раз (после входа); перечитывание его не сбрасывает. */
+  get loaded() {
+    return this.#loaded;
+  }
+
   /** Сообщение последней неудачной загрузки или null. */
   get error() {
     return this.#error;
@@ -64,6 +77,7 @@ class Favorites {
   }
 
   async load() {
+    clearTimeout(this.#retryTimer);
     const isLatest = this.#latest.next();
     this.#loading = true;
     this.#error = null;
@@ -71,10 +85,12 @@ class Favorites {
       const servers = await favoritesApi.fetchMine();
       if (!isLatest()) return;
       this.#servers = servers;
-      // Адреса сервера могли измениться — снимок активного обновляем вместе со списком
-      activeServer.refresh(servers);
+      this.#loaded = true;
+      this.#retryDelay = RETRY_DELAY_MIN;
     } catch (e) {
-      if (isLatest()) this.#error = e.message;
+      if (!isLatest()) return;
+      this.#error = e.message;
+      if (!this.#loaded) this.#retryLater();
     } finally {
       if (isLatest()) this.#loading = false;
     }
@@ -105,7 +121,6 @@ class Favorites {
 
     const server = this.#servers[index];
     this.#drop(serverId);
-    activeServer.clear(serverId);
     try {
       await favoritesApi.remove(serverId);
     } catch {
@@ -135,11 +150,19 @@ class Favorites {
     this.#servers = this.#servers.filter(s => s.id !== serverId);
   }
 
+  #retryLater() {
+    this.#retryTimer = setTimeout(() => this.load(), this.#retryDelay);
+    this.#retryDelay = Math.min(this.#retryDelay * 2, RETRY_DELAY_MAX);
+  }
+
   #onUser(userId) {
     // Выход или другой аккаунт: отложенные удаления прежнего пользователя не отправляем
     for (const serverId of [...this.#pendingRemove]) this.undo(serverId);
+    clearTimeout(this.#retryTimer);
+    this.#retryDelay = RETRY_DELAY_MIN;
     this.#latest.invalidate();
     this.#servers = [];
+    this.#loaded = false;
     this.#error = null;
     this.#loading = false;
     if (userId) this.load();

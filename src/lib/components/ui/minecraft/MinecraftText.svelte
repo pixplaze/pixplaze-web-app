@@ -2,11 +2,11 @@
 <script>
   import {parseMinecraftText} from '$lib/scripts/util/minecraft.util.js';
 
-  // Принимаем props в стиле Svelte 5 JS
-  let { text = '', trim = false, classes = '' } = $props();
+  // ampersand — понимать `&` как код (MOTD); в консоли и чате `&` — обычный символ
+  let { text = '', trim = false, classes = '', ampersand = true } = $props();
 
   // Автоматический перерасчет токенов при изменении строки
-  let tokens = $derived(parseMinecraftText(text, trim));
+  let tokens = $derived(parseMinecraftText(text, trim, {ampersand}));
   const parseColorStyle = color => {
     if (color === '#FFFFFF') {
       return 'var(--color-text-secondary)';

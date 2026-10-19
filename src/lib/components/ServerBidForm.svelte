@@ -6,7 +6,6 @@
   import Notice from '$lib/components/ui/Notice.svelte';
   import Button from '$lib/components/ui/buttons/Button.svelte';
   import ButtonIcon from '$lib/components/ui/buttons/ButtonIcon.svelte';
-  import Checkbox from '$lib/components/ui/inputs/Checkbox.svelte';
   import {bidsApi} from '$lib/scripts/api/bids.api.js';
 
   const {
@@ -17,14 +16,6 @@
 
   let inviteCode = $state('');
   let preview = $state(null);
-  /** Интеграция заявки, для которой выдан код: инструкция зависит от неё, а не от текущего флажка. */
-  let codeForIntegration = $state(false);
-  let integrationNotices = $derived(form.withoutIntegration ? [{
-    message: 'Интеграция необходима для авторизации игроков, синхронизации чата и карты сервера. ' +
-             'Без интеграции сервер в листинге будет отображаться как обычно. ' +
-             'Интеграция требует установки плагина.',
-    level: LEVEL.WARNING
-  }] : []);
 
   async function submit() {
     if (!form.isValid) return;
@@ -33,7 +24,6 @@
       const bid = await bidsApi.submit(request);
       inviteCode = bid.inviteCode;
       preview = bid.preview;
-      codeForIntegration = request.isIntegration;
       await onSubmit(request);
     } catch (e) {
       form.pushNotice(createNotice(e.message, LEVEL.ERROR));
@@ -75,36 +65,15 @@
     <div class="server-address-notices">
       <Notice bind:notices={form.fields.host.validationNotices} onClose={() => form.fields.host.clear()}/>
       <Notice bind:notices={form.fields.port.validationNotices} onClose={() => form.fields.port.clear()}/>
-      <Notice bind:notices={form.fields.port.validationNotices} onClose={() => form.fields.port.clear()}/>
     </div>
   </div>
-  <Checkbox id="without-integration" bind:checked={form.withoutIntegration}>Создать без интеграции</Checkbox>
-  <Notice notices={integrationNotices} closeable={false}/>
-  {#if !form.withoutIntegration}
-    <div class="owner-field">
-      <Input id="server-owner"
-             label="Ник владельца в Minecraft"
-             placeholder="Steve"
-             maxlength={16}
-             bind:value={form.fields.ownerUsername.value}
-             classes={form.fields.ownerUsername.validationClasses}
-      />
-      <Notice bind:notices={form.fields.ownerUsername.validationNotices} onClose={() => form.fields.ownerUsername.clear()}/>
-    </div>
-  {/if}
   <Notice bind:notices={form.notices} onClose={() => form.clearNotices()}/>
   {#if inviteCode}
     <div class="invite-code" style="display: flex; gap: var(--ui-spacing); width: 100%">
       <Input id="server-invite-code" bind:value={inviteCode} disabled/>
       <ButtonIcon icon="copy" onclick={() => copyToClipboard(inviteCode)}/>
     </div>
-    <p class="invite-code-hint">
-      {#if codeForIntegration}
-        Укажите код в конфиге плагина и перезапустите сервер, затем подтвердите регистрацию по ссылке, которую выведет плагин.
-      {:else}
-        Добавьте код в MOTD сервера: принадлежность подтвердится автоматически при проверке сервера, после чего код можно убрать.
-      {/if}
-    </p>
+    <p class="invite-code-hint">Добавьте код в MOTD сервера. Без плагина регистрация подтвердится при ближайшей проверке сервера; с плагином перезапустите сервер и подтвердите регистрацию по ссылке, которую он выведет. После регистрации код можно убрать.</p>
   {/if}
   {#if preview}
     <div class="ui box bid-preview">
@@ -142,9 +111,6 @@
   }
   .port-field {
     width: 110px;
-  }
-  .owner-field {
-    flex: 1 1 100%;
   }
   .invite-code-hint {
     flex: 1 1 100%;

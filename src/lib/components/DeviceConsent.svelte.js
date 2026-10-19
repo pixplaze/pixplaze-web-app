@@ -1,5 +1,5 @@
 import {auth} from '$lib/scripts/auth.svelte.js';
-import {oauthApi} from '$lib/scripts/api/oauth.api.js';
+import {GRANT_LINKED_TO_ANOTHER_PROFILE, oauthApi} from '$lib/scripts/api/oauth.api.js';
 
 /**
  * Device-Consent-Flow (DCF) — подтверждающая сторона device-flow (RFC 8628, §5.3–5.4):
@@ -11,6 +11,7 @@ export class DeviceConsentFlow {
   busy = $state(false);    // запрос в полёте (загрузка info / отправка решения)
   done = $state(null);     // 'approved' | 'denied' | null — итог
   failed = $state(false);  // ошибка последнего действия
+  linkedToAnotherProfile = $state(false); // игрок привязан к другому профилю — подтвердить нельзя
 
   #userCode;
 
@@ -45,6 +46,7 @@ export class DeviceConsentFlow {
       await oauthApi.grantDecision(allow ? 'ALLOW' : 'DENY', this.#userCode);
       this.done = allow ? 'approved' : 'denied';
     } catch (error) {
+      this.linkedToAnotherProfile = error.message === GRANT_LINKED_TO_ANOTHER_PROFILE;
       this.failed = true;
       console.error('Device-flow decision failed:', error);
     } finally {

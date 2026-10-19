@@ -19,6 +19,9 @@
   --ui-spacing: 20px;
   --ui-padding: 20px;
   --ui-size-screen: 500px;
+  /* Страница на весь экран без хедера (чат, карта): хедер высотой в блок сверху (десктоп)
+     или снизу (мобайл). vh — для браузеров без dvh, см. @supports в конце файла */
+  --ui-page-height: calc(100vh - var(--ui-size-block));
 
   --color-red-main: #C10000;
   --color-green-main: #5CBB3A;
@@ -55,6 +58,7 @@
   --color-ui-border: #42A021;
   --color-ui-border1: #C0C0C0;
 
+  --color-ui-contrast-border: var(--color-text-primary);
   --color-ui-info-border: var(--color-ui-border);
   --color-ui-info-background: var(--color-ui-primary);
   --color-ui-warning-border: #EFC500;
@@ -87,4 +91,12 @@
   --color-ui-background: #444444;
   --color-ui-foreground: #333333;
   --color-main-text-placeholder: var(--color-text-primary);
+}
+
+/* dvh — без адресной строки мобильного браузера. Через @supports, а не повтором объявления:
+   переменная с неизвестной единицей не откатывается к прежнему значению */
+@supports (height: 100dvh) {
+  :root {
+    --ui-page-height: calc(100dvh - var(--ui-size-block));
+  }
 }

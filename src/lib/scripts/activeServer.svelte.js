@@ -1,18 +1,23 @@
 import {browser} from '$app/environment';
 import {token} from '$lib/scripts/api/token.svelte.js';
+import {favorites} from '$lib/scripts/favorites.svelte.js';
 import {buildUserFromToken} from '$lib/scripts/util/user.mapper.js';
 
 const ACTIVE_SERVER_KEY = 'activeServer';
 
 /**
- * Активный сервер — тот, с которым работают карта, консоль и чат. Хранится снимок сервера
- * (а не только id), чтобы страницы знали сервер сразу после перезагрузки, не дожидаясь
- * избранного. Выбор принадлежит пользователю: при выходе или входе другим аккаунтом сбрасывается.
+ * Активный сервер — тот, с которым работают карта, консоль и чат. Хранится только id: данные сервера
+ * берутся из избранного, поэтому не устаревают. Сервер, которого в загруженном избранном нет (убран
+ * в другой вкладке или на другом устройстве), выбор сбрасывает. Выбор принадлежит пользователю:
+ * при выходе или входе другим аккаунтом сбрасывается.
  */
 class ActiveServer {
-  /** @type {{ownerId: *, server: object} | null} */
+  /** @type {{ownerId: *, serverId: number} | null} */
   #selection = $state(null);
   #ownerId = $derived(buildUserFromToken(token.value)?.id ?? null);
+  #server = $derived(this.#selection
+      ? favorites.servers.find(s => s.id === this.#selection.serverId) ?? null
+      : null);
 
   constructor() {
     if (!browser) {
@@ -30,58 +35,46 @@ class ActiveServer {
     $effect.root(() => {
       $effect(() => {
         if (this.#selection && this.#selection.ownerId !== this.#ownerId) {
-          this.#save(null);
+          this.#delete();
+        }
+      });
+      $effect(() => {
+        if (this.#selection && favorites.loaded && !this.#server) {
+          this.#delete();
         }
       });
     });
   }
 
-  /** Снимок активного сервера или null, если сервер не выбран (реактивно). */
+  /** Активный сервер (модель карточки из избранного) или null (реактивно). */
   get server() {
-    return this.#selection?.server ?? null;
+    return this.#server;
   }
 
-  /** Сделать сервер активным (модель карточки, {@link mapServer}). */
+  /** Сервер выбран, но избранное ещё не загружено: данных о нём пока нет. */
+  get loading() {
+    return this.#selection !== null && !favorites.loaded;
+  }
+
+  /** Сделать сервер активным. */
   select(server) {
     if (!this.#ownerId) return;
-    const {id, name, host, hosts, image} = server;
-    this.#save({ownerId: this.#ownerId, server: {id, name, host, hosts, image}});
+    this.#selection = {ownerId: this.#ownerId, serverId: server.id};
+    localStorage.setItem(ACTIVE_SERVER_KEY, JSON.stringify(this.#selection));
   }
 
-  /**
-   * Сверить с загруженным избранным: снимок обновляется свежими данными, а если сервера
-   * в избранном больше нет (убран в другой вкладке или на другом устройстве) — выбор сбрасывается.
-   */
-  refresh(servers) {
-    if (!this.server) return;
-    const fresh = servers.find(s => s.id === this.server.id);
-    if (fresh) {
-      this.select(fresh);
-    } else {
-      this.#save(null);
-    }
-  }
-
-  /** Сбросить выбор, если активен сервер `serverId`. */
-  clear(serverId) {
-    if (this.#selection?.server.id === serverId) {
-      this.#save(null);
-    }
-  }
-
-  #save(selection) {
-    this.#selection = selection;
-    if (selection) {
-      localStorage.setItem(ACTIVE_SERVER_KEY, JSON.stringify(selection));
-    } else {
-      localStorage.removeItem(ACTIVE_SERVER_KEY);
-    }
+  #delete() {
+    this.#selection = null;
+    localStorage.removeItem(ACTIVE_SERVER_KEY);
   }
 }
 
+/** Сохранённый выбор; из прежнего формата (снимок сервера) берётся id, мусор читается как «не выбран». */
 function read() {
   try {
-    return JSON.parse(localStorage.getItem(ACTIVE_SERVER_KEY));
+    const selection = JSON.parse(localStorage.getItem(ACTIVE_SERVER_KEY));
+    const serverId = selection?.serverId ?? selection?.server?.id;
+    return serverId != null ? {ownerId: selection.ownerId, serverId} : null;
   } catch {
     return null;
   }

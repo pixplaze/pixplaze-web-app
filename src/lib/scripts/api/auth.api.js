@@ -1,15 +1,19 @@
 import {api, apiConfig} from '$lib/scripts/api/client.js';
 
-/** Вход, регистрация, выход и обновление access-токена. */
+/**
+ * Вход, регистрация, выход и обновление access-токена. Ответы входа, регистрации и refresh —
+ * сессия `{accessToken, permissions}`: токен и подсказка с правами для интерфейса.
+ * @typedef {{accessToken: string, permissions: {system: string[], servers: Record<string, string[]>}}} Session
+ */
 export const authApi = {
-  /** @returns {Promise<string|null>} access-токен или null, если сервер отказал */
+  /** @returns {Promise<Session|null>} сессия или null, если сервер отказал */
   async signIn(signInData) {
-    return accessTokenOf(await api.post('/auth/sign-in', {body: JSON.stringify(signInData)}));
+    return sessionOf(await api.post('/auth/sign-in', {body: JSON.stringify(signInData)}));
   },
 
-  /** @returns {Promise<string|null>} access-токен или null, если сервер отказал */
+  /** @returns {Promise<Session|null>} сессия или null, если сервер отказал */
   async signUp(signUpData) {
-    return accessTokenOf(await api.post('/auth/sign-up', {body: JSON.stringify(signUpData)}));
+    return sessionOf(await api.post('/auth/sign-up', {body: JSON.stringify(signUpData)}));
   },
 
   async signOut() {
@@ -18,7 +22,7 @@ export const authApi = {
 
   /**
    * Обновить access-токен по refresh-куке. Мимо ApiClient: на 401 он сам зовёт refresh.
-   * @returns {Promise<string|null>} новый токен или null, если сервер отказал
+   * @returns {Promise<Session|null>} новая сессия или null, если сервер отказал
    * @throws {TypeError} при сетевой ошибке (сервер недоступен)
    */
   async refresh() {
@@ -26,14 +30,14 @@ export const authApi = {
       method: 'POST',
       credentials: 'include', // Обязательно для отправки куки
     });
-    return accessTokenOf(res);
+    return sessionOf(res);
   }
 };
 
-async function accessTokenOf(res) {
+async function sessionOf(res) {
   if (!res.ok) {
     return null;
   }
   const data = await res.json().catch(() => ({}));
-  return data.accessToken || null;
+  return data.accessToken ? data : null;
 }

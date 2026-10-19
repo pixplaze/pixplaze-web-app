@@ -1,6 +1,7 @@
 import {api} from '$lib/scripts/api/client.js';
 import {authApi} from '$lib/scripts/api/auth.api.js';
 import {token} from '$lib/scripts/api/token.svelte.js';
+import {permissions} from '$lib/scripts/permissions.svelte.js';
 
 /**
  * Авторизация: вход, регистрация, выход и обновление access-токена на ответ 401.
@@ -12,6 +13,11 @@ class Auth {
   constructor() {
     // Обработка 401 в низкоуровневом клиенте
     api.setUnauthorizedHandler(() => this.#handleUnauthorized());
+
+    // Сессия есть, а подсказки с правами нет (вход до её появления) — получаем её refresh-ом
+    if (token.value && !permissions.hasHint) {
+      this.refresh();
+    }
   }
 
   /** Авторизован ли пользователь (реактивно). */
@@ -48,11 +54,13 @@ class Auth {
     return this.#handleUnauthorized();
   }
 
-  #accept(accessToken) {
-    if (accessToken) {
-      token.set(accessToken);
+  /** Сессия из ответа: токен и подсказка с правами. Возвращает токен или null. */
+  #accept(session) {
+    if (session) {
+      permissions.set(session.permissions);
+      token.set(session.accessToken);
     }
-    return accessToken;
+    return session?.accessToken ?? null;
   }
 
   /**
@@ -68,19 +76,17 @@ class Auth {
   }
 
   async #refresh() {
-    let accessToken;
+    let session;
     try {
-      accessToken = await authApi.refresh();
+      session = await authApi.refresh();
     } catch {
       return null; // Сеть недоступна: сессию не завершаем
     }
 
-    if (accessToken) {
-      token.set(accessToken);
-    } else {
+    if (!session) {
       await this.signOut();
     }
-    return accessToken;
+    return this.#accept(session);
   }
 }
 
