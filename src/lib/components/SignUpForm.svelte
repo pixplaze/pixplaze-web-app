@@ -77,6 +77,7 @@
          bind:value={fields.inviteCode.value}
          oninput={() => form.clearNotices()}/>
   <Notice notices={form.inviteCodeNotices}/>
+<!--  <Notice notices={fields.inviteCode.validationNotices}/>-->
 
   <Notice bind:notices={form.notices}/>
   <Button onclick={onFormSubmit} disabled={!form.isValid}>Зарегистрироваться</Button>
@@ -96,6 +97,10 @@
         padding-left: 10px;
         padding-right: 10px;
       }
+    }
+
+    #user-invite-code {
+      text-transform: uppercase;
     }
   }
 </style>

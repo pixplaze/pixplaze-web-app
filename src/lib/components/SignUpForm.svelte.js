@@ -8,12 +8,12 @@ import {createNotice, LEVEL} from "$lib/scripts/util/notice.util.js";
 const inviteCodeSchema = () => pipeAsync(
     string(),
     minLength(8, 'Код приглашения должен состоять из 8 символов'),
-    checkAsync((code) => vouchersApi.isInviteCodeValid(code), 'Неверный код приглашения')
+    checkAsync((code) => code.length < 8 || vouchersApi.isInviteCodeValid(code), 'Неверный код приглашения')
 );
 
 /** Форма регистрации: поля + сообщение к коду приглашения. */
 export class SignUpForm extends Form {
-  inviteCodeNotices = $state([]);
+  inviteCodeNotices = $derived([...this.fields.inviteCode.validationNotices]);
 
   constructor(inviteCode) {
     const password = new Field(passwordSchema());
@@ -22,16 +22,19 @@ export class SignUpForm extends Form {
       email: new Field(emailSchema()),
       password,
       passwordRepeat: new Field(passwordRepeatSchema(() => password.value), {dependsOn: password}),
-      inviteCode: new Field(inviteCodeSchema(), {
-        initial: inviteCode ?? '',
-        onSuccess: code => this.#showInviteCodeNotice(code)
+      inviteCode: new Field(
+        inviteCodeSchema(),
+        {
+          initial: inviteCode ?? '',
+          normalize: code => code.toUpperCase(),
+          onSuccess: code => this.#showInviteCodeNotice(code)
       }),
     });
   }
 
   async #showInviteCodeNotice(code) {
     const message = await vouchersApi.getInviteCodeMessage(code);
-    this.inviteCodeNotices = [createNotice(message, LEVEL.INFO)];
+    this.inviteCodeNotices = [...this.inviteCodeNotices, createNotice(message, LEVEL.INFO)];
   }
 
   toRequest() {

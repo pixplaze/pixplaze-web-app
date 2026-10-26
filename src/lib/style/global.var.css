@@ -57,6 +57,7 @@
   --color-ui-secondary: #52A435;
   --color-ui-border: #42A021;
   --color-ui-border1: #C0C0C0;
+  --color-ui-focus: var(--color-text-selection);
 
   --color-ui-contrast-border: var(--color-text-primary);
   --color-ui-info-border: var(--color-ui-border);
@@ -66,9 +67,16 @@
   --color-ui-error-border: var(--color-red-main);
   --color-ui-error-background: #ED0808;
 
-  --color-button-background: var(--color-ui-primary);
-  --color-button-border: var(--color-ui-border);
-  --color-button-shadow: var(--color-ui-secondary)
+  /* Кнопки (Button): свой цвет в блоке — переопределить эти переменные на родителе */
+  --color-ui-button-text: var(--color-text-secondary);
+  --color-ui-button-border: var(--color-ui-border);
+  --color-ui-button-background: var(--color-ui-primary);
+  --color-ui-button-shadow: var(--color-ui-shadow);
+  --color-ui-button-hover-background: var(--color-ui-primary-lighter);
+  --color-ui-button-active-border: var(--color-ui-primary-lighter);
+  --color-ui-button-active-background: var(--color-ui-secondary);
+  --color-ui-button-disabled-border: var(--color-ui-primary);
+  --color-ui-button-disabled-background: var(--color-main-dark);
 }
 
 .themed,

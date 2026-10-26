@@ -2,6 +2,7 @@
 
   import {HoverDropdown} from "$lib/scripts/mixins/dropdown.svelte.js";
   import ItemList from "$lib/components/ui/ItemList.svelte";
+  import ItemListRow from "$lib/components/ui/ItemListRow.svelte";
 
   let {
     value = $bindable(''),
@@ -18,8 +19,12 @@
   {@render children({action: dropdown.trigger})}
   {#if isVisible}
     <div use:dropdown.menu class="dropdown-inner">
-      <ItemList items={suggestions} onselect={(suggestion) => value = suggestion}>
-        {#snippet children(suggestion)}{suggestion}{/snippet}
+      <ItemList>
+        {#each suggestions as suggestion}
+          <ItemListRow onselect={() => value = suggestion} classes={['dropdown-item']}>
+            <span class="suggestion">{suggestion}</span>
+          </ItemListRow>
+        {/each}
       </ItemList>
     </div>
   {/if}
@@ -42,5 +47,13 @@
     box-sizing: border-box;
     background-color: white;
     box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);
+  }
+
+  :global {
+    .suggestion {
+      padding-left: var(--ui-padding);
+      padding-right: var(--ui-padding);
+      font-family: "Minecraft", "Montserrat", "sans-serif";
+    }
   }
 </style>

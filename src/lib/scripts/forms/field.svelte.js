@@ -1,21 +1,24 @@
 import {safeParse, safeParseAsync} from "valibot";
 import {createNotice, LEVEL} from "$lib/scripts/util/notice.util.js";
-import {createLatest} from "$lib/scripts/util/latest.util.js";
+import {createDebounce} from "$lib/scripts/util/utils.js";
 
-/** Пауза ввода, после которой показываются новые ошибки и вызывается onSuccess. */
-const SHOW_DELAY = 500;
+/** Пауза ввода, после которой значение проверяется. */
+const VALIDATE_DELAY = 500;
 
 const isEmpty = (v) => v === '' || v === null || v === undefined;
 
 /**
- * Поле формы с валидацией по схеме valibot. Значение проверяется сразу в сеттере
- * {@link value} — {@link isValid} всегда описывает текущее значение. Показ результата
- * отложен: ошибки исчезают сразу, как только значение стало валидным, а новые появляются
- * после паузы ввода ({@link SHOW_DELAY}); тогда же вызывается onSuccess. Пока идёт
- * асинхронная проверка, поле невалидно; ответ по устаревшему значению отбрасывается.
+ * Поле формы с валидацией по схеме valibot. Значение проверяется после паузы ввода
+ * ({@link VALIDATE_DELAY}) — так асинхронная проверка (запрос) не уходит на каждую букву.
+ * До конца паузы и проверки поле невалидно; затем выставляются {@link isValid} и ошибки,
+ * при успехе вызывается onSuccess. Ответ по устаревшему значению отбрасывается (дебаунс
+ * завершает вытесненную проверку AbortError).
  *
  * Зависимое поле (повтор пароля) создаётся с `dependsOn`: смена значения того поля
  * перепроверяет зависимое.
+ *
+ * `normalize` приводит значение к хранимому виду (регистр, пробелы) до сохранения и проверки —
+ * и при вводе, и для `initial`; схема, onSuccess и {@link value} видят уже приведённое.
  */
 export class Field {
   isValid = $state(false);
@@ -26,21 +29,24 @@ export class Field {
   #initial;
   #schema;
   #onSuccess;
+  #normalize;
   #dependents = [];
-  #latest = createLatest();
-  #showTimer = null;
+  #debounce = createDebounce((value) => this.#schema.async
+      ? safeParseAsync(this.#schema, value)
+      : safeParse(this.#schema, value), VALIDATE_DELAY);
 
   /**
    * @param {object} schema схема valibot
-   * @param {{initial?: any, onSuccess?: (value) => any, dependsOn?: Field}} [options]
+   * @param {{initial?: any, onSuccess?: (value) => any, dependsOn?: Field, normalize?: (value) => any}} [options]
    */
-  constructor(schema, {initial = '', onSuccess, dependsOn} = {}) {
+  constructor(schema, {initial = '', onSuccess, dependsOn, normalize = value => value} = {}) {
     this.#schema = schema;
-    this.#initial = initial;
+    this.#normalize = normalize;
+    this.#initial = normalize(initial);
     this.#onSuccess = onSuccess;
-    this.#value = initial;
+    this.#value = this.#initial;
     dependsOn?.#dependents.push(this);
-    this.#validate(initial);
+    this.#validate(this.#value);
   }
 
   get value() {
@@ -48,8 +54,8 @@ export class Field {
   }
 
   set value(value) {
-    this.#value = value;
-    this.#validate(value);
+    this.#value = this.#normalize(value);
+    this.#validate(this.#value);
     this.#dependents.forEach(field => field.revalidate());
   }
 
@@ -73,37 +79,29 @@ export class Field {
   }
 
   async #validate(value) {
-    const isLatest = this.#latest.next();
-    clearTimeout(this.#showTimer);
+    this.isValid = false;
 
     if (isEmpty(value)) {
-      this.isValid = false;
+      this.#debounce.cancel();
       this.validationNotices = [];
       return;
     }
 
     let result;
-    if (this.#schema.async) {
-      this.isValid = false;
-      result = await safeParseAsync(this.#schema, value);
-      if (!isLatest()) return;
-    } else {
-      result = safeParse(this.#schema, value);
+    try {
+      result = await this.#debounce.run(value);
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+      throw e;
     }
 
     this.isValid = result.success;
     if (result.success) {
       this.validationNotices = [];
+      this.#onSuccess?.(value);
+    } else {
+      this.validationNotices = result.issues.map(i => createNotice(i.message, LEVEL.WARNING));
     }
-
-    this.#showTimer = setTimeout(() => {
-      if (!isLatest()) return;
-      if (result.success) {
-        this.#onSuccess?.(value);
-      } else {
-        this.validationNotices = result.issues.map(i => createNotice(i.message, LEVEL.WARNING));
-      }
-    }, SHOW_DELAY);
   }
 }
 

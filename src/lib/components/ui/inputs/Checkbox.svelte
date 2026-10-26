@@ -1,5 +1,7 @@
 <script>
+  import {untrack} from 'svelte';
   import Icon from "$lib/components/ui/Icon.svelte";
+  import {classIf} from '$lib/scripts/util/utils.js';
 
   let {
     id,
@@ -7,12 +9,14 @@
     classes,
     children,
   } = $props();
+
+  const checkboxId = untrack(() => `${id}-checkbox`);
 </script>
 
-<label for={`${id}-checkbox`} class={`checkbox ${classes}`} class:checked class:no-label={!children}>
+<label for={checkboxId} class={`checkbox focusable ${classIf(classes)}`} class:checked class:no-label={!children}>
   <Icon icon="arrow-ok"/>
   {@render children?.()}
-  <input type="checkbox" id={`${id}-checkbox`} class="hidden" bind:checked>
+  <input type="checkbox" id={checkboxId} class="hidden" bind:checked>
 </label>
 
 <style>

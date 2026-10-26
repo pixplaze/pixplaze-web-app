@@ -5,7 +5,6 @@
   import {MessageStream} from '$lib/scripts/messageStream.svelte.js';
   import CommandInput from '$lib/components/CommandInput.svelte';
   import MinecraftText from '$lib/components/ui/minecraft/MinecraftText.svelte';
-  import {autoscroll} from '$lib/scripts/util/autoscroll.js';
   import {BUBBLE_TYPES, chatBody, formatMessageLine, MESSAGE_TYPE} from '$lib/scripts/util/message.mapper.js';
 
   /** Команды обычного игрока, которые принимает чат плагина (`ChatWebSocketController`). */
@@ -37,23 +36,27 @@
      role="none"
      tabindex="-1"
      onclick={() => input.focus()}>
-  <div class="chat-messages" use:autoscroll={stream.messages}>
-    {#each stream.messages as message (message.id)}
-      {#if BUBBLE_TYPES.has(message.type)}
-        <div class="chat-bubble" class:own={stream.isOwnMessage(message.authorUuid)}>
-          <div class="chat-author">
-            <MinecraftText text={message.author ?? 'Web'} ampersand={false}/>
+  <!-- column-reverse: прокрутка отсчитывается от низа — лента открывается на последних сообщениях и
+       остаётся внизу при новых без JS; обёртка держит сообщения в обычном порядке -->
+  <div class="chat-messages">
+    <div class="chat-feed">
+      {#each stream.messages as message (message.id)}
+        {#if BUBBLE_TYPES.has(message.type)}
+          <div class="chat-bubble" class:own={stream.isOwnMessage(message.authorUuid)}>
+            <div class="chat-author">
+              <MinecraftText text={message.author ?? 'Web'} ampersand={false}/>
+            </div>
+            <div class="chat-text">
+              <MinecraftText text={chatBody(message)} ampersand={false}/>
+            </div>
           </div>
-          <div class="chat-text">
-            <MinecraftText text={chatBody(message)} ampersand={false}/>
+        {:else}
+          <div class="chat-event" class:reply={message.type === MESSAGE_TYPE.REPLY}>
+            <MinecraftText text={formatMessageLine(message)} ampersand={false}/>
           </div>
-        </div>
-      {:else}
-        <div class="chat-event" class:reply={message.type === MESSAGE_TYPE.REPLY}>
-          <MinecraftText text={formatMessageLine(message)} ampersand={false}/>
-        </div>
-      {/if}
-    {/each}
+        {/if}
+      {/each}
+    </div>
   </div>
 
   <div class="chat-actionbar">
@@ -67,14 +70,9 @@
 </div>
 
 <style>
-  /* Колонка, прижатая к низу: лента сообщений стоит над полем ввода, а не тянется на всю высоту */
   .chat {
     position: relative;
     box-sizing: border-box;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
 
     width: 100%;
     height: 100%;
@@ -91,14 +89,11 @@
   .chat-messages {
     box-sizing: border-box;
 
+    /* Обёртка прижата к низу: мало сообщений — они над полем ввода, много — прокрутка */
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: column-reverse;
 
-    /* Высота — по сообщениям, но не выше свободного места; дальше — прокрутка (min-height: 0 — иначе
-       flex-элемент не сжимается меньше содержимого и прокрутки не будет) */
-    flex: 0 1 auto;
-    min-height: 0;
+    height: 100%;
     overflow-y: auto;
 
     padding: 10px 10px 24px;
@@ -109,10 +104,19 @@
     overflow-wrap: anywhere;
   }
 
+  .chat-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   /* Сообщение — квадратное облачко в стиле блоков проекта: рамка и тень снизу */
+  /* Цвет текста — на облачке и событии, внутренние div его наследуют: глобальное правило по элементам
+     (global.css) красит каждый div в --color-text-primary, поэтому цвет с ленты до текста не доходит */
   .chat-bubble {
     box-sizing: border-box;
     align-self: flex-start;
+    color: var(--color-text-secondary);
 
     max-width: 80%;
     padding: 6px 10px calc(6px + var(--ui-size-shadow));
@@ -130,6 +134,11 @@
     border-color: var(--color-ui-border);
   }
 
+  .chat-author,
+  .chat-text {
+    color: inherit;
+  }
+
   .chat-author {
     font-size: 14px;
     opacity: .8;
@@ -138,6 +147,7 @@
   /* Событие — на всю ширину, текст по центру */
   .chat-event {
     box-sizing: border-box;
+    color: var(--color-text-secondary);
 
     width: 100%;
     padding: 4px 10px;

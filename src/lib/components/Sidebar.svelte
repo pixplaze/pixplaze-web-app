@@ -6,6 +6,7 @@
   import {currentUser} from "$lib/scripts/user.svelte.js";
   import {auth} from '$lib/scripts/auth.svelte.js';
   import ItemList from "$lib/components/ui/ItemList.svelte";
+  import ItemListRow from "$lib/components/ui/ItemListRow.svelte";
   import AppVersion from "$lib/components/AppVersion.svelte";
 
   // Реальный функционал — он уже реализован в сервисах.
@@ -45,8 +46,10 @@
 </script>
 
 <nav class="sidebar">
-  <ItemList items={menuItems} onselect={(menuItem) => menuItem.onClick()}>
-    {#snippet children({item, icon})}<Icon {icon}/>{item}{/snippet}
+  <ItemList>
+    {#each menuItems as {item, icon, onClick}}
+      <ItemListRow onselect={onClick} classes=''><Icon {icon}/>{item}</ItemListRow>
+    {/each}
   </ItemList>
 
   <AppVersion/>
@@ -68,7 +71,7 @@
 
   :global {
     .sidebar .item-list .icon {
-      padding-right: var(--ui-padding);
+      padding: 0 var(--ui-padding) 0 var(--ui-padding);
     }
 
     .sidebar ul {

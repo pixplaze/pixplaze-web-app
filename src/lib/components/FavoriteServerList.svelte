@@ -1,5 +1,6 @@
 <script>
   import ItemList from '$lib/components/ui/ItemList.svelte';
+  import ItemListRow from '$lib/components/ui/ItemListRow.svelte';
   import Button from '$lib/components/ui/buttons/Button.svelte';
   import ButtonIcon from '$lib/components/ui/buttons/ButtonIcon.svelte';
   import Loader from '$lib/components/ui/Loader.svelte';
@@ -29,23 +30,22 @@
 
 {#if favorites.servers.length > 0}
   <div class="favorite-server-list">
-    <ItemList items={favorites.servers}
-              key={(server) => server.id}
-              selected={(server) => server.id === activeServer.server?.id}
-              onselect={(server) => activeServer.select(server)}>
-      {#snippet children(server)}
-        <img src={server.image ?? PLACEHOLDER_ICON} alt="" class="pixel-art server-icon">
-        <span class="server-name">{server.name}</span>
-      {/snippet}
-      {#snippet actions(server)}
-        {#if favorites.isPendingRemove(server.id)}
-          <Button classes="transparent undo-button" onclick={() => favorites.undo(server.id)}>отменить</Button>
-        {:else}
-          <ButtonIcon classes="transparent" icon="more"/>
-          <ButtonIcon classes="transparent" icon={copiedId === server.id ? 'arrow-ok' : 'copy'} onclick={() => onCopy(server)}/>
-          <ButtonIcon classes="transparent" icon="star-filled" onclick={() => favorites.removeLater(server.id)}/>
-        {/if}
-      {/snippet}
+    <ItemList>
+      {#each favorites.servers as server (server.id)}
+        <ItemListRow selected={server.id === activeServer.server?.id} onselect={() => activeServer.select(server)}>
+          <img src={server.image ?? PLACEHOLDER_ICON} alt="" class="pixel-art server-icon">
+          <span class="server-name">{server.name}</span>
+          {#snippet actions()}
+            {#if favorites.isPendingRemove(server.id)}
+              <Button classes="transparent undo-button" onclick={() => favorites.undo(server.id)}>отменить</Button>
+            {:else}
+              <ButtonIcon classes="transparent" icon="more"/>
+              <ButtonIcon classes="transparent" icon={copiedId === server.id ? 'arrow-ok' : 'copy'} onclick={() => onCopy(server)}/>
+              <ButtonIcon classes="transparent" icon="star-filled" onclick={() => favorites.removeLater(server.id)}/>
+            {/if}
+          {/snippet}
+        </ItemListRow>
+      {/each}
     </ItemList>
   </div>
 {:else if favorites.loading}
@@ -71,7 +71,7 @@
     flex: 0 0 auto;
     width: var(--ui-size-block);
     height: var(--ui-size-block);
-    margin: 0 var(--ui-padding) 0 calc(-1 * var(--ui-padding));
+    margin: 0 var(--ui-padding) 0 0;
   }
 
   .server-name {

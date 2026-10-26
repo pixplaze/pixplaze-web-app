@@ -7,12 +7,14 @@
 
   // Автоматический перерасчет токенов при изменении строки
   let tokens = $derived(parseMinecraftText(text, trim, {ampersand}));
-  const parseColorStyle = color => {
-    if (color === '#FFFFFF') {
-      return 'var(--color-text-secondary)';
-    }
 
-    return color;
+  /**
+   * Цвет токена. Без кода цвета (`null`) — не задаём: текст наследует `color` родителя. Явный `§f` —
+   * `--mc-white`, если контейнер её задал (белый на светлом фоне не виден), иначе белый.
+   */
+  const colorStyle = color => {
+    if (!color) return undefined;
+    return `color: ${color === '#FFFFFF' ? 'var(--mc-white, #FFFFFF)' : color};`;
   }
 </script>
 
@@ -24,23 +26,26 @@
             class:underline={token.underline}
             class:strikethrough={token.strikethrough}
             class:obfuscated={token.obfuscated}
-            style="color: {parseColorStyle(token.color)};">
+            style={colorStyle(token.color)}>
             {token.text}
         </span>
     {/each}
 </span>
 
 <style>
+  /* Текст без кода цвета — цвета родителя. inherit явно: глобальное правило по элементам (global.css)
+     красит каждый span в --color-text-primary и иначе обрывает наследование */
   .minecraft-container {
+    color: inherit;
     display: inline-block;
     white-space: pre-wrap;
     line-height: 1.2;
   }
 
   .motd-token {
+    color: inherit;
     display: inline;
     font-family: "Minecraft", "Arial", "sans-serif";
-    color: var(--color-text-primary);
   }
 
   .bold { font-weight: bold; }

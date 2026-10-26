@@ -39,6 +39,14 @@
   /*outline: black 4px solid;*/
   /*outline-offset: 0;*/
 }
+
+/* Фокус с клавиатуры (не от мыши): рамка вокруг элемента. Для label со скрытым нативным инпутом
+   (Checkbox, Radio, Switch) — вокруг label, сам инпут не виден. */
+.focusable:focus-visible,
+.focusable:has(> input.hidden:focus-visible) {
+  outline: var(--ui-size-border) solid var(--color-ui-focus);
+  outline-offset: var(--ui-size-border);
+}
 svg,
 .icon {
   display: inline;
@@ -67,5 +75,17 @@ svg,
 /* INPUT TYPE */
 
 .attached {
+  margin: calc(-1 * var(--ui-size-border))!important;
+  margin-left: 0!important;
+}
+
+.attached:first-child {
+  margin-left: 0!important;
+}
+.attached:last-child {
+  margin-right: 0!important;
+}
+
+.tight {
   margin: calc(-1 * var(--ui-size-border))!important;
 }

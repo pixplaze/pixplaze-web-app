@@ -6,7 +6,7 @@ export function formatDate(isoString) {
   if (!isoString) return '';
   const normalized = isoString.slice(0, 23) + 'Z';
   return new Date(normalized).toLocaleString(undefined, {
-    year: 'numeric', month: 'long', day: 'numeric',
+    year: 'numeric', month: 'short', day: 'numeric',
     hour: '2-digit', minute: '2-digit'
   });
 }
@@ -64,39 +64,43 @@ export function randomUUID() {
   return `${hex.slice(0, 4).join('')}-${hex.slice(4, 6).join('')}-${hex.slice(6, 8).join('')}-${hex.slice(8, 10).join('')}-${hex.slice(10, 16).join('')}`;
 }
 
+/**
+ * Откладывает вызов callback до паузы в `delay` мс; аргументы — от последнего {@link run},
+ * последним аргументом callback получает AbortSignal.
+ *
+ * Завершается результатом только последний вызов `run`. Вытесненный новым `run` или
+ * отменённый `cancel` — ошибкой AbortError: и пока ждёт таймера, и если callback уже идёт
+ * (signal прерывает его запрос; не слушает signal — результат всё равно отбрасывается).
+ */
 export function createDebounce(callback, delay) {
   let timeoutId;
-  let abortController;
-  let activeResolve;
-  let activeReject;
+  let controller;
+  let rejectPending; // промис, чей таймер ещё не сработал
+
+  const cancel = () => {
+    clearTimeout(timeoutId);
+    controller?.abort();
+    rejectPending?.(controller.signal.reason);
+    rejectPending = null;
+  };
 
   const run = (...args) => {
-    clearTimeout(timeoutId);
+    cancel();
+    const current = controller = new AbortController();
 
-    if (abortController) {
-      abortController.abort();
-    }
-
-    // 3. Создаем новый Promise, который вернется из run
     return new Promise((resolve, reject) => {
-      activeResolve = resolve;
-      activeReject = reject;
-      abortController = new AbortController();
-
+      rejectPending = reject;
       timeoutId = setTimeout(async () => {
+        rejectPending = null;
         try {
-          const result = await callback(...args, abortController.signal);
+          const result = await callback(...args, current.signal);
+          current.signal.throwIfAborted();
           resolve(result);
         } catch (err) {
           reject(err);
         }
       }, delay);
     });
-  };
-
-  const cancel = () => {
-    clearTimeout(timeoutId);
-    if (abortController) abortController.abort();
   };
 
   return { run, cancel };

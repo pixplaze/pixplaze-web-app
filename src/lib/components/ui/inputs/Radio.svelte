@@ -14,7 +14,7 @@
   const checked = $derived(group === value);
 </script>
 
-<label for={radioId} class={`radio ${classIf(classes)}`} class:checked class:no-label={!children}>
+<label for={radioId} class={`radio focusable ${classIf(classes)}`} class:checked class:no-label={!children}>
   <span class="radio-point"></span>
   {@render children?.()}
   <input type="radio" id={radioId} class="hidden" bind:group value={value}>

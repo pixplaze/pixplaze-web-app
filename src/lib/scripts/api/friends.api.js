@@ -11,6 +11,13 @@ import {api} from '$lib/scripts/api/client.js';
  *   server: {id: number, name?: string, hosts?: {address: string, port: number, type: string}[]}}} OnlinePlayer
  */
 
+/**
+ * Профиль из поиска: голова скина одного из его игроков (Base64 PNG без `data:`, может не быть) и отношение
+ * к искавшему.
+ * @typedef {{profileId: number, name: string, skinHeadBase64: string|null,
+ *   status: 'MUTUAL'|'OUTGOING'|'INCOMING'|'NONE'}} FoundProfile
+ */
+
 /** Друзья текущего профиля и их онлайн (GET/POST /friends, DELETE /friends/{id}, GET /friends/online). */
 export const friendsApi = {
   /** Друзья: `{profileId, name, status}`, status — MUTUAL | OUTGOING | INCOMING. */
@@ -26,6 +33,15 @@ export const friendsApi = {
   /** Убрать друга со своей стороны. */
   async remove(profileId) {
     await api.ensureOk(await api.delete(`/friends/${profileId}`));
+  },
+
+  /**
+   * Поиск профилей по началу имени профиля или ника игрока (от 2 символов, до 20 результатов).
+   * @param {AbortSignal} [signal] отмена устаревшего запроса при продолжении ввода
+   * @returns {Promise<FoundProfile[]>}
+   */
+  async search(query, signal) {
+    return api.json(await api.get(`/friends/search?q=${encodeURIComponent(query.trim())}`, {signal}));
   },
 
   /** Онлайн свой и взаимных друзей. @returns {Promise<OnlineProfile[]>} */

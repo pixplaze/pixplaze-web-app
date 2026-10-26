@@ -13,9 +13,7 @@ export function formatAddress(address, port) {
  *        краткие сведения о сервере (`MinecraftServerInfo.brief`)
  */
 export function formatServerWhere(server) {
-  const name = server.name ?? `сервере #${server.id}`;
-  const address = gameAddress(server.hosts);
-  return address ? `${name} (${address})` : name;
+  return server.name ?? `сервере #${server.id}`;
 }
 
 /**

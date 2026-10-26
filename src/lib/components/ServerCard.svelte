@@ -7,6 +7,7 @@
   import {serversApi} from '$lib/scripts/api/servers.api.js';
   import {notifications} from '$lib/scripts/notifications.svelte.js';
   import Icon from "$lib/components/ui/Icon.svelte";
+  import AlternatingText from '$lib/components/ui/AlternatingText.svelte';
 
   /**
    * favorite — сервер в избранном; null — избранное недоступно (гость), звезда скрыта.
@@ -36,6 +37,12 @@
     });
   };
 
+  $effect(() => {
+    if (server.name === 'MineDest') {
+      console.log(server);
+    }
+  });
+
   </script>
 
 <div class="server-card">
@@ -45,14 +52,18 @@
          class="server-icon pixel-art">
     <div class="server-info">
       <div class="description">
-        <h2>{server.name}</h2>
-        <p>{server.host}</p>
-<!--        <MinecraftText text={server.motd} classes="motd" trim={true}/>-->
+        <!-- Название и игровой адрес сменяют друг друга; адреса нет — только название -->
+        {#snippet address()}{server.host}{/snippet}
+        <h2>
+          <AlternatingText alternate={server.host ? address : undefined}>
+            {#snippet primary()}{server.name}{/snippet}
+          </AlternatingText>
+        </h2>
         <Rating value={server.rating} {onVoted}/>
       </div>
       <div class="buttons">
-        <ButtonIcon icon="more" classes="transparent"/>
         <ButtonIcon icon={copied ? 'arrow-ok' : 'copy'} classes="transparent {copied ? 'copied' : ''}" onclick={onCopy}/>
+        <ButtonIcon icon="more" classes="transparent"/>
         {#if favorite !== null}
           <ButtonIcon icons={favorite ? ['star-filled'] : ['star', 'star-filled']}
                       classes="transparent" onclick={() => onFavorite?.(server)}/>
@@ -61,7 +72,7 @@
     </div>
   </div>
 
-  {#if server.state && server.core && server.core?.version && server.state.players}
+  {#if server.state && server.core && server.state.players}
     <div class="server-state-box">
       <div class="server-status">
         <span title="Онлайн" class="status-info online">
@@ -76,7 +87,7 @@
         </span>
         <span title="Версия" class="status-info version">
           <Icon icon="version"/>
-          {server.core?.version}
+          {server.core?.version ?? 'multi'}
         </span>
         <span title="Язык" class="status-info language">
           <Icon icon="translate"/>
@@ -185,6 +196,8 @@
     text-align: center;
     padding: 10px;
     min-width: 50%;
+    /* Тёмная карточка: текст MOTD без кода цвета — светлый */
+    color: var(--color-text-secondary);
     border: var(--ui-size-border) solid #333333;
     margin: calc(-1 * var(--ui-size-border));
   }
@@ -238,6 +251,16 @@
 
     .server-status .icon {
       margin-right: 10px;
+    }
+
+
+    .slot.primary {
+      color: var(--color-text-primary);
+      font-family: "Minecraft", "Arial", "sans-serif";
+    }
+
+    .slot.alternate {
+      color: var(--color-text-primary);
     }
   }
 </style>

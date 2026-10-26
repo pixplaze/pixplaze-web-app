@@ -24,6 +24,10 @@ const CODES_WITH_AMPERSAND = /([§&]x(?:[§&][0-9a-fA-F]){6}|&#[0-9a-fA-F]{6}|[�
 const CODES_SECTION_ONLY = /(§x(?:§[0-9a-fA-F]){6}|§[0-9a-fk-orR])/g;
 
 /**
+ * Разбор строки с кодами форматирования на токены. `color` токена — цвет из кода (`#RRGGBB`) или `null`,
+ * если цвет не задан: текст до первого кода цвета и после `§r`. Такой текст берёт цвет окружения,
+ * а явный `§f` — белый.
+ *
  * @param {string} text
  * @param {boolean} trim
  * @param {{ampersand?: boolean}} [options] ampersand — понимать `&` как код форматирования (по умолчанию да)
@@ -33,7 +37,7 @@ export function parseMinecraftText(text, trim, {ampersand = true} = {}) {
 
   const tokens = [];
 
-  let currentColor = '#FFFFFF';
+  let currentColor = null;
   let isBold = false;
   let isItalic = false;
   let isUnderline = false;
@@ -87,7 +91,7 @@ export function parseMinecraftText(text, trim, {ampersand = true} = {}) {
       } else if (code === 'k') {
         isObfuscated = true;
       } else if (code === 'r') {
-        currentColor = '#FFFFFF';
+        currentColor = null;
         isBold = isItalic = isUnderline = isStrikethrough = isObfuscated = false;
       }
     }

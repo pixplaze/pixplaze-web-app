@@ -6,7 +6,6 @@
   import {MessageStream} from '$lib/scripts/messageStream.svelte.js';
   import MessageList from '$lib/components/MessageList.svelte';
   import CommandInput from '$lib/components/CommandInput.svelte';
-  import {autoscroll} from '$lib/scripts/util/autoscroll.js';
 
   /** Консоль сервера: лог и консольные команды. serverId — чей токен доступа; host — адрес плагина `host:port`. */
   const {serverId, host} = $props();
@@ -27,8 +26,12 @@
      role="none"
      tabindex="-1"
      onclick={() => input.focus()}>
-  <div class="prompt-messages" use:autoscroll={stream.messages}>
-    <MessageList messages={stream.messages}/>
+  <!-- column-reverse: прокрутка отсчитывается от низа — лог открывается на последних строках и остаётся
+       внизу при новых без JS; обёртка держит строки в обычном порядке -->
+  <div class="prompt-messages">
+    <div>
+      <MessageList messages={stream.messages}/>
+    </div>
   </div>
 
   <div class="prompt-actionbar">
@@ -50,12 +53,14 @@
     padding-bottom: var(--ui-height);
 
     /* TODO: Заменить на другие переменные */
-    background-color: var(--color-text-primary);
-    border: 4px solid #333333;
+    background-color: var(--color-ui-foreground);
   }
 
   .prompt-messages {
     box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column-reverse;
 
     height: 100%;
     overflow-y: auto;
@@ -63,7 +68,9 @@
     padding: 0 10px 24px;
 
     font-family: "Minecraft", "Arial", "sans-serif";
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
+    /* Светлый фон: явный §f белым не виден — красим основным цветом текста */
+    --mc-white: var(--color-text-primary);
   }
 
   .prompt-actionbar {
