@@ -14,15 +14,15 @@ class Ui {
     return this.#theme;
   }
 
-  get asideExpanded() {
+  get isAsideExpanded() {
     return this.#asideExpanded;
   }
 
-  get favoritesExpanded() {
+  get isFavoritesExpanded() {
     return this.#favoritesExpanded;
   }
 
-  isMobileLayout() {
+  get isMobileLayout() {
     return window.innerWidth <= 440;
   }
 
@@ -37,10 +37,13 @@ class Ui {
     localStorage.setItem(IS_ASIDE_EXPANDED_STORAGE_KEY, this.#asideExpanded);
   }
 
-  /** На мобильном панель перекрывает экран: после выбора пункта меню её закрываем. */
-  closeAsideOnMobile() {
-    if (this.isMobileLayout() && this.#asideExpanded) {
+  minimize() {
+    if (this.isMobileLayout && this.#asideExpanded) {
       this.toggleAside();
+    }
+
+    if (this.#favoritesExpanded) {
+      this.toggleFavorites();
     }
   }
 

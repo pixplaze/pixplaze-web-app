@@ -1,15 +1,15 @@
 <script>
-  import {ui} from "$lib/scripts/ui.svelte.js";
-  import {navigation} from "$lib/scripts/navigation.js";
-  import {auth} from '$lib/scripts/auth.svelte.js';
+  import {ui} from "$scripts/ui.svelte.js";
+  import {navigation} from "$scripts/navigation.js";
+  import {auth} from '$scripts/auth.svelte.js';
   import {onMount} from "svelte";
   import {page} from "$app/state";
-  import {ROUTES} from "$lib/scripts/routes.js";
-  import Header from "$lib/components/Header.svelte";
-  import FavoriteServerList from "$lib/components/FavoriteServerList.svelte";
-  import Sidebar from "$lib/components/Sidebar.svelte";
-  import Backdrop from "$lib/components/ui/Backdrop.svelte";
-  import AppNotifications from "$lib/components/AppNotifications.svelte";
+  import {ROUTES} from "$scripts/routes.js";
+  import Header from "$components/layout/Header.svelte";
+  import FavoriteServerList from "$components/servers/FavoriteServerList.svelte";
+  import Sidebar from "$components/layout/Sidebar.svelte";
+  import Backdrop from "$ui/Backdrop.svelte";
+  import AppNotifications from "$components/layout/AppNotifications.svelte";
   import '$lib/style/global.css';
 
   const {children} = $props();
@@ -19,10 +19,22 @@
   const fullscreen = $derived(FULLSCREEN_ROUTES.includes(page.url.pathname));
 
   const onButtonAside = () => ui.toggleAside();
-  const onButtonConsole = () => navigation.goToServersConsole();
-  const onButtonMap = () => navigation.goToServersMap();
-  const onButtonSearch = () => navigation.goToServersList();
-  const onButtonChat = () => navigation.goToServersChat();
+  const onButtonConsole = () => {
+    ui.minimize();
+    navigation.goToServersConsole()
+  };
+  const onButtonMap = () => {
+    ui.minimize();
+    navigation.goToServersMap();
+  }
+  const onButtonSearch = () => {
+    ui.minimize();
+    navigation.goToServersList();
+  }
+  const onButtonChat = () => {
+    ui.minimize();
+    navigation.goToServersChat();
+  }
   const onButtonFavorite = () => ui.toggleFavorites();
 
   const onButtonProfile = () => {}
@@ -63,14 +75,14 @@
     />
     {#if auth.isAuthenticated}
       <div class="favorite-servers-menu debug">
-        <div class="favorite-servers" class:expanded={ui.favoritesExpanded}>
-          <FavoriteServerList expanded={ui.favoritesExpanded}/>
+        <div class="favorite-servers" class:expanded={ui.isFavoritesExpanded}>
+          <FavoriteServerList expanded={ui.isFavoritesExpanded}/>
         </div>
       </div>
     {/if}
     <AppNotifications/>
   </header>
-  <aside class:expanded={ui.asideExpanded} class="debug">
+  <aside class:expanded={ui.isAsideExpanded} class="debug">
     <div class="aside-host">
       <Sidebar {onButtonProfile}
                {onButtonLanguage}

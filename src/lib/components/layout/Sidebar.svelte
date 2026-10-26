@@ -1,35 +1,34 @@
 <script>
-  import Button from "$lib/components/ui/buttons/Button.svelte";
-  import Icon from "$lib/components/ui/Icon.svelte";
-  import {ui} from "$lib/scripts/ui.svelte.js";
-  import {navigation} from "$lib/scripts/navigation.js";
-  import {currentUser} from "$lib/scripts/user.svelte.js";
-  import {auth} from '$lib/scripts/auth.svelte.js';
-  import ItemList from "$lib/components/ui/ItemList.svelte";
-  import ItemListRow from "$lib/components/ui/ItemListRow.svelte";
-  import AppVersion from "$lib/components/AppVersion.svelte";
+  import Button from "$ui/buttons/Button.svelte";
+  import Icon from "$ui/Icon.svelte";
+  import {ui} from "$scripts/ui.svelte.js";
+  import {navigation} from "$scripts/navigation.js";
+  import {currentUser} from "$scripts/user.svelte.js";
+  import {auth} from '$scripts/auth.svelte.js';
+  import ItemList from "$ui/lists/ItemList.svelte";
+  import ItemListRow from "$ui/lists/ItemListRow.svelte";
+  import AppVersion from "$components/layout/AppVersion.svelte";
 
   // Реальный функционал — он уже реализован в сервисах.
   const onButtonTheme = () => ui.toggleTheme();
   const onButtonSignOut = () => {
-    ui.closeAsideOnMobile();
+    ui.minimize();
     auth.signOut();
   }
 
   const onButtonProfile = () => {
-    ui.closeAsideOnMobile();
+    ui.minimize();
     navigation.goToProfile();
   }
 
   const onButtonBids = () => {
-    ui.closeAsideOnMobile();
+    ui.minimize();
     navigation.goToServersBids();
   }
 
-  // Заглушки: функционал ещё не реализован, поэтому ничего не вызываем.
-  const onButtonLanguage = () => {};
-  const onButtonSettings = () => ui.closeAsideOnMobile();
-  const onButtonHelp = () => ui.closeAsideOnMobile();
+  const onButtonLanguage = () => ui.minimize();
+  const onButtonSettings = () => ui.minimize();
+  const onButtonHelp = () => ui.minimize();
 
   const themeIcon = $derived(ui.theme === 'dark' ? 'sun' : 'moon');
 
