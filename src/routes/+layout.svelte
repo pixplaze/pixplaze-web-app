@@ -293,20 +293,14 @@
       100% {opacity: 100%; transform: translateY(0) }
     }
 
-
-    /*
-      Мобайл — overlay: aside выходит из грида (position: fixed), перекрывая main
-      во весь экран кроме Header (он снизу), и не сдвигает main. Слайд — тем же
-      transform на .aside-host. z-index ниже Header (z-index: 2).
-    */
     aside {
       position: fixed;
       top: 0;
+      bottom: var(--ui-size-block);
       left: 0;
       z-index: 3;
 
       width: 0;
-      height: calc(100% - var(--ui-size-block));
     }
 
     aside.expanded {

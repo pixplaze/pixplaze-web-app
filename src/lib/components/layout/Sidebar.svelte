@@ -53,9 +53,9 @@
 
   <AppVersion/>
 
-  <Button classes="sidebar-button sidebar-button--danger" onclick={onButtonSignOut}>
-    выйти<Icon icon="sign-out"/>
-  </Button>
+  <Button classes="sidebar-button sidebar-button--danger"
+          onclick={onButtonSignOut}
+  >выйти<Icon icon="sign-out"/></Button>
 </nav>
 
 <style>
@@ -79,7 +79,6 @@
 
     .app-version {
       border: var(--ui-size-border) solid var(--color-ui-shadow);
-      /* border-top: var(--ui-size-border) solid var(--color-ui-shadow); */
       border-top: none;
       border-bottom: none;
     }

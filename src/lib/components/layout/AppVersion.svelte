@@ -42,13 +42,18 @@
 
 <style>
   .app-version {
-    background-color: transparent;
-    border-collapse: separate;
-    border-spacing: 0;
+    box-sizing: border-box;
     padding: var(--ui-padding);
     font-size: 12px;
     color: var(--color-ui-shadow);
     user-select: text;
+  }
+
+  table {
+    width: 100%;
+    background-color: transparent;
+    border-collapse: separate;
+    border-spacing: 0;
   }
 
   th, td {
