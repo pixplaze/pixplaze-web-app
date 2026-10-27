@@ -63,7 +63,7 @@
   });
 </script>
 
-<div id="layout" class={`container themed ${ui.theme}`}>
+<div id="layout" class={`container themed ${ui.theme}`} class:fullscreen>
   <header>
     <Header {onButtonAside}
             {onButtonConsole}
@@ -102,32 +102,33 @@
 </div>
 
 <style>
+  /*
+    Прокручивается окно (а не внутренний контейнер): так SvelteKit сам восстанавливает
+    позицию при навигации, а на iOS работают сворачивание адресной строки и тап по статус-бару.
+    Header и aside не прокручиваются за счёт sticky.
+  */
   #layout {
-    min-height: -webkit-fill-available;
+    min-height: 100dvh;
     display: grid;
     /* minmax(0, 1fr), а не 1fr (= minmax(auto, 1fr)): колонка main не растягивается
        по ширине содержимого и не выталкивает страницу за окно при открытой панели */
     grid-template-columns: auto minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr auto;
 
-    grid-template-areas: 'header header header'
-                         'aside  main   main'
-                         'footer footer footer';
-
-    padding-top: var(--ui-size-block);
-    padding-bottom: 0;
+    grid-template-areas: 'header header'
+                         'aside  main'
+                         'footer footer';
 
     background-color: var(--color-ui-foreground);
   }
 
+  /* sticky, а не fixed: header остаётся в гриде и сам занимает место — без компенсирующих padding */
   header {
-    position: fixed;
+    position: sticky;
     top: 0;
-    bottom: auto;
 
     z-index: 2;
 
-    width: 100%;
     min-height: var(--ui-size-block);
     background-color: #42A021;
     grid-area: header;
@@ -135,9 +136,9 @@
 
   .favorite-servers-menu {
     overflow: hidden;
-    position: fixed;
-    top: var(--ui-size-block);
-    bottom: auto;
+    position: absolute;
+    top: 100%;
+    left: 0;
     width: 100%;
     max-height: calc(10 * var(--ui-size-block));
 
@@ -204,6 +205,9 @@
   .aside-host {
     width: 300px;
     height: 100%;
+    overflow-y: auto;
+    /* прокрутка панели не перетекает на страницу */
+    overscroll-behavior: contain;
 
     background-color: var(--color-ui-foreground);
 
@@ -242,17 +246,22 @@
   }
 
   :global {
+    /*
+      overflow-x только на html и clip, а не hidden: hidden на body сделал бы body
+      отдельным контейнером прокрутки, и window.scrollY (а с ним восстановление
+      прокрутки SvelteKit) перестал бы работать.
+      scrollbar-gutter: место под полосу прокрутки зарезервировано — контент не прыгает.
+    */
     html {
-      height: 100%;
-    }
-
-    html, body {
-      overflow-x: hidden;
+      overflow-x: clip;
       overscroll-behavior-x: none;
+      scrollbar-gutter: stable;
     }
 
-    body, #app {
-      height: inherit;
+    /* Полноэкранные страницы ровно в высоту экрана: прокрутка и пустой жёлоб под неё не нужны */
+    html:has(#layout.fullscreen) {
+      overflow: hidden;
+      scrollbar-gutter: auto;
     }
 
     section {
@@ -262,22 +271,23 @@
   }
 
   @media screen and (max-width: 440px) {
+    /* aside здесь fixed и в грид не входит; header — последней строкой, залипает снизу */
     #layout {
-      padding-top: 0;
-      padding-bottom: var(--ui-size-block);
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: 1fr auto auto;
+      grid-template-areas: 'main'
+                           'footer'
+                           'header';
     }
 
     header {
-      position: fixed;
       top: auto;
       bottom: 0;
-      left: 0;
-      right: auto;
     }
 
     .favorite-servers-menu {
       top: auto;
-      bottom: var(--ui-size-block);
+      bottom: 100%;
 
       padding: var(--ui-size-shadow) 0 0;
       margin: calc(-1 * var(--ui-size-shadow)) 0 0;
@@ -312,6 +322,11 @@
     }
 
     :global {
+      /* Overlay-панель открыта — страница под ней не прокручивается (scrollbar-gutter не даст прыгнуть) */
+      html:has(#layout > aside.expanded) {
+        overflow: hidden;
+      }
+
       section {
         padding-left: 10px;
         padding-right: 10px;
