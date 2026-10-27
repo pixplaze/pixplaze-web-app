@@ -1,6 +1,6 @@
-import {Form} from '$lib/scripts/forms/form.svelte.js';
-import {Field} from '$lib/scripts/forms/field.svelte.js';
-import {requiredSchema, usernameSchema} from '$lib/scripts/util/validation.util.js';
+import {Form} from '$scripts/forms/form.svelte.js';
+import {Field} from '$scripts/forms/field.svelte.js';
+import {requiredSchema, usernameSchema} from '$util/validation.util.js';
 
 /** Форма входа. */
 export class SignInForm extends Form {

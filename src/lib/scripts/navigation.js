@@ -1,6 +1,6 @@
 import {goto, replaceState} from '$app/navigation';
-import {auth} from '$lib/scripts/auth.svelte.js';
-import {ROUTES} from '$lib/scripts/routes.js';
+import {auth} from '$scripts/auth.svelte.js';
+import {ROUTES} from '$scripts/routes.js';
 
 /** Навигация по маршрутам приложения и auth-guard. */
 export const navigation = {

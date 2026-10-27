@@ -1,9 +1,9 @@
 <script>
-  import {SignInForm} from './SignInForm.svelte.js';
-  import Input from '$lib/components/ui/inputs/Input.svelte';
-  import Button from '$lib/components/ui/buttons/Button.svelte';
-  import Notice from "$lib/components/ui/Notice.svelte";
-  import {createNotice, LEVEL} from "$lib/scripts/util/notice.util.js";
+  import {SignInForm} from '$components/auth/SignInForm.svelte.js';
+  import Input from '$ui/inputs/Input.svelte';
+  import Button from '$ui/buttons/Button.svelte';
+  import Notice from "$ui/Notice.svelte";
+  import {createNotice, LEVEL} from "$util/notice.util.js";
 
   const {
     onSubmit

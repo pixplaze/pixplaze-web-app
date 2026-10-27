@@ -1,5 +1,5 @@
 <script>
-  import Button from '$lib/components/ui/buttons/Button.svelte';
+  import Button from '$ui/buttons/Button.svelte';
 
   let {
     id = '',

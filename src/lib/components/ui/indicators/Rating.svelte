@@ -1,5 +1,5 @@
 <script>
-  import Icon from "$lib/components/ui/Icon.svelte";
+  import Icon from "$ui/Icon.svelte";
 
   let {
     max = 5,

@@ -1,5 +1,5 @@
-import {api} from '$lib/scripts/api/client.js';
-import {mapServer} from '$lib/scripts/util/server.mapper.js';
+import {api} from '$api/client.js';
+import {mapServer} from '$util/server.mapper.js';
 
 /** Листинг Minecraft-серверов: модели карточек ({@link mapServer}). */
 export const serversApi = {

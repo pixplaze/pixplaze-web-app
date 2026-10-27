@@ -1,4 +1,4 @@
-import {pluginTokens} from '$lib/scripts/pluginTokens.svelte.js';
+import {pluginTokens} from '$scripts/pluginTokens.svelte.js';
 
 /**
  * REST плагина Pixplaze. Отдельный клиент, а не {@link ApiClient}: тот подставляет токен профиля,

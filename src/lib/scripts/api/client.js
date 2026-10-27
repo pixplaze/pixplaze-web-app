@@ -1,5 +1,5 @@
 import {env} from '$env/dynamic/public';
-import {token} from '$lib/scripts/api/token.svelte.js';
+import {token} from '$api/token.svelte.js';
 
 // URL API читается из окружения в РАНТАЙМЕ (adapter-node), а не инлайнится на сборке —
 // поэтому образ деплоится как есть, а URL задаётся через docker-compose `environment`

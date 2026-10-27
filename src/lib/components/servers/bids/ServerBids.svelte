@@ -1,13 +1,13 @@
 <script>
-  import ServerBidList from '$lib/components/ServerBidList.svelte';
-  import ServerBidForm from '$lib/components/ServerBidForm.svelte';
-  import Notice from '$lib/components/ui/Notice.svelte';
-  import Loader from '$lib/components/ui/Loader.svelte';
-  import Radio from '$lib/components/ui/inputs/Radio.svelte';
-  import Button from '$lib/components/ui/buttons/Button.svelte';
-  import {currentUser} from '$lib/scripts/user.svelte.js';
-  import {permissions} from '$lib/scripts/permissions.svelte.js';
-  import {ServerBids} from './ServerBids.svelte.js';
+  import ServerBidList from '$components/servers/bids/ServerBidList.svelte';
+  import ServerBidForm from '$components/servers/bids/ServerBidForm.svelte';
+  import Notice from '$ui/Notice.svelte';
+  import Loader from '$ui/indicators/Loader.svelte';
+  import Radio from '$ui/inputs/Radio.svelte';
+  import Button from '$ui/buttons/Button.svelte';
+  import {currentUser} from '$scripts/user.svelte.js';
+  import {permissions} from '$scripts/permissions.svelte.js';
+  import {ServerBids} from '$components/servers/bids/ServerBids.svelte.js';
 
   // Вид выбирается по праву: кто одобряет заявки — все заявки с решениями, остальные — свои.
   const user = $derived(currentUser.value);

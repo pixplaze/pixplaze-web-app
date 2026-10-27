@@ -1,6 +1,6 @@
 <script>
-  import Notice from '$lib/components/ui/Notice.svelte';
-  import {notifications} from '$lib/scripts/notifications.svelte.js';
+  import Notice from '$ui/Notice.svelte';
+  import {notifications} from '$scripts/notifications.svelte.js';
 </script>
 
 <!-- Внутри <header>: на десктопе выпадает вниз, на мобильном (шапка снизу) растёт вверх. -->

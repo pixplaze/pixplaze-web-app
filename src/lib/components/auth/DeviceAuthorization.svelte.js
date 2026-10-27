@@ -1,6 +1,6 @@
-import {token} from '$lib/scripts/api/token.svelte.js';
-import {oauthApi} from '$lib/scripts/api/oauth.api.js';
-import {randomUUID} from '$lib/scripts/util/utils.js';
+import {token} from '$api/token.svelte.js';
+import {oauthApi} from '$api/oauth.api.js';
+import {randomUUID} from '$util/id.util.js';
 
 /** Стадии поллинга запрашивающей стороны (для UI). */
 export const POLL_STATUS = {

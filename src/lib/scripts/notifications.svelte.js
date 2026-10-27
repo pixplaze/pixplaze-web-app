@@ -1,4 +1,4 @@
-import {createNotice, LEVEL} from '$lib/scripts/util/notice.util.js';
+import {createNotice, LEVEL} from '$util/notice.util.js';
 
 /** Сколько уведомление висит до автозакрытия, мс. Ошибки читают дольше. */
 const DURATION = {

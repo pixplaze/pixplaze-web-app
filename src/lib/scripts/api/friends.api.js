@@ -1,4 +1,4 @@
-import {api} from '$lib/scripts/api/client.js';
+import {api} from '$api/client.js';
 
 /**
  * Онлайн профиля: игроки в сети и время выхода. У друга со «скрывать онлайн» — без игроков и времени.

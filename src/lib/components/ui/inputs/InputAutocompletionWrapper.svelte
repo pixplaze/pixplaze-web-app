@@ -1,8 +1,8 @@
 <script>
 
-  import {HoverDropdown} from "$lib/scripts/mixins/dropdown.svelte.js";
-  import ItemList from "$lib/components/ui/ItemList.svelte";
-  import ItemListRow from "$lib/components/ui/ItemListRow.svelte";
+  import {HoverDropdown} from "$scripts/mixins/dropdown.svelte.js";
+  import ItemList from "$ui/lists/ItemList.svelte";
+  import ItemListRow from "$ui/lists/ItemListRow.svelte";
 
   let {
     value = $bindable(''),

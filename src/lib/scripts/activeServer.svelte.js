@@ -1,7 +1,7 @@
 import {browser} from '$app/environment';
-import {token} from '$lib/scripts/api/token.svelte.js';
-import {favorites} from '$lib/scripts/favorites.svelte.js';
-import {buildUserFromToken} from '$lib/scripts/util/user.mapper.js';
+import {token} from '$api/token.svelte.js';
+import {favorites} from '$scripts/favorites.svelte.js';
+import {buildUserFromToken} from '$util/user.mapper.js';
 
 const ACTIVE_SERVER_KEY = 'activeServer';
 

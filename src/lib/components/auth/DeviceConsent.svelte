@@ -1,11 +1,11 @@
 <script>
-  import Button from "$lib/components/ui/buttons/Button.svelte";
-  import Notice from "./ui/Notice.svelte";
-  import {parseImageBase64} from "$lib/scripts/util/utils.js";
-  import Delimiter from "$lib/components/ui/Delimiter.svelte";
+  import Button from "$ui/buttons/Button.svelte";
+  import Notice from "$ui/Notice.svelte";
+  import {parseImageBase64} from "$util/image.util.js";
+  import Delimiter from "$ui/Delimiter.svelte";
   import {onMount} from "svelte";
-  import {DeviceConsentFlow} from "./DeviceConsent.svelte.js";
-  import {createNotice, LEVEL} from "$lib/scripts/util/notice.util.js";
+  import {DeviceConsentFlow} from "$components/auth/DeviceConsent.svelte.js";
+  import {createNotice, LEVEL} from "$util/notice.util.js";
 
   /**
    * Согласие device-flow (RFC 8628, §5.3–5.4 гайда): по `userCode` загружает, что именно

@@ -1,6 +1,6 @@
 <script>
-  import ActiveServerGate from '$lib/components/ActiveServerGate.svelte';
-  import ChatBox from '$lib/components/ChatBox.svelte';
+  import ActiveServerGate from '$components/servers/ActiveServerGate.svelte';
+  import ChatBox from '$components/console/ChatBox.svelte';
 </script>
 
 <ActiveServerGate type="API" permission="MC_CHAT_READ" unsupported="Чат недоступен: на сервере не установлен плагин Pixplaze">

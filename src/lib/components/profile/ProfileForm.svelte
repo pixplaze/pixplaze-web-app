@@ -1,12 +1,12 @@
 <script>
-  import {ProfileForm} from './ProfileForm.svelte.js';
-  import {profilesApi} from '$lib/scripts/api/profiles.api.js';
-  import {auth} from '$lib/scripts/auth.svelte.js';
-  import {notifications} from '$lib/scripts/notifications.svelte.js';
-  import {createNotice, LEVEL} from '$lib/scripts/util/notice.util.js';
-  import PreviewInput from '$lib/components/ui/PreviewInput.svelte';
-  import Button from '$lib/components/ui/buttons/Button.svelte';
-  import Notice from '$lib/components/ui/Notice.svelte';
+  import {ProfileForm} from '$components/profile/ProfileForm.svelte.js';
+  import {profilesApi} from '$api/profiles.api.js';
+  import {auth} from '$scripts/auth.svelte.js';
+  import {notifications} from '$scripts/notifications.svelte.js';
+  import {createNotice, LEVEL} from '$util/notice.util.js';
+  import PreviewInput from '$ui/inputs/PreviewInput.svelte';
+  import Button from '$ui/buttons/Button.svelte';
+  import Notice from '$ui/Notice.svelte';
 
   let { user } = $props();
 

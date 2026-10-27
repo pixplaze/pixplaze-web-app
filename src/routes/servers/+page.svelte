@@ -1,5 +1,5 @@
 <script>
-  import ServerList from '$lib/components/ServerList.svelte';
+  import ServerList from '$components/servers/ServerList.svelte';
 
   let {data} = $props();
 </script>

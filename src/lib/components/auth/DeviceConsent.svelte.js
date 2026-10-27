@@ -1,5 +1,5 @@
-import {auth} from '$lib/scripts/auth.svelte.js';
-import {GRANT_LINKED_TO_ANOTHER_PROFILE, oauthApi} from '$lib/scripts/api/oauth.api.js';
+import {auth} from '$scripts/auth.svelte.js';
+import {GRANT_LINKED_TO_ANOTHER_PROFILE, oauthApi} from '$api/oauth.api.js';
 
 /**
  * Device-Consent-Flow (DCF) — подтверждающая сторона device-flow (RFC 8628, §5.3–5.4):

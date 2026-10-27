@@ -1,5 +1,5 @@
 <script>
-  import {required} from "$lib/scripts/util/utils.js";
+  import {required} from "$util/assert.util.js";
 
   let {
     id = required('id'),

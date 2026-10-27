@@ -1,6 +1,6 @@
 <script>
-  import ActiveServerGate from '$lib/components/ActiveServerGate.svelte';
-  import CommandPrompt from '$lib/components/CommandPrompt.svelte';
+  import ActiveServerGate from '$components/servers/ActiveServerGate.svelte';
+  import CommandPrompt from '$components/console/CommandPrompt.svelte';
 </script>
 
 <ActiveServerGate type="API" permission="MC_CONSOLE_READ" unsupported="Консоль недоступна: на сервере не установлен плагин Pixplaze">

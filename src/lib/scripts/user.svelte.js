@@ -1,7 +1,7 @@
 import {untrack} from 'svelte';
-import {token} from '$lib/scripts/api/token.svelte.js';
-import {buildUserFromToken} from '$lib/scripts/util/user.mapper.js';
-import {profilesApi} from '$lib/scripts/api/profiles.api.js';
+import {token} from '$api/token.svelte.js';
+import {buildUserFromToken} from '$util/user.mapper.js';
+import {profilesApi} from '$api/profiles.api.js';
 
 /**
  * Текущий пользователь, выведенный из access-токена: сразу после смены токена —

@@ -1,5 +1,5 @@
 <script>
-  import {infoApi} from '$lib/scripts/api/info.api.js';
+  import {infoApi} from '$api/info.api.js';
 
   /* global __APP_VERSION__ */
   // Версия web-app вшивается на сборке (vite.config.js), та же форма, что у GET /info/version

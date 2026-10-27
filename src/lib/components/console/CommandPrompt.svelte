@@ -3,9 +3,9 @@
     TODO: Реализовать глобальные стили для тёмных цветов и border/box-shadow
     TODO: Вынести длину переходов в глобальные переменные стилей
    */
-  import {MessageStream} from '$lib/scripts/messageStream.svelte.js';
-  import MessageList from '$lib/components/MessageList.svelte';
-  import CommandInput from '$lib/components/CommandInput.svelte';
+  import {MessageStream} from '$scripts/messageStream.svelte.js';
+  import MessageList from '$components/console/MessageList.svelte';
+  import CommandInput from '$components/console/CommandInput.svelte';
 
   /** Консоль сервера: лог и консольные команды. serverId — чей токен доступа; host — адрес плагина `host:port`. */
   const {serverId, host} = $props();

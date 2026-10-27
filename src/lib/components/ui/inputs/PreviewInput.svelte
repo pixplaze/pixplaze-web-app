@@ -1,6 +1,6 @@
 <script>
-  import Input from "$lib/components/ui/inputs/Input.svelte";
-  import ButtonIcon from "$lib/components/ui/buttons/ButtonIcon.svelte";
+  import Input from "$ui/inputs/Input.svelte";
+  import ButtonIcon from "$ui/buttons/ButtonIcon.svelte";
 
   let {
     isEditMode = $bindable(false),

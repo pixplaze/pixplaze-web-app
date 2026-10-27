@@ -1,9 +1,9 @@
 import {checkAsync, minLength, pipeAsync, string} from "valibot";
-import {Form} from "$lib/scripts/forms/form.svelte.js";
-import {Field} from "$lib/scripts/forms/field.svelte.js";
-import {emailSchema, passwordRepeatSchema, passwordSchema, usernameSchema} from "$lib/scripts/util/validation.util.js";
-import {vouchersApi} from "$lib/scripts/api/vouchers.api.js";
-import {createNotice, LEVEL} from "$lib/scripts/util/notice.util.js";
+import {Form} from "$scripts/forms/form.svelte.js";
+import {Field} from "$scripts/forms/field.svelte.js";
+import {emailSchema, passwordRepeatSchema, passwordSchema, usernameSchema} from "$util/validation.util.js";
+import {vouchersApi} from "$api/vouchers.api.js";
+import {createNotice, LEVEL} from "$util/notice.util.js";
 
 const inviteCodeSchema = () => pipeAsync(
     string(),

@@ -1,4 +1,4 @@
-import {api, apiConfig} from '$lib/scripts/api/client.js';
+import {api, apiConfig} from '$api/client.js';
 
 /** Ошибка решения: подтверждаемый игрок привязан к другому профилю. */
 export const GRANT_LINKED_TO_ANOTHER_PROFILE = 'linked_to_another_profile';

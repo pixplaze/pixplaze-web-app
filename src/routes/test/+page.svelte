@@ -1,12 +1,12 @@
 <script>
-  import Button from "$lib/components/ui/buttons/Button.svelte";
-  import Input from "$lib/components/ui/inputs/Input.svelte";
-  import ButtonIcon from "$lib/components/ui/buttons/ButtonIcon.svelte";
-  import Icon from "$lib/components/ui/Icon.svelte";
-  import CommandPrompt from "$lib/components/CommandPrompt.svelte";
-  import ButtonLabel from "$lib/components/ui/buttons/ButtonLabel.svelte";
-  import Rating from "$lib/components/Rating.svelte"
-  import ServerCard from "$lib/components/ServerCard.svelte";
+  import Button from "$ui/buttons/Button.svelte";
+  import Input from "$ui/inputs/Input.svelte";
+  import ButtonIcon from "$ui/buttons/ButtonIcon.svelte";
+  import Icon from "$ui/Icon.svelte";
+  import CommandPrompt from "$components/console/CommandPrompt.svelte";
+  import ButtonLabel from "$ui/buttons/ButtonLabel.svelte";
+  import Rating from "$ui/indicators/Rating.svelte"
+  import ServerCard from "$components/servers/ServerCard.svelte";
 
   let value = $state("");
   let hearts = $state(1);

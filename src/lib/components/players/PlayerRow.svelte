@@ -1,8 +1,8 @@
 <script>
-  import {parseImageBase64} from '$lib/scripts/util/utils.js';
-  import OnlineIndicator from '$lib/components/ui/OnlineIndicator.svelte';
-  import AlternatingText from '$lib/components/ui/AlternatingText.svelte';
-  import Icon from "$lib/components/ui/Icon.svelte";
+  import {parseImageBase64} from '$util/image.util.js';
+  import OnlineIndicator from '$ui/indicators/OnlineIndicator.svelte';
+  import AlternatingText from '$ui/text/AlternatingText.svelte';
+  import OperatorIndicator from '$ui/indicators/OperatorIndicator.svelte';
 
   /**
    * Строка игрока или профиля: голова скина, имя с подписью, индикатор онлайна и действия справа.
@@ -32,7 +32,7 @@
   <p class="player-name">
     {#snippet details()}
       {#if isOperator}
-        <Icon icon="operator" classes="player-operator"/>
+        <OperatorIndicator/>
       {/if}
       {@render subtitle()}
     {/snippet}

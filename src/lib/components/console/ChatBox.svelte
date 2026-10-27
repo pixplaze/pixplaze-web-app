@@ -2,10 +2,10 @@
   /*
     TODO: Переделать вид вместе с дизайнером (облачка, события, аватары)
    */
-  import {MessageStream} from '$lib/scripts/messageStream.svelte.js';
-  import CommandInput from '$lib/components/CommandInput.svelte';
-  import MinecraftText from '$lib/components/ui/minecraft/MinecraftText.svelte';
-  import {BUBBLE_TYPES, chatBody, formatMessageLine, MESSAGE_TYPE} from '$lib/scripts/util/message.mapper.js';
+  import {MessageStream} from '$scripts/messageStream.svelte.js';
+  import CommandInput from '$components/console/CommandInput.svelte';
+  import MinecraftText from '$ui/text/MinecraftText.svelte';
+  import {BUBBLE_TYPES, chatBody, formatMessageLine, MESSAGE_TYPE} from '$util/message.mapper.js';
 
   /** Команды обычного игрока, которые принимает чат плагина (`ChatWebSocketController`). */
   const CHAT_COMMANDS = ['msg', 'tell', 'w', 'me', 'list', 'help'];

@@ -1,4 +1,4 @@
-import {api} from '$lib/scripts/api/client.js';
+import {api} from '$api/client.js';
 
 /** Каталог прав web-api (GET /auth/permissions): имя константы → код права. */
 export const permissionsApi = {

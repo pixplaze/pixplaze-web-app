@@ -1,7 +1,7 @@
 <script>
-  import Button from '$lib/components/ui/buttons/Button.svelte';
-  import ButtonIcon from '$lib/components/ui/buttons/ButtonIcon.svelte';
-  import {copyToClipboard} from '$lib/scripts/util/utils.js';
+  import Button from '$ui/buttons/Button.svelte';
+  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
+  import {copyToClipboard} from '$util/dom.util.js';
 
   /**
    * Список заявок. В режиме `admin` показывает, кто подал заявку, и кнопки решения по открытым.

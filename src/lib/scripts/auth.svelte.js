@@ -1,7 +1,7 @@
-import {api} from '$lib/scripts/api/client.js';
-import {authApi} from '$lib/scripts/api/auth.api.js';
-import {token} from '$lib/scripts/api/token.svelte.js';
-import {permissions} from '$lib/scripts/permissions.svelte.js';
+import {api} from '$api/client.js';
+import {authApi} from '$api/auth.api.js';
+import {token} from '$api/token.svelte.js';
+import {permissions} from '$scripts/permissions.svelte.js';
 
 /**
  * Авторизация: вход, регистрация, выход и обновление access-токена на ответ 401.

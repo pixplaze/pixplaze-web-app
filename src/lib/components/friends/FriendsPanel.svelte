@@ -1,17 +1,17 @@
 <script>
   import {onMount} from 'svelte';
-  import {FriendsPanel, SEARCH_MIN_LENGTH} from './FriendsPanel.svelte.js';
-  import {formatDate} from '$lib/scripts/util/utils.js';
-  import {formatServerWhere} from '$lib/scripts/util/server.mapper.js';
-  import Delimiter from '$lib/components/ui/Delimiter.svelte';
-  import Input from '$lib/components/ui/inputs/Input.svelte';
-  import Button from '$lib/components/ui/buttons/Button.svelte';
-  import ButtonIcon from '$lib/components/ui/buttons/ButtonIcon.svelte';
-  import PlayerRow from '$lib/components/PlayerRow.svelte';
-  import Notice from '$lib/components/ui/Notice.svelte';
-  import OnlineIndicator from '$lib/components/ui/OnlineIndicator.svelte';
-  import ItemList from '$lib/components/ui/ItemList.svelte';
-  import ItemListRow from '$lib/components/ui/ItemListRow.svelte';
+  import {FriendsPanel, SEARCH_MIN_LENGTH} from '$components/friends/FriendsPanel.svelte.js';
+  import {formatDate} from '$util/format.util.js';
+  import {formatServerWhere} from '$util/server.mapper.js';
+  import Delimiter from '$ui/Delimiter.svelte';
+  import Input from '$ui/inputs/Input.svelte';
+  import Button from '$ui/buttons/Button.svelte';
+  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
+  import PlayerRow from '$components/players/PlayerRow.svelte';
+  import Notice from '$ui/Notice.svelte';
+  import OnlineIndicator from '$ui/indicators/OnlineIndicator.svelte';
+  import ItemList from '$ui/lists/ItemList.svelte';
+  import ItemListRow from '$ui/lists/ItemListRow.svelte';
 
   /** Друзья профиля и их онлайн. */
   const {profileId} = $props();

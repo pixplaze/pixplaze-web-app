@@ -1,7 +1,7 @@
-import {profilesApi} from '$lib/scripts/api/profiles.api.js';
-import {presence} from '$lib/scripts/presence.svelte.js';
-import {auth} from '$lib/scripts/auth.svelte.js';
-import {notifications} from '$lib/scripts/notifications.svelte.js';
+import {profilesApi} from '$api/profiles.api.js';
+import {friends} from '$scripts/friends.svelte.js';
+import {auth} from '$scripts/auth.svelte.js';
+import {notifications} from '$scripts/notifications.svelte.js';
 
 /**
  * Персонажи профиля: серверы каждого с признаком основного, кто сейчас в сети и где.
@@ -20,12 +20,12 @@ export class ProfilePlayers {
 
   /** Свой онлайн: игроки в сети и серверы, на которых они сейчас; null — ещё не загружен. */
   get online() {
-    return presence.self;
+    return friends.self;
   }
 
   /** Игрок профиля в сети по uuid; undefined — не в сети. */
   playerOnline(uuid) {
-    return presence.playerOnline(uuid);
+    return friends.playerOnline(uuid);
   }
 
   async load() {
@@ -34,7 +34,7 @@ export class ProfilePlayers {
     try {
       const [players] = await Promise.all([
         profilesApi.fetchPlayers(this.#profileId),
-        presence.load(this.#profileId)
+        friends.loadOnline(this.#profileId)
       ]);
       this.players = players;
     } catch {

@@ -1,11 +1,11 @@
 <script>
-  import {getEmailSuggestions} from '$lib/scripts/util/email.util.js';
-  import {SignUpForm} from './SignUpForm.svelte.js';
-  import Input from '$lib/components/ui/inputs/Input.svelte';
-  import Button from '$lib/components/ui/buttons/Button.svelte';
-  import Notice from '$lib/components/ui/Notice.svelte';
-  import InputAutocompletionWrapper from '$lib/components/ui/inputs/InputAutocompletionWrapper.svelte';
-  import {createNotice, LEVEL} from '$lib/scripts/util/notice.util.js';
+  import {getEmailSuggestions} from '$util/email.util.js';
+  import {SignUpForm} from '$components/auth/SignUpForm.svelte.js';
+  import Input from '$ui/inputs/Input.svelte';
+  import Button from '$ui/buttons/Button.svelte';
+  import Notice from '$ui/Notice.svelte';
+  import InputAutocompletionWrapper from '$ui/inputs/InputAutocompletionWrapper.svelte';
+  import {createNotice, LEVEL} from '$util/notice.util.js';
 
   const {
     inviteCode,

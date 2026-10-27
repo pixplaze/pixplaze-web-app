@@ -1,13 +1,13 @@
 <script>
   import {page} from '$app/state';
-  import {navigation} from '$lib/scripts/navigation.js';
-  import {auth} from '$lib/scripts/auth.svelte.js';
-  import {ROUTES} from '$lib/scripts/routes.js';
-  import SignInForm from '$lib/components/SignInForm.svelte';
-  import SignUpForm from '$lib/components/SignUpForm.svelte';
-  import Button from "$lib/components/ui/buttons/Button.svelte";
-  import DeviceAuthorization from "$lib/components/DeviceAuthorization.svelte";
-  import Delimiter from "$lib/components/ui/Delimiter.svelte";
+  import {navigation} from '$scripts/navigation.js';
+  import {auth} from '$scripts/auth.svelte.js';
+  import {ROUTES} from '$scripts/routes.js';
+  import SignInForm from '$components/auth/SignInForm.svelte';
+  import SignUpForm from '$components/auth/SignUpForm.svelte';
+  import Button from "$ui/buttons/Button.svelte";
+  import DeviceAuthorization from "$components/auth/DeviceAuthorization.svelte";
+  import Delimiter from "$ui/Delimiter.svelte";
   import {onMount} from "svelte";
 
   let mode = $state(page.params.mode);

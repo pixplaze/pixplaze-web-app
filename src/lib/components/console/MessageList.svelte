@@ -1,6 +1,6 @@
 <script>
-  import MinecraftText from '$lib/components/ui/minecraft/MinecraftText.svelte';
-  import {formatMessageLine, MESSAGE_TYPE} from '$lib/scripts/util/message.mapper.js';
+  import MinecraftText from '$ui/text/MinecraftText.svelte';
+  import {formatMessageLine, MESSAGE_TYPE} from '$util/message.mapper.js';
 
   /** Сообщения одной строкой каждое (консоль): модели `mapMessage`. */
   let {messages} = $props();

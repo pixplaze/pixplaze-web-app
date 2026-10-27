@@ -1,7 +1,7 @@
-import {friendsApi} from '$lib/scripts/api/friends.api.js';
-import {notifications} from '$lib/scripts/notifications.svelte.js';
-import {presence} from '$lib/scripts/presence.svelte.js';
-import {createDebounce} from '$lib/scripts/util/utils.js';
+import {friendsApi} from '$api/friends.api.js';
+import {notifications} from '$scripts/notifications.svelte.js';
+import {friends} from '$scripts/friends.svelte.js';
+import {createDebounce} from '$util/debounce.util.js';
 
 /** Короче web-api не ищет. */
 export const SEARCH_MIN_LENGTH = 2;
@@ -12,9 +12,8 @@ export const SEARCH_MIN_LENGTH = 2;
  * ввода; устаревшие запросы отменяются, их ответы отбрасываются.
  */
 export class FriendsPanel {
-  friends = $state([]);
   failed = $state(false);
-  /** @type {import('$lib/scripts/api/friends.api.js').FoundProfile[]} */
+  /** @type {import('$api/friends.api.js').FoundProfile[]} */
   found = $state([]);
   searching = $state(false);
 
@@ -28,15 +27,15 @@ export class FriendsPanel {
 
   /** Взаимные друзья с игроками в сети и временем выхода (без самого профиля). */
   get online() {
-    return presence.friends;
+    return friends.online;
   }
 
   get incoming() {
-    return this.friends.filter(friend => friend.status === 'INCOMING');
+    return friends.incoming;
   }
 
   get outgoing() {
-    return this.friends.filter(friend => friend.status === 'OUTGOING');
+    return friends.outgoing;
   }
 
   get query() {
@@ -51,8 +50,7 @@ export class FriendsPanel {
   async load() {
     this.failed = false;
     try {
-      const [friends] = await Promise.all([friendsApi.list(), presence.load(this.#profileId)]);
-      this.friends = friends;
+      await friends.load(this.#profileId);
     } catch {
       this.failed = true;
     }
@@ -60,25 +58,14 @@ export class FriendsPanel {
 
   /** @returns {Promise<boolean>} добавлен ли */
   async add(name) {
-    try {
-      await friendsApi.add(name.trim());
-      await this.load();
-      // Статус в выдаче поиска изменился
-      this.#search(this.#query);
-      return true;
-    } catch (error) {
-      notifications.error(`Не удалось добавить в друзья: ${error.message}`);
-      return false;
-    }
+    const added = await friends.add(name);
+    // Статус в выдаче поиска изменился
+    if (added) this.#search(this.#query);
+    return added;
   }
 
-  async remove(friend) {
-    try {
-      await friendsApi.remove(friend.profileId);
-      await this.load();
-    } catch (error) {
-      notifications.error(`Не удалось убрать из друзей: ${error.message}`);
-    }
+  remove(friend) {
+    return friends.remove(friend);
   }
 
   #search(query) {

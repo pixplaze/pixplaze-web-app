@@ -1,12 +1,12 @@
-import {Form} from "$lib/scripts/forms/form.svelte.js";
-import {Field} from "$lib/scripts/forms/field.svelte.js";
+import {Form} from "$scripts/forms/form.svelte.js";
+import {Field} from "$scripts/forms/field.svelte.js";
 import {
   emailSchema,
   passwordRepeatSchema,
   passwordSchema,
   requiredSchema,
   usernameSchema
-} from "$lib/scripts/util/validation.util.js";
+} from "$util/validation.util.js";
 
 /**
  * Форма профиля. Поля правятся по отдельности: имя, email и пароль (новый, повтор и текущий —

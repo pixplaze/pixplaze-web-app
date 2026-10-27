@@ -1,6 +1,6 @@
 <script>
   import {untrack} from 'svelte';
-  import {classIf} from '$lib/scripts/util/utils.js';
+  import {classIf} from '$util/dom.util.js';
 
   /**
    * Переключатель вкл/выкл: дорожка с ползунком. Устроен как {@link Checkbox} — скрытый нативный

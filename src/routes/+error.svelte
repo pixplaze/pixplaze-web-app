@@ -1,7 +1,7 @@
 <script>
   import {page} from '$app/state';
-  import ArtEnderman404 from "$lib/components/arts/ArtEnderman404.svelte";
-  import ArtAlex500 from '../lib/components/arts/ArtAlex500.svelte';
+  import ArtEnderman404 from "$components/arts/ArtEnderman404.svelte";
+  import ArtAlex500 from '$components/arts/ArtAlex500.svelte';
 
   console.error(page.error);
   const getMessageByCode = c => {

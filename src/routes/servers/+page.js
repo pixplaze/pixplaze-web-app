@@ -1,5 +1,5 @@
 import {error} from '@sveltejs/kit';
-import {serversApi} from '$lib/scripts/api/servers.api.js';
+import {serversApi} from '$api/servers.api.js';
 
 // Листинг рендерится на сервере ради SEO, несмотря на SPA-режим остального приложения.
 export const ssr = true

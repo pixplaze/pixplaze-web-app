@@ -1,6 +1,6 @@
 import {safeParse, safeParseAsync} from "valibot";
-import {createNotice, LEVEL} from "$lib/scripts/util/notice.util.js";
-import {createDebounce} from "$lib/scripts/util/utils.js";
+import {createNotice, LEVEL} from "$util/notice.util.js";
+import {createDebounce} from "$util/debounce.util.js";
 
 /** Пауза ввода, после которой значение проверяется. */
 const VALIDATE_DELAY = 500;

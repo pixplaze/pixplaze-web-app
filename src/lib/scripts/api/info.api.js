@@ -1,4 +1,4 @@
-import {api} from '$lib/scripts/api/client.js';
+import {api} from '$api/client.js';
 
 /** Служебная информация о web-api (GET /info/*). */
 export const infoApi = {

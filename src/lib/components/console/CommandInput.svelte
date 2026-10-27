@@ -1,5 +1,5 @@
 <script>
-  import {CommandLine} from './CommandInput.svelte.js';
+  import {CommandLine} from '$components/console/CommandInput.svelte.js';
 
   /**
    * Поле ввода команд и сообщений с предикатом (см. {@link CommandLine}).

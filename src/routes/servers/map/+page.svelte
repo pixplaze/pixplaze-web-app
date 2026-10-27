@@ -1,6 +1,6 @@
 <script>
-  import ActiveServerGate from '$lib/components/ActiveServerGate.svelte';
-  import ServerMap from '$lib/components/ServerMap.svelte';
+  import ActiveServerGate from '$components/servers/ActiveServerGate.svelte';
+  import ServerMap from '$components/servers/ServerMap.svelte';
 </script>
 
 <ActiveServerGate type="MAP" unsupported="Карта недоступна: на сервере не установлен плагин Pixplaze">

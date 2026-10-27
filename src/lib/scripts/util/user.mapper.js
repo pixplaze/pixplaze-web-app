@@ -1,5 +1,5 @@
-import {parseJwt} from "$lib/scripts/util/jwt.util.js";
-import {parse} from "$lib/scripts/util/authority.util.js";
+import {parseJwt} from "$util/jwt.util.js";
+import {parse} from "$util/authority.util.js";
 
 /**
  * Чистая функция: access-токен → объект пользователя.

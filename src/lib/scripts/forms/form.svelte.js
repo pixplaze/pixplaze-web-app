@@ -1,4 +1,4 @@
-import {maxLevel} from "$lib/scripts/util/notice.util.js";
+import {maxLevel} from "$util/notice.util.js";
 
 /**
  * База формы: поля ({@link Field}) и уведомления уровня формы (ошибка отправки и т.п.).
@@ -8,7 +8,7 @@ import {maxLevel} from "$lib/scripts/util/notice.util.js";
 export class Form {
   notices = $state([]);
 
-  /** @param {Record<string, import('./field.svelte.js').Field>} fields */
+  /** @param {Record<string, import('$scripts/forms/field.svelte.js').Field>} fields */
   constructor(fields) {
     this.fields = fields;
   }

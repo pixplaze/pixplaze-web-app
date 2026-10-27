@@ -1,7 +1,7 @@
 import {maxLength, maxValue, minLength, minValue, number, pipe, string, trim} from "valibot";
-import {Form} from '$lib/scripts/forms/form.svelte.js';
-import {Field} from '$lib/scripts/forms/field.svelte.js';
-import {hostSchema} from "$lib/scripts/util/validation.util.js";
+import {Form} from '$scripts/forms/form.svelte.js';
+import {Field} from '$scripts/forms/field.svelte.js';
+import {hostSchema} from "$util/validation.util.js";
 
 /** Форма заявки на подключение сервера. */
 export class ServerBidForm extends Form {

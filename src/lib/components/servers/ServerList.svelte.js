@@ -1,6 +1,6 @@
-import {serversApi} from '$lib/scripts/api/servers.api.js';
-import {notifications} from '$lib/scripts/notifications.svelte.js';
-import {createDebounce} from '$lib/scripts/util/utils.js';
+import {serversApi} from '$api/servers.api.js';
+import {notifications} from '$scripts/notifications.svelte.js';
+import {createDebounce} from '$util/debounce.util.js';
 
 /**
  * Поиск по листингу серверов. Пустой запрос — исходный список (из SSR `load`), иначе —

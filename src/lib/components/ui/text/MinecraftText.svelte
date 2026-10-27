@@ -1,6 +1,6 @@
 <!-- src/lib/components/MinecraftText.svelte -->
 <script>
-  import {parseMinecraftText} from '$lib/scripts/util/minecraft.util.js';
+  import {parseMinecraftText} from '$util/minecraft.util.js';
 
   // ampersand — понимать `&` как код (MOTD); в консоли и чате `&` — обычный символ
   let { text = '', trim = false, classes = '', ampersand = true } = $props();

@@ -1,10 +1,10 @@
 <script>
-  import ServerCard from '$lib/components/ServerCard.svelte';
-  import Input from '$lib/components/ui/inputs/Input.svelte';
-  import Loader from '$lib/components/ui/Loader.svelte';
-  import {ServerSearch} from './ServerList.svelte.js';
-  import {auth} from '$lib/scripts/auth.svelte.js';
-  import {favorites} from '$lib/scripts/favorites.svelte.js';
+  import ServerCard from '$components/servers/ServerCard.svelte';
+  import Input from '$ui/inputs/Input.svelte';
+  import Loader from '$ui/indicators/Loader.svelte';
+  import {ServerSearch} from '$components/servers/ServerList.svelte.js';
+  import {auth} from '$scripts/auth.svelte.js';
+  import {favorites} from '$scripts/favorites.svelte.js';
 
   /** servers — исходный листинг (SSR `load`), показывается при пустом поиске. */
   const {servers} = $props();

@@ -1,13 +1,15 @@
 <script>
-  import Rating from '$lib/components/Rating.svelte';
-  import ButtonIcon from '$lib/components/ui/buttons/ButtonIcon.svelte';
-  import MinecraftText from '$lib/components/ui/minecraft/MinecraftText.svelte';
-  import {copyToClipboard, createDistinctDebounce} from '$lib/scripts/util/utils.js';
-  import {formatNumber} from '$lib/scripts/util/utils.js';
-  import {serversApi} from '$lib/scripts/api/servers.api.js';
-  import {notifications} from '$lib/scripts/notifications.svelte.js';
-  import Icon from "$lib/components/ui/Icon.svelte";
-  import AlternatingText from '$lib/components/ui/AlternatingText.svelte';
+  import Rating from '$ui/indicators/Rating.svelte';
+  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
+  import MinecraftText from '$ui/text/MinecraftText.svelte';
+  import {copyToClipboard} from '$util/dom.util.js';
+  import {createDistinctDebounce} from '$util/debounce.util.js';
+  import {formatNumber} from '$util/format.util.js';
+  import {serversApi} from '$api/servers.api.js';
+  import {notifications} from '$scripts/notifications.svelte.js';
+  import Icon from "$ui/Icon.svelte";
+  import AlternatingText from '$ui/text/AlternatingText.svelte';
+  import ServerIcon from '$components/servers/ServerIcon.svelte';
 
   /**
    * favorite — сервер в избранном; null — избранное недоступно (гость), звезда скрыта.
@@ -20,6 +22,11 @@
   } = $props();
 
   let copied = $state(false);
+  let expanded = $state(false);
+
+  const onMore = () => {
+    expanded = !expanded;
+  }
 
   const onCopy = async () => {
     await copyToClipboard(server.host);
@@ -32,7 +39,7 @@
   const onVoted = (rating) => {
     rateServer.run(rating).catch((e) => {
       if (e.name !== 'AbortError') {
-        notifications.error('Не удалось сохранить оценку');
+        notifications.error('Вы не можете голосовать за этот сервер!');
       }
     });
   };
@@ -47,9 +54,7 @@
 
 <div class="server-card">
   <div class="ui box server-card-box">
-    <img src={server.image}
-         alt="Server Icon"
-         class="server-icon pixel-art">
+    <ServerIcon src={server.image} alt="Server Icon" framed/>
     <div class="server-info">
       <div class="description">
         <!-- Название и игровой адрес сменяют друг друга; адреса нет — только название -->
@@ -63,7 +68,7 @@
       </div>
       <div class="buttons">
         <ButtonIcon icon={copied ? 'arrow-ok' : 'copy'} classes="transparent {copied ? 'copied' : ''}" onclick={onCopy}/>
-        <ButtonIcon icon="more" classes="transparent"/>
+        <ButtonIcon icon="more" classes="transparent" onclick={onMore}/>
         {#if favorite !== null}
           <ButtonIcon icons={favorite ? ['star-filled'] : ['star', 'star-filled']}
                       classes="transparent" onclick={() => onFavorite?.(server)}/>
@@ -72,7 +77,7 @@
     </div>
   </div>
 
-  {#if server.state && server.core && server.state.players}
+  {#if expanded && server.state && server.core && server.state.players}
     <div class="server-state-box">
       <div class="server-status">
         <span title="Онлайн" class="status-info online">
@@ -115,14 +120,8 @@
     overflow: hidden;
     min-width: 256px;
     height: 128px;
+    --server-icon-size: 128px;
     box-shadow: 0 6px 0 0 var(--color-ui-shadow);
-  }
-
-  .server-icon {
-    flex: 0 0 128px;
-    box-sizing: border-box;
-    border: var(--ui-size-border) solid var(--color-ui-primary);
-    box-shadow: inset 0 -4px 0 0 var(--color-ui-shadow);
   }
 
   .server-info {
@@ -152,7 +151,7 @@
     box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
-    height: auto!important;
+    min-height: 128px;
     min-height: var(--ui-size-block);
     justify-content: space-between;
     user-select: none;

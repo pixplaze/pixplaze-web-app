@@ -1,12 +1,13 @@
 <script>
-  import {copyToClipboard} from '$lib/scripts/util/utils.js';
-  import {createNotice, LEVEL} from '$lib/scripts/util/notice.util.js';
-  import {ServerBidForm} from './ServerBidForm.svelte.js';
-  import Input from '$lib/components/ui/inputs/Input.svelte';
-  import Notice from '$lib/components/ui/Notice.svelte';
-  import Button from '$lib/components/ui/buttons/Button.svelte';
-  import ButtonIcon from '$lib/components/ui/buttons/ButtonIcon.svelte';
-  import {bidsApi} from '$lib/scripts/api/bids.api.js';
+  import {copyToClipboard} from '$util/dom.util.js';
+  import {createNotice, LEVEL} from '$util/notice.util.js';
+  import {ServerBidForm} from '$components/servers/bids/ServerBidForm.svelte.js';
+  import Input from '$ui/inputs/Input.svelte';
+  import Notice from '$ui/Notice.svelte';
+  import Button from '$ui/buttons/Button.svelte';
+  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
+  import ServerIcon from '$components/servers/ServerIcon.svelte';
+  import {bidsApi} from '$api/bids.api.js';
 
   const {
     onSubmit = () => {}
@@ -77,9 +78,7 @@
   {/if}
   {#if preview}
     <div class="ui box bid-preview">
-      {#if preview.image}
-        <img src={preview.image} alt="Server Icon" class="bid-preview-icon pixel-art">
-      {/if}
+      <ServerIcon src={preview.image} alt="Server Icon"/>
       <div>
         <h2>{preview.name}</h2>
         <p>{preview.host}</p>
@@ -120,9 +119,6 @@
     flex: 1 1 100%;
     align-items: center;
     gap: var(--ui-spacing);
-  }
-  .bid-preview-icon {
-    width: 64px;
-    height: 64px;
+    --server-icon-size: 64px;
   }
 </style>

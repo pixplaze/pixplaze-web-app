@@ -1,18 +1,18 @@
 <script>
   import {page} from '$app/state';
   import {replaceState} from "$app/navigation";
-  import {currentUser} from "$lib/scripts/user.svelte.js";
-  import {formatDate} from "$lib/scripts/util/utils.js";
-  import {LEVEL} from "$lib/scripts/util/notice.util.js";
-  import Notice from '$lib/components/ui/Notice.svelte';
-  import DeviceConsent from '$lib/components/DeviceConsent.svelte';
-  import BoxRow from '$lib/components/ui/BoxRow.svelte';
-  import ProfileForm from "$lib/components/ProfileForm.svelte";
-  import ProfilePlayers from "$lib/components/ProfilePlayers.svelte";
-  import FriendsPanel from "$lib/components/FriendsPanel.svelte";
-  import Checkbox from "$lib/components/ui/inputs/Checkbox.svelte";
-  import {profilesApi} from "$lib/scripts/api/profiles.api.js";
-  import {notifications} from "$lib/scripts/notifications.svelte.js";
+  import {currentUser} from "$scripts/user.svelte.js";
+  import {formatDate} from "$util/format.util.js";
+  import {LEVEL} from "$util/notice.util.js";
+  import Notice from '$ui/Notice.svelte';
+  import DeviceConsent from '$components/auth/DeviceConsent.svelte';
+  import BoxRow from '$ui/lists/BoxRow.svelte';
+  import ProfileForm from "$components/profile/ProfileForm.svelte";
+  import ProfilePlayers from "$components/profile/ProfilePlayers.svelte";
+  import FriendsPanel from "$components/friends/FriendsPanel.svelte";
+  import Checkbox from "$ui/inputs/Checkbox.svelte";
+  import {profilesApi} from "$api/profiles.api.js";
+  import {notifications} from "$scripts/notifications.svelte.js";
 
   const userCode = page.url.searchParams.get('userCode');
   const user = $derived(currentUser.value);

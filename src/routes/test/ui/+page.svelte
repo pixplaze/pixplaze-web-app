@@ -1,10 +1,10 @@
 <script>
-  import Button from '$lib/components/ui/buttons/Button.svelte'
-  import ButtonLabel from "$lib/components/ui/buttons/ButtonLabel.svelte";
-  import ButtonIcon from "$lib/components/ui/buttons/ButtonIcon.svelte";
-  import Switch from "$lib/components/ui/inputs/Switch.svelte";
-  import Checkbox from "$lib/components/ui/inputs/Checkbox.svelte";
-  import Radio from "$lib/components/ui/inputs/Radio.svelte";
+  import Button from '$ui/buttons/Button.svelte'
+  import ButtonLabel from "$ui/buttons/ButtonLabel.svelte";
+  import ButtonIcon from "$ui/buttons/ButtonIcon.svelte";
+  import Switch from "$ui/inputs/Switch.svelte";
+  import Checkbox from "$ui/inputs/Checkbox.svelte";
+  import Radio from "$ui/inputs/Radio.svelte";
 
   let switched = $state(false);
   let checked = $state(false);

@@ -1,11 +1,11 @@
 import {browser} from '$app/environment';
 import {untrack} from 'svelte';
 import {SvelteSet} from 'svelte/reactivity';
-import {token} from '$lib/scripts/api/token.svelte.js';
-import {favoritesApi} from '$lib/scripts/api/favorites.api.js';
-import {buildUserFromToken} from '$lib/scripts/util/user.mapper.js';
-import {notifications} from '$lib/scripts/notifications.svelte.js';
-import {createLatest} from '$lib/scripts/util/latest.util.js';
+import {token} from '$api/token.svelte.js';
+import {favoritesApi} from '$api/favorites.api.js';
+import {buildUserFromToken} from '$util/user.mapper.js';
+import {notifications} from '$scripts/notifications.svelte.js';
+import {createLatest} from '$util/latest.util.js';
 
 /** Сколько строка ждёт отмены, прежде чем сервер уйдёт из избранного. */
 export const UNDO_DELAY = 5000;

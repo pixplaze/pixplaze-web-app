@@ -1,7 +1,7 @@
 import {browser} from '$app/environment';
-import {token} from '$lib/scripts/api/token.svelte.js';
-import {serversApi} from '$lib/scripts/api/servers.api.js';
-import {buildUserFromToken} from '$lib/scripts/util/user.mapper.js';
+import {token} from '$api/token.svelte.js';
+import {serversApi} from '$api/servers.api.js';
+import {buildUserFromToken} from '$util/user.mapper.js';
 
 /** Токен считается истёкшим заранее: успеть переподключиться или прислать новый AUTH. */
 const EXPIRY_MARGIN_MS = 30_000;
