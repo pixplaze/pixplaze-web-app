@@ -13,7 +13,7 @@
   <SvgSprite path="/icons/sprite.svg"
              name={icon}
              names={icons}
-             size="var(--ui-size-icon)"
+             {size}
              classes={[classes, 'icon']}
   />
 
