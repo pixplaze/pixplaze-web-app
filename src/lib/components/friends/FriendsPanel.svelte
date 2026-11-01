@@ -45,49 +45,58 @@
 
 <div class="friends-add">
   <Input id="friend-name" placeholder="Имя профиля или ник игрока" bind:value={panel.query} onEnter={add}/>
+  {#if panel.found.length}
+    <div class="friends-found">
+      <ItemList>
+        {#each panel.found as profile (profile.profileId)}
+          {#snippet foundStatus()}{FOUND_STATUS[profile.status]}{/snippet}
+          <!-- Без onselect строка — блок, поэтому кнопки лежат в PlayerRow и берут его цвета -->
+          <ItemListRow>
+            <PlayerRow skinHeadBase64={profile.skinHeadBase64}
+                       name={profile.name}
+                       subtitle={FOUND_STATUS[profile.status] ? foundStatus : undefined}
+                       classes="">
+              {#snippet actions()}
+                {#if FOUND_ACTION[profile.status]}
+                  <ButtonIcon title="Добавить в друзья"
+                              icon="plus"
+                              classes="transparent"
+                              disabled={!panel.query.trim()}
+                              onclick={add}/>
+                  <ButtonIcon title={FOUND_ACTION[profile.status]}
+                              icon="people"
+                              classes="transparent"
+                              onclick={() => panel.add(profile.name)}/>
+                {/if}
+              {/snippet}
+            </PlayerRow>
+          </ItemListRow>
+        {/each}
+      </ItemList>
+    </div>
+  {:else if panel.query.trim().length >= SEARCH_MIN_LENGTH && !panel.searching}
+    <p class="friends-caption">Никого не нашлось</p>
+  {/if}
 </div>
-
-{#if panel.found.length}
-  <div class="friends-found">
-    <ItemList>
-      {#each panel.found as profile (profile.profileId)}
-        {#snippet foundStatus()}{FOUND_STATUS[profile.status]}{/snippet}
-        <!-- Без onselect строка — блок, поэтому кнопки лежат в PlayerRow и берут его цвета -->
-        <ItemListRow>
-          <PlayerRow skinHeadBase64={profile.skinHeadBase64}
-                     name={profile.name}
-                     subtitle={FOUND_STATUS[profile.status] ? foundStatus : undefined}>
-            {#snippet actions()}
-              {#if FOUND_ACTION[profile.status]}
-                <ButtonIcon title="Добавить в друзья"
-                            icon="plus"
-                            disabled={!panel.query.trim()}
-                            onclick={add}/>
-                <ButtonIcon title={FOUND_ACTION[profile.status]} icon="people" onclick={() => panel.add(profile.name)}/>
-              {/if}
-            {/snippet}
-          </PlayerRow>
-        </ItemListRow>
-      {/each}
-    </ItemList>
-  </div>
-{:else if panel.query.trim().length >= SEARCH_MIN_LENGTH && !panel.searching}
-  <p class="friends-caption">Никого не нашлось</p>
-{/if}
 
 {#if panel.failed}
   <Notice notices={[{level: 'error', message: 'Не удалось загрузить друзей'}]} closeable={false}/>
 {/if}
 
 {#if panel.incoming.length}
-  <p class="friends-caption">Хотят дружить</p>
+  <h3 class="friends-caption">Хотят дружить</h3>
   {#each panel.incoming as friend (friend.profileId)}
     <div class="friend">
-      <PlayerRow name={friend.name}>
+      <PlayerRow name={friend.name} classes="">
         {#snippet actions()}
-          <ButtonIcon title="Добавить в ответ" icon="arrow-ok" onclick={() => panel.add(friend.name)}/>
-          <ButtonIcon title="Отказать в ответ" icon="close" onclick={() => panel.remove(friend.name)}/>
-<!--          <Button title="Добавить в ответ" onclick={() => panel.add(friend.name)}>Принять</Button>-->
+          <ButtonIcon title="Добавить в ответ"
+                      icon="arrow-ok"
+                      classes="transparent"
+                      onclick={() => panel.add(friend.name)}/>
+          <ButtonIcon title="Отказать в ответ"
+                      icon="close"
+                      classes="transparent"
+                      onclick={() => panel.remove(friend.name)}/>
         {/snippet}
       </PlayerRow>
     </div>
@@ -95,15 +104,16 @@
 {/if}
 
 {#if panel.online.length}
-  <p class="friends-caption">Друзья</p>
+  <h3 class="friends-caption">Друзья</h3>
   {#each panel.online as friend (friend.profileId)}
     <div class="friend">
-      <PlayerRow name={friend.name} classes={['tight']}>
+      <PlayerRow name={friend.name} classes="">
         {#snippet subtitle()}{friendStatus(friend)}{/snippet}
         {#snippet actions()}
           <OnlineIndicator online={friend.players.length > 0}/>
           <ButtonIcon title="Убрать из друзей"
                       icon="minus"
+                      classes="transparent"
                       onclick={() => panel.remove(friend)}/>
         {/snippet}
       </PlayerRow>
@@ -112,13 +122,14 @@
 {/if}
 
 {#if panel.outgoing.length}
-  <p class="friends-caption">Ждут ответа</p>
+  <h3 class="friends-caption">Ждут ответа</h3>
   {#each panel.outgoing as friend (friend.profileId)}
     <div class="friend">
-      <PlayerRow name={friend.name}>
+      <PlayerRow name={friend.name} classes="">
         {#snippet actions()}
           <ButtonIcon title="Отменить заявку"
                       icon="minus"
+                      classes="transparent"
                       onclick={() => panel.remove(friend)}/>
         {/snippet}
       </PlayerRow>
@@ -128,9 +139,6 @@
 
 <style>
   .friends-add {
-    display: flex;
-    align-items: center;
-    gap: var(--ui-padding);
     margin-bottom: var(--ui-spacing);
   }
 
@@ -141,12 +149,6 @@
     /*border-bottom: var(--ui-size-border) solid var(--color-ui-shadow);*/
     color: var(--color-text-secondary);
     font-family: "Minecraft", "Arial", "sans-serif";
-  }
-
-  /* Строка игрока — на всю строку списка, кнопки у правого края */
-  .friends-found :global(.player-row) {
-    flex: 1 1 auto;
-    min-width: 0;
   }
 
   .friend {
@@ -160,5 +162,13 @@
   .friends-caption {
     margin: 0 0 calc(var(--ui-spacing) / 2);
     color: var(--color-text-primary);
+  }
+
+  :global {
+    .friends-found {
+      .player-row {
+        outline: none;
+      }
+    }
   }
 </style>

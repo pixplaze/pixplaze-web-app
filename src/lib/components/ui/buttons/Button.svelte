@@ -51,7 +51,7 @@
       width: var(--ui-size-block);
       padding-left: 0;
       padding-right: 0;
-      margin: 0;
+      /*margin: 0;*/
     }
 
     &.tiny {

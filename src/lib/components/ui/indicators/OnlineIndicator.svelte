@@ -4,7 +4,7 @@
 
   let {
     online,
-    classes
+    classes = []
   } = $props();
 </script>
 

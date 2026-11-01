@@ -3,6 +3,7 @@
   import OnlineIndicator from '$ui/indicators/OnlineIndicator.svelte';
   import AlternatingText from '$ui/text/AlternatingText.svelte';
   import OperatorIndicator from '$ui/indicators/OperatorIndicator.svelte';
+  import SvgSprite from "$ui/SvgSprite.svelte";
 
   /**
    * Строка игрока или профиля: голова скина, имя с подписью, индикатор онлайна и действия справа.
@@ -23,12 +24,20 @@
     online = undefined,
     isOperator = false,
     actions,
-    classes = []
+    classes = ''
   } = $props();
 </script>
 
-<div class={[...classes, "player-row"]}>
-  <img src={parseImageBase64(skinHeadBase64)} alt="" class="player-icon pixel-art tight">
+<div class={`${classes} player-row`}>
+  {#if skinHeadBase64}
+    <img src={parseImageBase64(skinHeadBase64)} alt="" class="player-icon pixel-art">
+  {:else}
+    <SvgSprite path="/images/sprite.svg"
+               name="head"
+               size="40px"
+               classes="player-icon"
+    />
+  {/if}
   <p class="player-name">
     {#snippet details()}
       {#if isOperator}
@@ -43,7 +52,7 @@
     </AlternatingText>
   </p>
 
-  <div class="player-actions tight">
+  <div class="player-actions transparent square">
     {#if online !== undefined}
       <OnlineIndicator {online}/>
     {/if}
@@ -54,47 +63,51 @@
 <style>
   /* Шрифт и цвет — от родителя-карточки (.player, .friend), как было до выделения строки */
   .player-row {
+    box-sizing: border-box;
     display: flex;
+    flex: 1 1 auto;
     align-items: center;
 
-    border: var(--ui-size-border) solid #333333;
+    /*border: var(--ui-size-border) solid #333333;*/
     background-color: #666666;
     color: var(--color-text-secondary);
     font-family: "Minecraft", "Arial", "sans-serif";
+
+    outline: var(--ui-size-border) solid #333333;
+    outline-offset: calc(-1 * var(--ui-size-border));
   }
 
-  .player-icon {
+  .player-row :global(.player-icon) {
+    box-sizing: border-box;
     min-width: var(--ui-size-block);
     min-height: var(--ui-size-block);
     width: var(--ui-size-block);
     height: var(--ui-size-block);
 
-    margin-right: var(--ui-spacing);
-
     border: var(--ui-size-border) solid #333333;
-
-    outline: none;
+    color: var(--color-ui-shadow);
   }
 
   /* Занимает оставшееся место и не шире его: длинное прокручивается внутри (AlternatingText) */
   .player-name {
     flex: 1;
     min-width: 0;
-    margin: 0 auto 0 var(--ui-spacing);
+    padding-left: var(--ui-padding);
     color: var(--color-text-secondary);
     font-family: "Minecraft", "Arial", "sans-serif";
   }
-
-  /* Как у картинки с .pixel-art: рамка внутри размера */
-  .player-icon.empty {
+  .player-actions {
+    display: flex;
     box-sizing: border-box;
-    display: block;
-    background-color: #444444;
-    margin: calc(-1 * var(--ui-size-border))!important;
+
+    /*--color-ui-button-border: #333333;*/
+    /*--color-ui-button-background: #666666;*/
+    /*--color-ui-button-hover-background: #888888;*/
+    /*--color-ui-button-active-border: #666666;*/
+    /*--color-ui-button-active-background: #444444;*/
   }
 
-  /* Кнопки действий — в цвет строки */
-  .player-actions {
+  .player-actions.transparent.square {
     display: flex;
 
     --color-ui-button-border: #333333;

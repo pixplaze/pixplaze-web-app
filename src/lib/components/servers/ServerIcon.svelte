@@ -1,5 +1,6 @@
 <script>
   import Icon from '$ui/Icon.svelte';
+  import SvgSprite from "$ui/SvgSprite.svelte";
 
   /**
    * Иконка сервера. Без `src` — заглушка: значок picture по центру блока того же размера и с той же рамкой.
@@ -17,7 +18,11 @@
 {#if src}
   <img {src} {alt} class="server-icon pixel-art {classes}" class:framed>
 {:else}
-  <Icon icon="picture" classes="server-icon placeholder {framed ? 'framed' : ''} {classes}"/>
+<!--  <Icon icon="picture" classes="server-icon placeholder {framed ? 'framed' : ''} {classes}"/>-->
+  <SvgSprite path="/images/sprite.svg"
+             name="pack"
+             size="128px"
+             classes="server-icon {framed ? 'framed' : ''}"/>
 {/if}
 
 <style>
