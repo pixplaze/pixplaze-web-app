@@ -10,6 +10,7 @@
   import Icon from "$ui/Icon.svelte";
   import AlternatingText from '$ui/text/AlternatingText.svelte';
   import ServerIcon from '$components/servers/ServerIcon.svelte';
+  import ServerState from "$components/servers/ServerStatus.svelte";
 
   /**
    * favorite — сервер в избранном; null — избранное недоступно (гость), звезда скрыта.
@@ -64,6 +65,7 @@
             {#snippet primary()}{server.name}{/snippet}
           </AlternatingText>
         </h2>
+        <ServerState core={server.core} state={server.state} --padding="5px"/>
         <Rating value={server.rating} {onVoted}/>
       </div>
       <div class="buttons">
@@ -79,26 +81,7 @@
 
   {#if expanded && server.state && server.core && server.state.players}
     <div class="server-state-box">
-      <div class="server-status">
-        <span title="Онлайн" class="status-info online">
-          <Icon icon="people"/>
-          {#if server.state.players}
-            {formatNumber(server.state.players.online)}/{formatNumber(server.state.players.max)}
-          {/if}
-        </span>
-        <span title="Пинг" class="status-info ping">
-          <Icon icon="ping"/>
-          {server.state.ping}
-        </span>
-        <span title="Версия" class="status-info version">
-          <Icon icon="version"/>
-          {server.core?.version ?? 'multi'}
-        </span>
-        <span title="Язык" class="status-info language">
-          <Icon icon="translate"/>
-          {server.language}
-        </span>
-      </div>
+      <ServerState state={server.state} core={server.core}/>
       <div class="server-motd">
         <MinecraftText text={server.motd} classes="motd" trim={true}/>
       </div>
@@ -144,14 +127,12 @@
     padding: 10px 10px 0 10px;
     flex: 1 0;
     min-width: 0;
-    /*max-width: 100px;*/
   }
 
   .server-state-box {
     box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
-    min-height: 128px;
     min-height: var(--ui-size-block);
     justify-content: space-between;
     user-select: none;
@@ -161,28 +142,11 @@
     border: var(--ui-size-border) solid #333333;
     /*border: var(--ui-size-border) solid var(--color-ui-border);*/
     box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);
-  }
 
-  .server-status {
-    display: grid;
-    /* Одна колонка, пока рядом motd; одна на строке — колонок столько, сколько влезает */
-    grid-template-columns: repeat(auto-fit, minmax(7em, 1fr));
-    column-gap: var(--ui-spacing);
-    flex-grow: 1;
-    padding: 10px;
-    padding-right: var(--ui-padding);
-    margin-top: auto;
-    margin-bottom: auto;
-    user-select: none;
-    /*border: var(--ui-size-border) solid #333333;*/
-    /*margin: calc(-1 * var(--ui-size-border));*/
-  }
-
-  .status-info {
-    text-wrap: nowrap;
-    color: var(--color-text-secondary);
-    font-family: "Minecraft", "Arial", "sans-serif";
-    /*cursor: default;*/
+    :global(.server-status) {
+      padding: 10px;
+      color: var(--color-text-secondary);
+    }
   }
 
   .server-motd {
