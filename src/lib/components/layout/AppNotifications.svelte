@@ -6,7 +6,7 @@
 <!-- Внутри <header>: на десктопе выпадает вниз, на мобильном (шапка снизу) растёт вверх. -->
 <div class="app-notifications" role="status" aria-live="polite">
   <Notice notices={notifications.items}
-          onClose={(id) => notifications.close(id)}/>
+          onClose={(id) => notifications.close(id)} classes="shadowed"/>
 </div>
 
 <style>
@@ -20,7 +20,6 @@
     display: flex;
     flex-direction: column;
     gap: calc(var(--ui-spacing) / 2);
-    width: min(400px, 100%);
     padding: calc(var(--ui-spacing) / 2);
 
     background: transparent;

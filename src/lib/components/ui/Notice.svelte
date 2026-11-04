@@ -10,7 +10,7 @@
     notices = $bindable(notice ? [notice] : []),
     closeable = true,
     autoCloseAfter,
-    classes = '',
+    classes = []  ,
     onClose = () => {}
   } = $props();
 
@@ -55,6 +55,10 @@
     align-items: center;
   }
 
+  .notice.shadowed {
+    box-shadow: var(--ui-size-shadow) var(--ui-size-shadow) 0 0 var(--color-ui-shadow)!important;
+  }
+
   .notice.info {
     border: var(--ui-size-border) solid var(--color-ui-border);
     background-color: var(--color-ui-primary);
@@ -71,7 +75,6 @@
   }
 
   .notice-content {
-    text-align: justify;
     padding: 5px 10px;
     color: white;
   }
