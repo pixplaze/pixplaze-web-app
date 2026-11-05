@@ -4,6 +4,8 @@
  */
 export const ROUTES = {
   serversConsole: '/servers/console',
+  // Панель управления сервером: «Око Саурона» и консоль
+  serversPanel: '/servers/panel',
   serversMap: '/servers/map',
   serversList: '/servers',
   // Страница сервера из листинга

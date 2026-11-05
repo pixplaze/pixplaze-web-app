@@ -78,7 +78,7 @@
   const actions = $derived([
     server.hasChat && {id: 'chat', icon: 'chat', label: 'Чат', route: ROUTES.serversChat},
     server.hasMap && {id: 'map', icon: 'map', label: 'Карта', route: ROUTES.serversMap},
-    canManage && {id: 'panel', icon: 'console', label: 'Панель управления', route: ROUTES.serversConsole}
+    canManage && {id: 'panel', icon: 'console', label: 'Панель управления', route: ROUTES.serversPanel}
   ].filter(Boolean));
   const isFavorite = $derived(favorites.has(server.id));
 
