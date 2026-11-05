@@ -15,7 +15,7 @@ export function parseCommand(raw) {
  * `predicates` ограничивает команды, на которые можно переключиться (чат: только команды
  * игрока); `null` — любые (консоль).
  */
-export class CommandLine {
+export class ConsoleInput {
   predicate = $state(null);
   input = $state('');
   #defaultPredicate;

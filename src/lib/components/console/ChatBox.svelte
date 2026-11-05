@@ -3,9 +3,10 @@
     TODO: Переделать вид вместе с дизайнером (облачка, события, аватары)
    */
   import {MessageStream} from '$scripts/messageStream.svelte.js';
-  import CommandInput from '$components/console/CommandInput.svelte';
   import MinecraftText from '$ui/text/MinecraftText.svelte';
+  import {FORMATTER_WEEK_DAY_HM} from '$util/date.util.js';
   import {BUBBLE_TYPES, chatBody, formatMessageLine, MESSAGE_TYPE} from '$util/message.mapper.js';
+  import ConsoleInput from "$components/console/ConsoleInput.svelte";
 
   /** Команды обычного игрока, которые принимает чат плагина (`ChatWebSocketController`). */
   const CHAT_COMMANDS = ['msg', 'tell', 'w', 'me', 'list', 'help'];
@@ -21,6 +22,9 @@
 
   // svelte-ignore state_referenced_locally
   const stream = new MessageStream(serverId, host, 'chat', {label: 'чату сервера'});
+  const formatTime = (time) => {
+    return FORMATTER_WEEK_DAY_HM.format(time).toLowerCase();
+  }
 
   let input;
 
@@ -38,20 +42,24 @@
      onclick={() => input.focus()}>
   <!-- column-reverse: прокрутка отсчитывается от низа — лента открывается на последних сообщениях и
        остаётся внизу при новых без JS; обёртка держит сообщения в обычном порядке -->
-  <div class="chat-messages">
-    <div class="chat-feed">
+  <div class="messages">
+    <div class="feed">
       {#each stream.messages as message (message.id)}
         {#if BUBBLE_TYPES.has(message.type)}
-          <div class="chat-bubble" class:own={stream.isOwnMessage(message.authorUuid)}>
-            <div class="chat-author">
-              <MinecraftText text={message.author ?? 'Web'} ampersand={false}/>
+          <div class="message" class:own={stream.isOwnMessage(message.authorUuid)}>
+            <div class="bubble">
+              <div class="author">
+                <MinecraftText text={message.author ?? 'Web'} ampersand={false}/>
+              </div>
+              <div class="text">
+                <MinecraftText text={chatBody(message)} ampersand={false}/>
+              </div>
             </div>
-            <div class="chat-text">
-              <MinecraftText text={chatBody(message)} ampersand={false}/>
-            </div>
+            <span class="time">{formatTime(message.time)}</span>
           </div>
         {:else}
-          <div class="chat-event" class:reply={message.type === MESSAGE_TYPE.REPLY}>
+          <div class="event" class:reply={message.type === MESSAGE_TYPE.REPLY}>
+            <span class="time">{formatTime(message.time)}</span>
             <MinecraftText text={formatMessageLine(message)} ampersand={false}/>
           </div>
         {/if}
@@ -59,8 +67,8 @@
     </div>
   </div>
 
-  <div class="chat-actionbar">
-    <CommandInput bind:this={input}
+  <div class="actionbar">
+    <ConsoleInput bind:this={input}
                   predicates={CHAT_COMMANDS}
                   maxlength={MAX_LENGTH}
                   placeholder="Сообщение или /команда"
@@ -86,7 +94,13 @@
     height: var(--ui-page-height);
   }
 
-  .chat-messages {
+  .feed {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .messages {
     box-sizing: border-box;
 
     /* Обёртка прижата к низу: мало сообщений — они над полем ввода, много — прокрутка */
@@ -104,18 +118,25 @@
     overflow-wrap: anywhere;
   }
 
-  .chat-feed {
+  .message {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    gap: var(--ui-spacing);
+    align-self: flex-start;
   }
 
-  /* Сообщение — квадратное облачко в стиле блоков проекта: рамка и тень снизу */
-  /* Цвет текста — на облачке и событии, внутренние div его наследуют: глобальное правило по элементам
-     (global.css) красит каждый div в --color-text-primary, поэтому цвет с ленты до текста не доходит */
-  .chat-bubble {
+  .message.own {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+
+    .bubble {
+      background-color: var(--color-ui-primary);
+      border-color: var(--color-ui-border);
+    }
+  }
+
+  .bubble {
     box-sizing: border-box;
-    align-self: flex-start;
+
     color: var(--color-text-secondary);
 
     max-width: 80%;
@@ -126,26 +147,29 @@
     box-shadow: inset 0 calc(-1 * var(--ui-size-shadow)) 0 0 var(--color-ui-shadow);
   }
 
-  /* Своё сообщение — справа, цветом основных кнопок */
-  .chat-bubble.own {
-    align-self: flex-end;
-
-    background-color: var(--color-ui-primary);
-    border-color: var(--color-ui-border);
-  }
-
-  .chat-author,
-  .chat-text {
+  .author,
+  .text {
     color: inherit;
   }
 
-  .chat-author {
+  .author {
     font-size: 14px;
     opacity: .8;
   }
 
   /* Событие — на всю ширину, текст по центру */
-  .chat-event {
+  .time {
+    width: min-content;
+    text-wrap: wrap;
+    word-wrap: normal;
+    flex: 0 0 auto;
+    font-family: "Minecraft", "Montserrat", "sans-serif";
+    opacity: .3;
+    align-self: flex-end;
+  }
+
+  .event {
+    position: relative;
     box-sizing: border-box;
     color: var(--color-text-secondary);
 
@@ -154,15 +178,24 @@
 
     text-align: center;
     background-color: rgba(0, 0, 0, .2);
+
+    .time {
+      width: auto;
+      flex: 0 0 auto;
+      padding-left: 10px;
+      padding-right: 10px;
+      vertical-align: baseline;
+      text-align: center;
+    }
   }
 
   /* Ответ команды — только этому клиенту */
-  .chat-event.reply {
+  .event.reply {
     font-style: italic;
     opacity: .7;
   }
 
-  .chat-actionbar {
+  .actionbar {
     position: absolute;
     bottom: 0;
     width: 100%;

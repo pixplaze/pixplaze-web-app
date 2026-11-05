@@ -3,7 +3,7 @@
   import {parseMinecraftText} from '$util/minecraft.util.js';
 
   // ampersand — понимать `&` как код (MOTD); в консоли и чате `&` — обычный символ
-  let { text = '', trim = false, classes = '', ampersand = true } = $props();
+  let { text = '', trim = false, classes = [], ampersand = true } = $props();
 
   // Автоматический перерасчет токенов при изменении строки
   let tokens = $derived(parseMinecraftText(text, trim, {ampersand}));
@@ -33,13 +33,10 @@
 </span>
 
 <style>
-  /* Текст без кода цвета — цвета родителя. inherit явно: глобальное правило по элементам (global.css)
-     красит каждый span в --color-text-primary и иначе обрывает наследование */
   .minecraft-container {
     color: inherit;
     display: inline-block;
     white-space: pre-wrap;
-    line-height: 1.2;
   }
 
   .motd-token {

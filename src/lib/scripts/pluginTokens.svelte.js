@@ -42,12 +42,14 @@ class PluginTokens {
    * @throws {PluginAccessDeniedError} у профиля нет доступа к серверу
    */
   get(serverId) {
-    const cached = this.#tokens.get(serverId);
-    if (cached && cached.expiresAt - Date.now() > EXPIRY_MARGIN_MS) {
-      return Promise.resolve(cached);
+    const cachedTokens = this.#tokens.get(serverId);
+    if (cachedTokens && cachedTokens.expiresAt - Date.now() > EXPIRY_MARGIN_MS) {
+      return Promise.resolve(cachedTokens);
     }
     if (!this.#pending.has(serverId)) {
-      this.#pending.set(serverId, this.#exchange(serverId).finally(() => this.#pending.delete(serverId)));
+      const pendingTokens = this.#exchange(serverId)
+          .finally(() => this.#pending.delete(serverId));
+      this.#pending.set(serverId, pendingTokens);
     }
     return this.#pending.get(serverId);
   }

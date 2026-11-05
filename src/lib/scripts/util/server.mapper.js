@@ -41,6 +41,13 @@ export function hostAddress(hosts, type) {
   return host ? `${host.address}:${host.port}` : null;
 }
 
+export function host(server, type) {
+  if (!server) return null;
+  if (!type) type = 'HOST';
+  const host = server.hosts?.find(h => h.type === type);
+  return host ? `${host?.address}:${host?.port}` : null
+}
+
 const BID_STATUS_LABELS = {
   PENDING: 'На рассмотрении',
   ACTIVE: 'Подтверждена',

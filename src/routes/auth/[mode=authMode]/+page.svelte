@@ -91,8 +91,7 @@
   }
 
   .auth-pane {
-    /*flex: 1 1 440px;*/
-    flex: 1 1 auto;
+    flex: 1 1 440px;
     box-sizing: border-box;
     margin-bottom: var(--ui-spacing);
   }

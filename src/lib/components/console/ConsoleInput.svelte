@@ -1,8 +1,8 @@
 <script>
-  import {CommandLine} from '$components/console/CommandInput.svelte.js';
+  import {ConsoleInput} from '$components/console/ConsoleInput.svelte.js';
 
   /**
-   * Поле ввода команд и сообщений с предикатом (см. {@link CommandLine}).
+   * Поле ввода команд и сообщений с предикатом (см. {@link ConsoleInput}).
    * defaultPredicate — команда по умолчанию (консоль: `say`; чат: нет — сообщение);
    * predicates — команды, на которые можно переключиться (`null` — любые);
    * onsubmit(line) — строка для отправки: «/команда аргументы» или сообщение.
@@ -17,7 +17,7 @@
   } = $props();
 
   // svelte-ignore state_referenced_locally
-  const line = new CommandLine({defaultPredicate, predicates});
+  const consoleInput = new ConsoleInput({defaultPredicate, predicates});
 
   let inputElement;
 
@@ -27,8 +27,8 @@
 
   function onKeyDown(e) {
     // До изменения поля: Backspace в уже пустом поле
-    if (e.key === 'Backspace' && line.input === '') {
-      line.resetPredicate();
+    if (e.key === 'Backspace' && consoleInput.input === '') {
+      consoleInput.resetPredicate();
     }
   }
 
@@ -36,33 +36,33 @@
     switch (e.key) {
       case 'Enter': {
         if (disabled) return;
-        const text = line.submit();
+        const text = consoleInput.submit();
         if (text) onsubmit?.(text);
         break;
       }
       case ' ':
-        line.switchPredicate();
+        consoleInput.switchPredicate();
         break;
       case 'ArrowUp':
-        line.previous();
+        consoleInput.previous();
         break;
       case 'ArrowDown':
-        line.next();
+        consoleInput.next();
         break;
     }
   }
 </script>
 
 <div class="command-input">
-  {#if line.predicate}
+  {#if consoleInput.predicate}
     <div class="command-predicate">
-      <span>/{line.predicate}</span>
+      <span>/{consoleInput.predicate}</span>
     </div>
   {/if}
   <input type="text"
          name="command"
          bind:this={inputElement}
-         bind:value={line.input}
+         bind:value={consoleInput.input}
          {disabled}
          {maxlength}
          autocomplete="off"
