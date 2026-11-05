@@ -1,5 +1,6 @@
 <script>
   import {ConsoleInput} from '$components/console/ConsoleInput.svelte.js';
+  import ButtonIcon from "$ui/buttons/ButtonIcon.svelte";
 
   /**
    * Поле ввода команд и сообщений с предикатом (см. {@link ConsoleInput}).
@@ -20,6 +21,11 @@
   const consoleInput = new ConsoleInput({defaultPredicate, predicates});
 
   let inputElement;
+  const send = () => {
+    if (disabled) return;
+    const text = consoleInput.submit();
+    if (text) onsubmit?.(text);
+  }
 
   export function focus() {
     inputElement?.focus();
@@ -35,9 +41,7 @@
   function onKeyUp(e) {
     switch (e.key) {
       case 'Enter': {
-        if (disabled) return;
-        const text = consoleInput.submit();
-        if (text) onsubmit?.(text);
+        send();
         break;
       }
       case ' ':
@@ -72,6 +76,7 @@
          placeholder={disabled ? 'Подключение…' : placeholder}
          onkeydown={onKeyDown}
          onkeyup={onKeyUp}>
+  <ButtonIcon title="Отправить" icon="send" onclick={send}/>
 </div>
 
 <style>

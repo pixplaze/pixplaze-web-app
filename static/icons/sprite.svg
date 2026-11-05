@@ -32,6 +32,7 @@
   <symbol id="reload" viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h12v12h-5l1.828 1.828-1.414 1.415L9.172 17l4.242-4.243 1.414 1.415L13 16h3V8H8v10H6z"/></symbol>
   <symbol id="repost" viewBox="0 0 24 24"><path fill="currentColor" d="M17.626 18H7V9.729h10.626m0 0-4-4m4 4-4 4"/></symbol>
   <symbol id="search" viewBox="0 0 24 24"><path fill="currentColor" d="M18 18h-7.757l2-2H18z"/><path fill="currentColor" d="M8 12H6v-2h2z"/><path fill="currentColor" d="M8 8H6V6h2z"/><path fill="currentColor" fill-rule="evenodd" d="M18 14h-6.586l-4.411 4.411-1.414-1.414L10 12.586V6h8zm-6-6v4h4V8z" clip-rule="evenodd"/></symbol>
+  <symbol id="send" viewBox="0 0 24 24"><path fill="currentColor" d="m17.889 12-6.364 6.364-1.414-1.414 3.95-3.95H6.11v-2h7.95l-3.95-3.95 1.414-1.414z"/></symbol>
   <symbol id="settings" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 4.929 19.071 12l-1.414 1.414-4.243 4.243L12 19.07 4.929 12l1.414-1.414 4.243-4.243zm0 2.828L16.243 12 12 16.243 7.757 12zM13 11h-2v2h2z" clip-rule="evenodd"/></symbol>
   <symbol id="sign-out" viewBox="0 0 24 24"><path fill="currentColor" d="M12 9h-2V8H8v8h2v-1h2v3H6V6h6z"/><path fill="currentColor" d="m19.657 12-4.243 4.242L14 14.828 15.828 13H10v-2h5.828L14 9.172l1.414-1.414z"/></symbol>
   <symbol id="star-filled" viewBox="0 0 24 24"><path fill="currentColor" d="M14.928 9.071 20 12l-5.072 2.928L12 20l-2.929-5.072L4 12l5.071-2.929L12 4z"/></symbol>
