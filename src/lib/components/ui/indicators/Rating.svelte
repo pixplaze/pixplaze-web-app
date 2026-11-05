@@ -1,8 +1,13 @@
 <script>
   import Icon from "$ui/Icon.svelte";
 
+  /**
+   * icon — пиктограмма шкалы: `<icon>` для пустой и `<icon>-filled` для заполненной ячейки.
+   * Цвет заполненной задаётся `--rating-color`, при наведении — `--rating-hover-color`.
+   */
   let {
     max = 5,
+    icon = 'heart',
     value = $bindable(0),
     onVoted = () => {}
   } = $props();
@@ -61,7 +66,7 @@
      onkeydown={handleKey}
 >
   {#each Array(max) as _, i}
-    <Icon icons={["heart", "heart-filled"]} classes={display >= i + 1 ? "filled" : ""}/>
+    <Icon icons={[icon, `${icon}-filled`]} classes={display >= i + 1 ? "filled" : ""}/>
   {/each}
 </div>
 
@@ -84,12 +89,12 @@
     }
 
     .rating {
-      [href$="heart-filled"] {
-        color: var(--color-red-main);
+      [href$="-filled"] {
+        color: var(--rating-color, var(--color-red-main));
       }
 
-      &:hover [href$="heart-filled"] {
-        color: #EFC500;
+      &:hover [href$="-filled"] {
+        color: var(--rating-hover-color, #EFC500);
       }
     }
   }

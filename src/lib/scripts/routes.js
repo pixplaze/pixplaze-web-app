@@ -6,6 +6,8 @@ export const ROUTES = {
   serversConsole: '/servers/console',
   serversMap: '/servers/map',
   serversList: '/servers',
+  // Страница сервера из листинга
+  server: (id) => `/servers/${id}`,
   serversChat: '/servers/chat',
   // Заявки на регистрацию серверов: свои — пользователю, все — админу.
   serversBids: '/servers/bids',
@@ -18,6 +20,8 @@ export const ROUTES = {
 
   // Профиль; принимает ?userCode=... для подтверждения входа стороннего устройства (DCF).
   profile: '/profile',
+  // Друзья (пока заглушка)
+  friends: '/friends',
 
   home: '/',
 };

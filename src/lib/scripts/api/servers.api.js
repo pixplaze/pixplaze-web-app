@@ -12,6 +12,30 @@ export const serversApi = {
   },
 
   /**
+   * Один сервер листинга.
+   * @param {typeof fetch} [fetch] `fetch` из `load` SvelteKit
+   */
+  async get(serverId, fetch) {
+    return mapServer(await api.json(await api.get(`/servers/${serverId}`, {fetch})));
+  },
+
+  /**
+   * Онлайн сервера по часам за последние `days` суток; часов без замеров в ответе нет.
+   * @param {typeof fetch} [fetch] `fetch` из `load` SvelteKit
+   * @returns {Promise<{hour: Date, peak: number|null, average: number|null, max: number|null, online: boolean}[]>}
+   */
+  async history(serverId, days = 7, fetch) {
+    const points = await api.json(await api.get(`/servers/${serverId}/history?days=${days}`, {fetch}));
+    return points.map(p => ({
+      hour: new Date(p.hour),
+      peak: p.playersPeak,
+      average: p.playersAverage,
+      max: p.playersMax,
+      online: p.isOnline
+    }));
+  },
+
+  /**
    * Поиск по листингу.
    * @param {AbortSignal} [signal] отмена устаревшего запроса при продолжении ввода
    */

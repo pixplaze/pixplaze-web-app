@@ -60,6 +60,11 @@ class Friends {
     return this.self?.players.find(player => player.uuid === uuid);
   }
 
+  /** Сколько взаимных друзей сейчас на сервере: друг с несколькими игроками там считается один раз. */
+  onlineOn(serverId) {
+    return this.online.filter(friend => friend.players.some(player => player.server?.id === serverId)).length;
+  }
+
   /** @returns {Promise<boolean>} добавлен ли */
   async add(name) {
     try {

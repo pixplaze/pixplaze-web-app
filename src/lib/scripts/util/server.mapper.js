@@ -70,6 +70,8 @@ export const mapBid = b => ({
   expiresAt: b.expiresAt
 });
 
+const hosts = s => s.hosts ?? [];
+
 /** Ответ API (`MinecraftServerInfo`) → модель карточки сервера. */
 export const mapServer = s => ({
   id: s.id,
@@ -78,8 +80,20 @@ export const mapServer = s => ({
   hosts: s.hosts ?? [],
   image: s.iconBase64,
   motd: s.motd,
+  description: s.description,
   core: s.core,
   state: s.state,
+  // Подключён к Pixplaze: на сервере стоит плагин, а не только отвечает на пинг
+  isLinked: s.state?.integrationStatus === 'PLUGIN',
+  // Чат и консоль идут через API плагина, карта — по своему адресу
+  hasChat: hosts(s).some(h => h.type === 'API'),
+  hasMap: hosts(s).some(h => h.type === 'MAP'),
+  // Вайп: {lastAt, nextAt} в ISO. API поле пока не отдаёт — страница сервера прячет плитку вайпа
+  wipe: s.wipe ? {
+    lastAt: s.wipe.lastAt ? new Date(s.wipe.lastAt) : null,
+    nextAt: s.wipe.nextAt ? new Date(s.wipe.nextAt) : null
+  } : null,
   rating: s.rating,
+  ratingCount: s.ratingCount ?? 0,
   language: s.language ?? 'RU'
 });

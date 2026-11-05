@@ -5,11 +5,14 @@
   import {onMount} from "svelte";
   import {page} from "$app/state";
   import {ROUTES} from "$scripts/routes.js";
+  import {goto} from "$app/navigation";
+  import {activeServer} from "$scripts/activeServer.svelte.js";
   import Header from "$components/layout/Header.svelte";
   import FavoriteServerList from "$components/servers/FavoriteServerList.svelte";
   import Sidebar from "$components/layout/Sidebar.svelte";
   import Backdrop from "$ui/Backdrop.svelte";
   import AppNotifications from "$components/layout/AppNotifications.svelte";
+  import PointerHint from "$ui/PointerHint.svelte";
   import '$lib/style/global.css';
 
   const {children} = $props();
@@ -36,6 +39,10 @@
     navigation.goToServersChat();
   }
   const onButtonFavorite = () => ui.toggleFavorites();
+  const onButtonFriends = () => {
+    ui.minimize();
+    goto(ROUTES.friends);
+  }
 
   const onButtonProfile = () => {}
   const onButtonLanguage = () => {}
@@ -66,11 +73,13 @@
 <div id="layout" class={`container themed ${ui.theme}`} class:fullscreen>
   <header>
     <Header {onButtonAside}
-            {onButtonConsole}
             {onButtonMap}
             {onButtonSearch}
             {onButtonChat}
+            {onButtonFriends}
             {onButtonFavorite}
+            asideExpanded={ui.isAsideExpanded}
+            showServerButtons={auth.isAuthenticated && !!activeServer.server}
             showFavorite={auth.isAuthenticated}
     />
     {#if auth.isAuthenticated}
@@ -82,6 +91,7 @@
     {/if}
     <AppNotifications/>
   </header>
+  <PointerHint/>
   <aside class:expanded={ui.isAsideExpanded} class="debug">
     <div class="aside-host">
       <Sidebar {onButtonProfile}
@@ -129,8 +139,8 @@
 
     z-index: 2;
 
-    min-height: var(--ui-size-block);
-    background-color: #42A021;
+    min-height: var(--ui-header-height);
+    background-color: var(--color-ui-primary);
     grid-area: header;
   }
 
@@ -188,9 +198,9 @@
   aside {
     grid-area: aside;
     position: sticky;
-    top: var(--ui-size-block);
+    top: var(--ui-header-height);
     align-self: start;
-    height: calc(100dvh - var(--ui-size-block));
+    height: calc(100dvh - var(--ui-header-height));
 
     overflow: hidden;
     width: 0;
@@ -306,7 +316,7 @@
     aside {
       position: fixed;
       top: 0;
-      bottom: var(--ui-size-block);
+      bottom: var(--ui-header-height);
       left: 0;
       z-index: 3;
 
