@@ -72,12 +72,13 @@ const iconSpritePath = path.resolve('static/icons/sprite.svg');
 const iconFilePaths = getFilesFromDir(iconsDirPath);
 const iconSprite = buildSprite(iconFilePaths, {});
 
+fs.writeFileSync(iconSpritePath, iconSprite);
+console.log('Icon sprite generated:', iconSpritePath);
+
 const imageDirPath = path.resolve('resources/images');
 const imageSpritePath = path.resolve('static/images/sprite.svg');
 const imagesFilePaths = getFilesFromDir(imageDirPath);
 const imageSprite = buildSprite(imagesFilePaths, {size: 48});
 
-fs.writeFileSync(iconSpritePath, iconSprite);
 fs.writeFileSync(imageSpritePath, imageSprite);
-
-// console.log('Sprite generated:', iconSpritePath);
+console.log('Image sprite generated:', imageSpritePath);
