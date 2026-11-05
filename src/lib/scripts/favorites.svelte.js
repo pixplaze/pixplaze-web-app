@@ -66,6 +66,10 @@ class Favorites {
     return this.#error;
   }
 
+  get empty() {
+    return this.loaded && this.servers.length === 0;
+  }
+
   /** В избранном ли сервер; ожидающий удаления — уже нет. */
   has(serverId) {
     return !this.#pendingRemove.has(serverId) && this.#servers.some(s => s.id === serverId);

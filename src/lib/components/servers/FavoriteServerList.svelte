@@ -30,7 +30,7 @@
   <div class="favorite-server-list">
     <ItemList>
       {#each favorites.servers as server (server.id)}
-        <ItemListRow selected={server.id === activeServer.server?.id} onselect={() => activeServer.select(server)}>
+        <ItemListRow selected={activeServer.isActive(server.id)} onselect={() => activeServer.select(server)}>
           <ServerIcon src={server.image}/>
           <span class="server-name">{server.name}</span>
           {#snippet actions()}

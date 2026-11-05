@@ -30,13 +30,14 @@
   let access = $state('pending');
 
   $effect(() => {
+    $inspect('active:', activeServer.server);
     if (!needsPlugin || !server || !address || !permitted) return;
     const serverId = server.id;
     access = 'pending';
     pluginTokens.get(serverId)
-        .then(() => serverId === activeServer.server?.id && (access = 'granted'))
-        .catch((error) => serverId === activeServer.server?.id
-            && (access = error instanceof PluginAccessDeniedError ? 'denied' : 'failed'));
+        .then(() => activeServer.isActive(serverId) && (access = 'granted'))
+        .catch((error) => activeServer.isActive(serverId) &&
+            (access = error instanceof PluginAccessDeniedError ? 'denied' : 'failed'));
   });
 </script>
 
@@ -53,10 +54,7 @@
 {:else if needsPlugin && access === 'failed'}
   <p class="active-server-message">Не удалось получить доступ к серверу, попробуйте позже</p>
 {:else}
-  <!-- Другой сервер или адрес — содержимое пересоздаётся (переподключение консоли) -->
-  {#key `${server.id}:${address}`}
-    {@render children?.(address, server.id)}
-  {/key}
+  {@render children?.(address, server.id)}
 {/if}
 
 <style>
