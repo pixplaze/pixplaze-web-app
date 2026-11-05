@@ -37,8 +37,8 @@
 
   :global(.server-icon.framed) {
     --server-icon-border: var(--ui-size-border);
-    border: var(--server-icon-border) solid var(--color-ui-primary);
-    box-shadow: inset 0 -4px 0 0 var(--color-ui-shadow);
+    border-right: var(--ui-size-border) solid var(--color-ui-border1);
+    box-shadow: inset 0 -8px 0 0 var(--color-ui-shadow);
   }
 
   /* Icon берёт размер из --icon-size; значок обычного размера центрируется отступами внутри рамки */

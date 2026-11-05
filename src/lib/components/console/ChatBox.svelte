@@ -166,6 +166,8 @@
     font-family: "Minecraft", "Montserrat", "sans-serif";
     opacity: .3;
     align-self: flex-end;
+
+    user-select: none;
   }
 
   .event {

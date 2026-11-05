@@ -54,7 +54,7 @@
   </script>
 
 <div class="server-card">
-  <div class="ui box server-card-box">
+  <div class="ui box server-card-box" class:integrated={server.state.integrationStatus === 'PLUGIN'}>
     <ServerIcon src={server.image} alt="Server Icon" framed/>
     <div class="server-info">
       <div class="description">
@@ -105,6 +105,12 @@
     height: 128px;
     --server-icon-size: 128px;
     box-shadow: 0 6px 0 0 var(--color-ui-shadow);
+
+    border: var(--ui-size-border) solid var(--color-ui-border1);
+  }
+
+  .server-card-box.integrated {
+    border: var(--ui-size-border) solid var(--color-ui-primary);
   }
 
   .server-info {
@@ -113,7 +119,6 @@
     display: flex;
     height: 100%;
     padding-bottom: var(--ui-size-shadow);
-    border: var(--ui-size-border) solid var(--color-ui-border1);
     border-left: none;
     box-shadow: inset 0 calc(-1 * var(--ui-size-shadow)) 0 0 var(--color-ui-shadow);
   }
@@ -143,10 +148,7 @@
     /*border: var(--ui-size-border) solid var(--color-ui-border);*/
     box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);
 
-    :global(.server-status) {
-      padding: 10px;
-      color: var(--color-text-secondary);
-    }
+    color: var(--color-text-secondary);
   }
 
   .server-motd {
@@ -208,8 +210,22 @@
       }
     }
 
-    .server-status {
-      vertical-align: middle;
+    .server-state-box {
+      padding: 0;
+
+      .server-status {
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        vertical-align: middle;
+
+        padding: 5px;
+
+        width: 100%;
+        height: var(--ui-size-block);
+
+        color: inherit;
+      }
     }
 
     .server-status .icon {
