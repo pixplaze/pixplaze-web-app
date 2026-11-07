@@ -2,9 +2,10 @@
   let {
     title,
     disabled = false,
-    classes = "",
+    classes = [],
     children,
     onclick,
+    ...rest
   } = $props();
 </script>
 
@@ -12,11 +13,18 @@
         type="button"
         {disabled}
         class={`ui interactive button ${classes}`}
-        {onclick}>
+        {onclick}
+        {...rest}>
   {@render children()}
 </button>
 
 <style>
+  button.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   button.button {
     cursor: pointer;
     user-select: none;
@@ -27,6 +35,10 @@
     box-shadow: inset 0 calc(-1 * var(--ui-size-shadow)) 0 0 var(--color-ui-button-shadow);
     transition: background-color .2s ease-out;
     padding-bottom: var(--ui-size-shadow);
+
+    &:focus {
+      outline-style: auto;
+    }
 
     &:hover {
       background-color: var(--color-ui-button-hover-background);

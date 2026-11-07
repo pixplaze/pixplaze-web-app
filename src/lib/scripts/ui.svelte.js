@@ -37,6 +37,17 @@ class Ui {
     localStorage.setItem(IS_ASIDE_EXPANDED_STORAGE_KEY, this.#asideExpanded);
   }
 
+  toggleFavorites() {
+    this.#favoritesExpanded = !this.#favoritesExpanded;
+  }
+
+  scrollTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
   minimize() {
     if (this.isMobileLayout && this.#asideExpanded) {
       this.toggleAside();
@@ -45,10 +56,6 @@ class Ui {
     if (this.#favoritesExpanded) {
       this.toggleFavorites();
     }
-  }
-
-  toggleFavorites() {
-    this.#favoritesExpanded = !this.#favoritesExpanded;
   }
 }
 

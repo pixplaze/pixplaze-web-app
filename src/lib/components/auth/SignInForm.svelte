@@ -40,7 +40,9 @@
          placeholder="********"
          classes={[fields.password.validationClasses, form.level].filter(Boolean).join(' ')}
          bind:value={fields.password.value}
-         oninput={() => form.clearNotices()}/>
+         oninput={() => form.clearNotices()}
+         onEnter={onFormSubmit}
+  />
   <Notice bind:notices={fields.password.validationNotices}/>
   <Notice bind:notices={form.notices} onClose={() => {form.clear(); form.clearNotices();}}/>
   <Button onclick={onFormSubmit}

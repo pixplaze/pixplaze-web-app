@@ -1,6 +1,6 @@
 <script>
   import {page} from '$app/state';
-  import ArtEnderman404 from "$components/arts/ArtEnderman404.svelte";
+  import ArtEnderman404 from '$components/arts/ArtEnderman404.svelte';
   import ArtAlex500 from '$components/arts/ArtAlex500.svelte';
 
   console.error(page.error);

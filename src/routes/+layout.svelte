@@ -1,31 +1,31 @@
 <script>
-  import {ui} from "$scripts/ui.svelte.js";
-  import {navigation} from "$scripts/navigation.js";
+  import {ui} from '$scripts/ui.svelte.js';
+  import {navigation} from '$scripts/navigation.js';
   import {auth} from '$scripts/auth.svelte.js';
-  import {onMount} from "svelte";
-  import {page} from "$app/state";
-  import {ROUTES} from "$scripts/routes.js";
-  import Header from "$components/layout/Header.svelte";
-  import FavoriteServerList from "$components/servers/FavoriteServerList.svelte";
-  import Sidebar from "$components/layout/Sidebar.svelte";
-  import Backdrop from "$ui/Backdrop.svelte";
-  import AppNotifications from "$components/layout/AppNotifications.svelte";
+  import {page} from '$app/state';
+  import {ROUTES} from '$scripts/routes.js';
+  import {activeServer} from '$scripts/activeServer.svelte.js';
+  import Header from '$components/layout/Header.svelte';
+  import FavoriteServerList from '$components/servers/FavoriteServerList.svelte';
+  import Sidebar from '$components/layout/Sidebar.svelte';
+  import Backdrop from '$ui/Backdrop.svelte';
+  import AppNotifications from '$components/layout/AppNotifications.svelte';
   import '$lib/style/global.css';
 
   const {children} = $props();
 
   /** Страницы на весь экран без хедера (чат, карта): без подложки и футера, иначе под ними остаётся прокрутка. */
-  const FULLSCREEN_ROUTES = [ROUTES.serversChat, ROUTES.serversMap];
-  const fullscreen = $derived(FULLSCREEN_ROUTES.includes(page.url.pathname));
+  const FULLSCREEN_ROUTES = [ROUTES.serversChat(''), ROUTES.serversMap(''), ROUTES.serversConsole('')];
+  const fullscreen = $derived(FULLSCREEN_ROUTES.includes(page.url.pathname.replace(/\d/, '')));
 
   const onButtonAside = () => ui.toggleAside();
   const onButtonConsole = () => {
     ui.minimize();
-    navigation.goToServersConsole()
+    navigation.goToServersConsole(activeServer.server?.id)
   };
   const onButtonMap = () => {
     ui.minimize();
-    navigation.goToServersMap();
+    navigation.goToServersMap(activeServer.server?.id);
   }
   const onButtonSearch = () => {
     ui.minimize();
@@ -33,7 +33,7 @@
   }
   const onButtonChat = () => {
     ui.minimize();
-    navigation.goToServersChat();
+    navigation.goToServersChat(activeServer.server?.id);
   }
   const onButtonFavorite = () => ui.toggleFavorites();
 
@@ -49,17 +49,6 @@
   */
   $effect(() => {
     navigation.enforceAuth(page.url.pathname, page.url.search);
-  });
-
-  onMount(() => {
-    // fetch(`${env.PUBLIC_PIXPLAZE_WEB_API_URL}/servers`)
-    //     .then(res => res.json())
-    //     .then(res => console.log(res))
-    //     .catch(err => {
-    //       if (err) {
-    //         throw error(500, err);
-    //       }
-    //     });
   });
 </script>
 
@@ -255,7 +244,7 @@
     html {
       overflow-x: clip;
       overscroll-behavior-x: none;
-      scrollbar-gutter: stable;
+      /*scrollbar-gutter: stable;*/
     }
 
     /* Полноэкранные страницы ровно в высоту экрана: прокрутка и пустой жёлоб под неё не нужны */

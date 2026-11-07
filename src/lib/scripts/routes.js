@@ -3,11 +3,11 @@
  * импортируется из сервисов, компонентов и тестов. Убирает захардкоженные пути.
  */
 export const ROUTES = {
-  serversConsole: '/servers/console',
-  serversMap: '/servers/map',
   serversList: '/servers',
-  serversChat: '/servers/chat',
-  // Заявки на регистрацию серверов: свои — пользователю, все — админу.
+  serversMap: (serverId) => `/servers/${serverId}/map`,
+  serversChat: (serverId) => `/servers/${serverId}/chat`,
+  serversConsole: (serverId) => `/servers/${serverId}/console`,
+  serversControl: (id) => `/servers/${id}/control`,
   serversBids: '/servers/bids',
 
   signIn: '/auth/sign-in',

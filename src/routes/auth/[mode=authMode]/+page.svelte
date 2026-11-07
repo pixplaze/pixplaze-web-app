@@ -2,13 +2,15 @@
   import {page} from '$app/state';
   import {navigation} from '$scripts/navigation.js';
   import {auth} from '$scripts/auth.svelte.js';
+  import {ui} from '$scripts/ui.svelte.js';
   import {ROUTES} from '$scripts/routes.js';
   import SignInForm from '$components/auth/SignInForm.svelte';
   import SignUpForm from '$components/auth/SignUpForm.svelte';
-  import Button from "$ui/buttons/Button.svelte";
-  import DeviceAuthorization from "$components/auth/DeviceAuthorization.svelte";
-  import Delimiter from "$ui/Delimiter.svelte";
-  import {onMount} from "svelte";
+  import Button from '$ui/buttons/Button.svelte';
+  import DeviceAuthorization from '$components/auth/DeviceAuthorization.svelte';
+  import Delimiter from '$ui/Delimiter.svelte';
+  import ButtonSwitcher from "$ui/buttons/ButtonSwitcher.svelte";
+  import {onMount} from 'svelte';
 
   let mode = $state(page.params.mode);
 
@@ -26,11 +28,9 @@
 
   /** Сделать форму активной и отразить это в адресе, сохранив query (inviteCode). */
   function activate(next) {
-    if (mode === next) {
-      return;
-    }
     mode = next;
     navigation.setAuthMode(next, page.url.search);
+    ui.scrollTop();
   }
 
   // После успешного входа (паролем или device-flow QR): если это был линк подтверждения
@@ -73,10 +73,12 @@
 </div>
 <section class="auth-pane">
   <Delimiter value="или" classes="content-line"/>
-  <div class="ui box">
-    <Button onclick={() => activate('sign-in')} disabled={showSignIn}>Вход</Button>
-    <Button onclick={() => activate('sign-up')} disabled={showSignUp}>Регистрация</Button>
-  </div>
+  <ButtonSwitcher bind:mode onSwitch={activate}>
+    <Button title="Переключить режим на вход"
+            data-id="sign-in">Вход</Button>
+    <Button title="Переключить режим на регистрацию"
+            data-id="sign-up">Регистрация</Button>
+  </ButtonSwitcher>
 </section>
 
 <style>
@@ -108,12 +110,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-
-  .ui.box {
-    box-sizing: border-box;
-    display: flex;
-    margin-bottom: var(--ui-spacing);
   }
 
   :global {

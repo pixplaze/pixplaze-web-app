@@ -2,6 +2,7 @@
   import Button from '$ui/buttons/Button.svelte';
   import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
   import {copyToClipboard} from '$util/dom.util.js';
+  import Clipboard from "$ui/Clipboard.svelte";
 
   /**
    * Список заявок. В режиме `admin` показывает, кто подал заявку, и кнопки решения по открытым.
@@ -37,8 +38,8 @@
         Подана {formatDateTime(bid.createdAt)}{#if bid.expiresAt}, истекает {formatDateTime(bid.expiresAt)}{/if}
       </p>
       <div class="bid-code">
-        <span>Код: <code>{bid.code}</code></span>
-        <ButtonIcon icon="copy" classes="transparent" onclick={() => copyToClipboard(bid.code)}/>
+        <span>Код:</span>
+        <Clipboard bind:value={bid.code}/>
       </div>
       {#if bid.pending && !admin}
         <p class="bid-meta">Добавьте код в MOTD сервера. Без плагина регистрация подтвердится при ближайшей проверке сервера; с плагином перезапустите сервер и подтвердите регистрацию по ссылке, которую он выведет. После регистрации код можно убрать.</p>
@@ -69,7 +70,7 @@
     display: flex;
     flex-direction: column;
     gap: calc(var(--ui-spacing) / 2);
-    padding: var(--ui-padding);
+    /*padding: var(--ui-padding);*/
   }
 
   .bid-head {

@@ -5,7 +5,7 @@
   import ConsoleInput from '$components/console/ConsoleInput.svelte';
 
   /** Консоль сервера: лог и консольные команды. serverId — чей токен доступа; host — адрес плагина `host:port`. */
-  const {serverId, host} = $props();
+  const {serverId, host, fullscreen = false} = $props();
 
   // svelte-ignore state_referenced_locally
   const stream = new MessageStream(serverId, host, 'console', {label: 'консоли сервера'});
@@ -28,6 +28,7 @@
 </script>
 
 <div class="console"
+     class:fullscreen
      role="none"
      tabindex="-1"
      onclick={() => input.focus()}>
@@ -65,6 +66,10 @@
 
     /* TODO: Заменить на другие переменные */
     background-color: var(--color-ui-foreground);
+  }
+
+  .console.fullscreen {
+    height: var(--ui-page-height);
   }
 
   .messages {

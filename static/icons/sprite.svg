@@ -7,6 +7,7 @@
   <symbol id="console" viewBox="0 0 24 24"><path fill="currentColor" d="m12 12-4.242 4.242-1.414-1.414L9.172 12 6.344 9.172l1.414-1.414z"/><path fill="currentColor" d="M18 16.242h-6v-2h6z"/></symbol>
   <symbol id="copy" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M14 5H6v10h8zm-2 8H8V7h4z" clip-rule="evenodd"/><path fill="currentColor" d="M16 9h2v10h-8v-2h6z"/></symbol>
   <symbol id="error" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M18 18H6V6h12zM8 11v2h8v-2z" clip-rule="evenodd"/></symbol>
+  <symbol id="flag" viewBox="0 0 24 24"><path fill="currentColor" d="M8 6h2v12H8z"/><path fill="currentColor" d="m16 11 2 3h-6V8h6z"/><path fill="currentColor" d="M10 6h2v6h-2z"/></symbol>
   <symbol id="globe" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M4 4v16h16V4zm5.155 2H6v2h2zM8 10H6v4h2zm2 0h4v4h-4zm3.69-2h-3.38l1.154-2h1.072zM16 8h2V6h-3.155zm2 2h-2v4h2zM6 16h2l1.155 2H6zm5.464 2-1.155-2h3.382l-1.155 2zm3.381 0L16 16h2v2z" clip-rule="evenodd"/></symbol>
   <symbol id="heart" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="m14.828 4.929-2.827 2.828-2.828-2.828-5.657 5.657L12 19.07l8.485-8.485zm2.829 5.657-2.829-2.829-2.827 2.828-2.828-2.828-2.828 2.829L12 16.242z" clip-rule="evenodd"/></symbol>
   <symbol id="heart-filled" viewBox="0 0 24 24"><path fill="currentColor" d="m12 7.757 2.828-2.828 5.657 5.657L12 19.07l-8.484-8.485 5.657-5.657z"/></symbol>

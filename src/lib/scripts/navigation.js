@@ -8,19 +8,19 @@ export const navigation = {
     return goto(url);
   },
 
-  goToServersConsole() { return goto(ROUTES.serversConsole); },
-  goToServersMap()     { return goto(ROUTES.serversMap); },
-  goToServersList()    { return goto(ROUTES.serversList); },
-  goToServersChat()    { return goto(ROUTES.serversChat); },
-  goToServersBids()    { return goto(ROUTES.serversBids); },
-  goToProfile()        { return goto(ROUTES.profile); },
+  goToServersList()           { return goto(ROUTES.serversList); },
+  goToServersBids()           { return goto(ROUTES.serversBids); },
+  goToServersMap(serverId)    { return goto(ROUTES.serversMap(serverId)); },
+  goToServersChat(serverId)   { return goto(ROUTES.serversChat(serverId)); },
+  goToServersConsole(serverId){ return goto(ROUTES.serversConsole(serverId)); },
+  goToServersControl(id)      { return goto(ROUTES.serversControl(id)); },
+  goToProfile()               { return goto(ROUTES.profile); },
 
   /** Отразить активную форму авторизации в URL без добавления записи в историю. */
   setAuthMode(mode, search = '') {
     // Второй аргумент — обязательный объект page-state для shallow routing SvelteKit.
     replaceState(`${ROUTES.auth(mode)}${search}`, {});
   },
-
   /**
    * Увести неавторизованного на вход, СОХРАНИВ исходный query (напр. `?userCode=...`),
    * чтобы после входа вернуться к подтверждению устройства. Страницы /auth/* исключены,

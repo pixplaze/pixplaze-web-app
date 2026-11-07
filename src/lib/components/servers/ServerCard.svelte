@@ -4,13 +4,14 @@
   import MinecraftText from '$ui/text/MinecraftText.svelte';
   import {copyToClipboard} from '$util/dom.util.js';
   import {createDistinctDebounce} from '$util/debounce.util.js';
-  import {formatNumber} from '$util/format.util.js';
+  import {navigation} from '$scripts/navigation.js';
   import {serversApi} from '$api/servers.api.js';
   import {notifications} from '$scripts/notifications.svelte.js';
-  import Icon from "$ui/Icon.svelte";
   import AlternatingText from '$ui/text/AlternatingText.svelte';
   import ServerIcon from '$components/servers/ServerIcon.svelte';
   import ServerState from "$components/servers/ServerStatus.svelte";
+  import {temp} from "$scripts/mixins/temp.svelte.js";
+  import ServerMotd from "$components/servers/ServerMotd.svelte";
 
   /**
    * favorite — сервер в избранном; null — избранное недоступно (гость), звезда скрыта.
@@ -22,17 +23,16 @@
     onFavorite
   } = $props();
 
-  let copied = $state(false);
-  let expanded = $state(false);
+  let copyIcon = temp('copy', 1500);
+  let expanded = $state(true);
 
   const onMore = () => {
-    expanded = !expanded;
+    navigation.goToServersControl(server.id);
   }
 
   const onCopy = async () => {
     await copyToClipboard(server.host);
-    copied = true;
-    setTimeout(() => copied = false, 1500);
+    copyIcon.value = 'arrow-ok';
   };
 
   const rateServer = createDistinctDebounce((rating) => serversApi.rate(server.id, rating), 1000);
@@ -69,7 +69,7 @@
         <Rating value={server.rating} {onVoted}/>
       </div>
       <div class="buttons">
-        <ButtonIcon icon={copied ? 'arrow-ok' : 'copy'} classes="transparent {copied ? 'copied' : ''}" onclick={onCopy}/>
+        <ButtonIcon icon={copyIcon.value} classes="transparent {copyIcon ? 'copied' : ''}" onclick={onCopy}/>
         <ButtonIcon icon="more" classes="transparent" onclick={onMore}/>
         {#if favorite !== null}
           <ButtonIcon icons={favorite ? ['star-filled'] : ['star', 'star-filled']}
@@ -82,9 +82,7 @@
   {#if expanded && server.state && server.core && server.state.players}
     <div class="server-state-box">
       <ServerState state={server.state} core={server.core}/>
-      <div class="server-motd">
-        <MinecraftText text={server.motd} classes="motd" trim={true}/>
-      </div>
+      <ServerMotd motd={server.motd}/>
     </div>
   {/if}
 </div>
@@ -104,9 +102,21 @@
     min-width: 256px;
     height: 128px;
     --server-icon-size: 128px;
-    box-shadow: 0 6px 0 0 var(--color-ui-shadow);
+    /*box-shadow: 0 6px 0 0 var(--color-ui-shadow);*/
 
     border: var(--ui-size-border) solid var(--color-ui-border1);
+    color: var(--color-text-primary);
+
+    cursor: pointer;
+  }
+
+  .server-card {
+    box-shadow: 0 6px 0 0 var(--color-ui-shadow);
+  }
+
+  .server-card:hover {
+    transform: scale(1.01);
+    /*box-shadow: -6px 6px 0 0 var(--color-ui-shadow);*/
   }
 
   .server-card-box.integrated {
@@ -146,25 +156,8 @@
     background-color: #444444;
     border: var(--ui-size-border) solid #333333;
     /*border: var(--ui-size-border) solid var(--color-ui-border);*/
-    box-shadow: 0 var(--ui-size-shadow) 0 0 var(--color-ui-shadow);
 
     color: var(--color-text-secondary);
-  }
-
-  .server-motd {
-    box-sizing: border-box;
-    display: flex;
-    /* Забирает весь остаток строки, чтобы статус рядом с ним не растягивался */
-    flex: 9999 0;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 10px;
-    min-width: 50%;
-    /* Тёмная карточка: текст MOTD без кода цвета — светлый */
-    color: var(--color-text-secondary);
-    border: var(--ui-size-border) solid #333333;
-    margin: calc(-1 * var(--ui-size-border));
   }
 
   :global {
@@ -178,10 +171,6 @@
         >svg {
           justify-content: space-between;
         }
-      }
-
-      .motd {
-        font-size: 12px;
       }
 
       button.button.square.ui.interactive {
@@ -226,12 +215,15 @@
 
         color: inherit;
       }
+
+      .server-status > span {
+        padding-right: 0;
+      }
     }
 
     .server-status .icon {
       margin-right: 10px;
     }
-
 
     .slot.primary {
       color: var(--color-text-primary);
