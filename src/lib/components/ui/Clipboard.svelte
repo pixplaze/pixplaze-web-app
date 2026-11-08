@@ -11,8 +11,6 @@
   } = $props();
   let copied = temp('copy', 1500);
 
-  $inspect(hidden);
-
   const onClick = () => {
     copied.value = 'arrow-ok';
     copyToClipboard(value);

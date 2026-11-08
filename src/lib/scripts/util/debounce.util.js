@@ -16,6 +16,7 @@ export function createDebounce(callback, delay) {
     controller?.abort();
     rejectPending?.(controller.signal.reason);
     rejectPending = null;
+    timeoutId = null; // Сбрасываем id таймера при отмене
   };
 
   const run = (...args) => {
@@ -26,6 +27,7 @@ export function createDebounce(callback, delay) {
       rejectPending = reject;
       timeoutId = setTimeout(async () => {
         rejectPending = null;
+        timeoutId = null; // Сбрасываем id таймера после выполнения
         try {
           const result = await callback(...args, current.signal);
           current.signal.throwIfAborted();
@@ -37,7 +39,10 @@ export function createDebounce(callback, delay) {
     });
   };
 
-  return { run, cancel };
+  // Метод pending возвращает true, если запущен таймер ожидания (rejectPending)
+  const pending = () => !!rejectPending;
+
+  return { run, cancel, pending };
 }
 
 export function createDistinctDebounce(callback, delay) {

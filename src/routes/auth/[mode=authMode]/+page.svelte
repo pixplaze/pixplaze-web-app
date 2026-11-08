@@ -28,9 +28,9 @@
 
   /** Сделать форму активной и отразить это в адресе, сохранив query (inviteCode). */
   function activate(next) {
+    ui.scrollTop();
     mode = next;
     navigation.setAuthMode(next, page.url.search);
-    ui.scrollTop();
   }
 
   // После успешного входа (паролем или device-flow QR): если это был линк подтверждения
@@ -93,7 +93,7 @@
   }
 
   .auth-pane {
-    flex: 1 1 440px;
+    flex: 1 1 auto;
     box-sizing: border-box;
     margin-bottom: var(--ui-spacing);
   }

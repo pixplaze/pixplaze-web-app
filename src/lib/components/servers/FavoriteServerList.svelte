@@ -8,6 +8,7 @@
   import {activeServer} from '$scripts/activeServer.svelte.js';
   import {copyToClipboard} from '$util/dom.util.js';
   import ServerIcon from '$components/servers/ServerIcon.svelte';
+  import Cancellable from "$ui/Cancellable.svelte";
 
   /** expanded — панель открыта: список перечитывается при каждом открытии, чтобы не устаревать. */
   const {expanded = false} = $props();
@@ -35,7 +36,9 @@
           <span class="server-name">{server.name}</span>
           {#snippet actions()}
             {#if favorites.isPendingRemove(server.id)}
-              <Button classes="transparent undo-button" onclick={() => favorites.undo(server.id)}>отменить</Button>
+              <Cancellable time="5s">
+                <Button classes="transparent undo-button" onclick={() => favorites.undo(server.id)}>отменить</Button>
+              </Cancellable>
             {:else}
               <ButtonIcon classes="transparent" icon="more"/>
               <ButtonIcon classes="transparent" icon={copiedId === server.id ? 'arrow-ok' : 'copy'} onclick={() => onCopy(server)}/>

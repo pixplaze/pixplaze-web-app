@@ -111,6 +111,7 @@ class Favorites {
     this.#servers = [...this.#servers, server];
     try {
       await favoritesApi.add(server.id);
+      notifications.info('Сервер ' + server.name + ' добавлен в избранное!')
     } catch {
       this.#drop(server.id);
       notifications.error('Не удалось добавить сервер в избранное');
@@ -127,6 +128,7 @@ class Favorites {
     this.#drop(serverId);
     try {
       await favoritesApi.remove(serverId);
+      notifications.info('Сервер ' + server.name + ' убран из избранного')
     } catch {
       // Возвращаем на прежнее место, если перечитанный за это время список его уже не вернул
       if (!this.#servers.some(s => s.id === serverId)) {

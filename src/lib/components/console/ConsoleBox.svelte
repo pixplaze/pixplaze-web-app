@@ -3,9 +3,10 @@
   import {formatMessageLine, MESSAGE_TYPE} from '$util/message.mapper.js';
   import MinecraftText from '$ui/text/MinecraftText.svelte';
   import ConsoleInput from '$components/console/ConsoleInput.svelte';
+  import ButtonIcon from "$ui/buttons/ButtonIcon.svelte";
 
   /** Консоль сервера: лог и консольные команды. serverId — чей токен доступа; host — адрес плагина `host:port`. */
-  const {serverId, host, fullscreen = false} = $props();
+  const {serverId, host} = $props();
 
   // svelte-ignore state_referenced_locally
   const stream = new MessageStream(serverId, host, 'console', {label: 'консоли сервера'});
@@ -20,6 +21,8 @@
     return `${y}.${m}.${d} ${h}:${min}.${s}`;
   }
   let input;
+  let fullscreen = $state(false);
+  const mode = $derived(fullscreen? 'compact' : 'fullscreen');
 
   $effect(() => {
     stream.open();
@@ -49,8 +52,11 @@
   <div class="console-actionbar">
     <ConsoleInput bind:this={input}
                   defaultPredicate="say"
+                  placeholder="Команда"
                   disabled={!stream?.connected}
-                  onsubmit={(line) => stream?.send(line)}/>
+                  onsubmit={(line) => stream?.send(line)}>
+      <ButtonIcon icon={mode} onclick={() => fullscreen = !fullscreen}/>
+    </ConsoleInput>
   </div>
 </div>
 
@@ -69,7 +75,12 @@
   }
 
   .console.fullscreen {
-    height: var(--ui-page-height);
+    position: fixed;
+    z-index: 10;
+    top: var(--ui-size-block);
+    bottom: 0;
+    width: auto;
+    height: inherit;
   }
 
   .messages {
@@ -91,6 +102,7 @@
     position: absolute;
     bottom: 0;
     width: 100%;
+    display: flex;
   }
 
   .row {
@@ -119,5 +131,12 @@
 
   .row :global(.log) {
     padding-bottom: 10px;
+  }
+
+  @media screen and (max-width: 440px) {
+    .console.fullscreen {
+      top: 0;
+      bottom: var(--ui-size-block);
+    }
   }
 </style>

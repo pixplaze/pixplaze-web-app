@@ -9,6 +9,7 @@
    * onsubmit(line) — строка для отправки: «/команда аргументы» или сообщение.
    */
   let {
+    children,
     defaultPredicate = null,
     predicates = null,
     disabled = false,
@@ -58,6 +59,7 @@
 </script>
 
 <div class="command-input">
+  {@render children?.()}
   {#if consoleInput.predicate}
     <div class="command-predicate">
       <span>/{consoleInput.predicate}</span>

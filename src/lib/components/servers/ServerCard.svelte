@@ -102,16 +102,12 @@
     min-width: 256px;
     height: 128px;
     --server-icon-size: 128px;
-    /*box-shadow: 0 6px 0 0 var(--color-ui-shadow);*/
+    box-shadow: 0 6px 0 0 var(--color-ui-shadow);
 
     border: var(--ui-size-border) solid var(--color-ui-border1);
     color: var(--color-text-primary);
 
     cursor: pointer;
-  }
-
-  .server-card {
-    box-shadow: 0 6px 0 0 var(--color-ui-shadow);
   }
 
   .server-card:hover {

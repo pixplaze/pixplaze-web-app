@@ -81,12 +81,11 @@
   </aside>
   <main>
     {@render children()}
-    {#if !fullscreen}
-      <Backdrop classes="page-backdrop"/>
-    {/if}
   </main>
   {#if !fullscreen}
-    <footer></footer>
+    <footer>
+      <Backdrop classes="page-backdrop"/>
+    </footer>
   {/if}
 </div>
 
@@ -116,7 +115,7 @@
     position: sticky;
     top: 0;
 
-    z-index: 2;
+    z-index: 3;
 
     min-height: var(--ui-size-block);
     background-color: #42A021;
@@ -178,6 +177,7 @@
     grid-area: aside;
     position: sticky;
     top: var(--ui-size-block);
+    z-index: 2;
     align-self: start;
     height: calc(100dvh - var(--ui-size-block));
 
@@ -231,7 +231,7 @@
     content: "";
     background-color: #444444;
     grid-area: footer;
-    padding-top: 160px;
+    /*padding-top: 160px;*/
   }
 
   :global {

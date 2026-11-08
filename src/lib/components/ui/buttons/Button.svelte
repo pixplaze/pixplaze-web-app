@@ -52,11 +52,12 @@
     }
 
     &:disabled {
-      cursor: not-allowed;
-      padding-bottom: 0;
       background-color: var(--color-ui-button-disabled-background);
       border-color: var(--color-ui-button-disabled-border);
       box-shadow: none;
+      padding-bottom: 0;
+
+      cursor: not-allowed;
     }
 
     &.square {
