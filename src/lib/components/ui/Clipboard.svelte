@@ -4,7 +4,7 @@
   import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
 
   let {
-    value,
+    value = $bindable(),
     hidden = false,
     spaced = false,
     ...rest
@@ -24,8 +24,10 @@
         {...rest}>
     {#if hidden}
       ********
-    {:else}
+    {:else if (value)}
       {value}
+    {:else}
+      N/A
     {/if}
   </code>
   <ButtonIcon icon={copied.value} classes="transparent copyable" onclick={onClick}/>
@@ -41,7 +43,7 @@
 
     font-family: "Minecraft", "Montserrat", "sans-serif";
 
-    color: inherit;
+    color: #333333;
 
     --color-border: #C9C9C9;
     --color-background: #EFEFEF;
@@ -52,10 +54,16 @@
     box-sizing: border-box;
     flex: 1 0 auto;
 
+    width: 50%;
+
     align-items: center;
     justify-content: center;
     text-align: center;
     align-content: center;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     padding: 10px;
 

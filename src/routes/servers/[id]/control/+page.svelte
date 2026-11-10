@@ -4,9 +4,12 @@
   import ButtonSwitcher from '$ui/buttons/ButtonSwitcher.svelte';
   import Clipboard from '$ui/Clipboard.svelte';
   import {goto} from "$app/navigation";
+  import Button from "$ui/buttons/Button.svelte";
+  import {pluginTokens} from "$scripts/pluginTokens.svelte.js";
 
   const serverId = page.params.id;
   const mode = $derived(page.url.searchParams.get('mode') || 'players');
+  let pluginToken = $state(null);
 
   function nextMode(mode) {
     page.url.searchParams.set('mode', mode);
@@ -15,6 +18,11 @@
       noScroll: true,
       keepFocus: true
     });
+  }
+
+  async function requestAndSetToken(serverId) {
+    pluginToken = (await pluginTokens.get(serverId)).accessToken;
+    console.log(pluginToken);
   }
 </script>
 
@@ -34,7 +42,9 @@
     >Консоль</ButtonIcon>
   </ButtonSwitcher>
 
-  <Clipboard value="TESTCODE" hidden={true}/>
+  <h3>Токен API сервера</h3>
+  <Clipboard bind:value={pluginToken} hidden={false}/>
+  <Button onclick={async () => requestAndSetToken(serverId)}>Запросить</Button>
 
   {#if (mode === 'players')}
     <h2>PLAYERS</h2>
