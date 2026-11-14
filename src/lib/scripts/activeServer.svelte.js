@@ -21,9 +21,7 @@ class ActiveServer {
   #ownerId = $derived(buildUserFromToken(token.value)?.id ?? null);
   #server = $state(null);
   #isServerChanged = createDiffChecker((ownerId, server) => {
-    const diff = `${ownerId || '*'}:${server?.id ?? '*'}:${host(server, 'API') ?? '*'}`;
-    console.log(diff);
-    return diff;
+    return `${ownerId || '*'}:${server?.id ?? '*'}:${host(server, 'API') ?? '*'}`;
   });
 
   constructor() {
@@ -41,14 +39,6 @@ class ActiveServer {
     });
 
     $effect.root(() => {
-      $effect(() => {
-        $inspect('selected:', this.#selection);
-      })
-
-      $effect(() => {
-        $inspect('active:', this.#server);
-      });
-
       // Очистка #selection (+ localStorage)
       $effect(() => {
         if (
@@ -61,9 +51,7 @@ class ActiveServer {
       // Установка #server
       $effect(() => {
         // Эффект сработает автоматически при изменении selection или массива серверов
-        if (!favorites.loaded) return;
-
-        this.#selection; // Чтобы зависило от изменения #selection
+        if (!favorites.loaded || !this.#selection) return;
 
         untrack(() => {
           const server = favorites.servers.find(s => this.isActive(s.id)) ?? null;
@@ -71,12 +59,10 @@ class ActiveServer {
         })
       });
 
-      // Уведомления и установка #selection
+      // Уведомления и установка #selection при первой загрузке страницы
       $effect(() => {
         // Ждем, пока загрузится избранное
         if (!favorites.loaded || favorites.empty || this.#server) return;
-
-        // favorites.servers;
 
         // Читаем зависимости через untrack, чтобы контролировать срабатывание
         untrack(() => {
@@ -131,7 +117,9 @@ class ActiveServer {
   }
 
   #isSelectionDeleted() {
-    return !favorites.has(this.#selection.serverId) && !favorites.isPendingRemove(this.#selection.serverId);
+    return favorites.loaded &&
+        !favorites.has(this.#selection.serverId) &&
+        !favorites.isPendingRemove(this.#selection.serverId);
   }
 
   #delete() {
@@ -140,9 +128,8 @@ class ActiveServer {
   }
 
   #setServer(server) {
-    if (this.#isServerChanged(this.#ownerId, server)) {
-      this.#server = server;
-    }
+    if (!this.#isServerChanged(this.#ownerId, server)) return;
+    this.#server = server;
   }
 }
 

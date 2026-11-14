@@ -30,7 +30,6 @@
   let access = $state('pending');
 
   $effect(() => {
-    $inspect('active:', activeServer.server);
     if (!needsPlugin || !server || !address || !permitted) return;
     const serverId = server.id;
     access = 'pending';
