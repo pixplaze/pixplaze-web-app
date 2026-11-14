@@ -124,6 +124,7 @@ class ActiveServer {
 
   #delete() {
     this.#selection = null;
+    this.#server = null;
     localStorage.removeItem(ACTIVE_SERVER_KEY);
   }
 
