@@ -1,11 +1,11 @@
-import {browser} from '$app/environment';
-import {untrack} from 'svelte';
-import {SvelteSet} from 'svelte/reactivity';
-import {token} from '$api/token.svelte.js';
-import {favoritesApi} from '$api/favorites.api.js';
-import {buildUserFromToken} from '$util/user.mapper.js';
-import {notifications} from '$scripts/notifications.svelte.js';
-import {createLatest} from '$util/latest.util.js';
+import { browser } from '$app/env';
+import { untrack } from 'svelte';
+import { SvelteSet } from 'svelte/reactivity';
+import { token } from '#api/token.svelte.js';
+import { favoritesApi } from '#api/favorites.api.js';
+import { buildUserFromToken } from '#util/user.mapper.js';
+import { notifications } from '#scripts/notifications.svelte.js';
+import { createLatest } from '#util/latest.util.js';
 
 /** Сколько строка ждёт отмены, прежде чем сервер уйдёт из избранного. */
 export const UNDO_DELAY = 5000;
@@ -20,7 +20,7 @@ const RETRY_DELAY_MAX = 30000;
  * (web-api мог перезапускаться: до прогрева он отвечает 503), иначе активный сервер не узнает данных. Удаление из списка отложенное: сервер ждёт {@link UNDO_DELAY},
  * его можно вернуть {@link undo}; запрос уходит по истечении задержки.
  */
-class Favorites {
+class FavoriteServers {
   #servers = $state([]);
   #loading = $state(false);
   /** Список текущего пользователя загружен хотя бы раз. */
@@ -72,7 +72,7 @@ class Favorites {
 
   /** В избранном ли сервер; ожидающий удаления — уже нет. */
   has(serverId) {
-    return !this.#pendingRemove.has(serverId) && this.#servers.some(s => s.id === serverId);
+    return !this.#pendingRemove.has(serverId) && this.#servers.some((s) => s.id === serverId);
   }
 
   /** Ожидает ли сервер удаления (можно {@link undo}). */
@@ -121,7 +121,7 @@ class Favorites {
   /** Убрать сервер сразу, без отмены. */
   async remove(serverId) {
     this.undo(serverId);
-    const index = this.#servers.findIndex(s => s.id === serverId);
+    const index = this.#servers.findIndex((s) => s.id === serverId);
     if (index < 0) return;
 
     const server = this.#servers[index];
@@ -131,7 +131,7 @@ class Favorites {
       notifications.info('Сервер ' + server.name + ' убран из избранного')
     } catch {
       // Возвращаем на прежнее место, если перечитанный за это время список его уже не вернул
-      if (!this.#servers.some(s => s.id === serverId)) {
+      if (!this.#servers.some((s) => s.id === serverId)) {
         this.#servers = this.#servers.toSpliced(index, 0, server);
       }
       notifications.error('Не удалось убрать сервер из избранного');
@@ -153,7 +153,7 @@ class Favorites {
   }
 
   #drop(serverId) {
-    this.#servers = this.#servers.filter(s => s.id !== serverId);
+    this.#servers = this.#servers.filter((s) => s.id !== serverId);
   }
 
   #retryLater() {
@@ -175,4 +175,4 @@ class Favorites {
   }
 }
 
-export const favorites = new Favorites();
+export const favoriteServers = new FavoriteServers();

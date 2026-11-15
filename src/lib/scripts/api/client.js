@@ -1,14 +1,12 @@
-import {env} from '$env/dynamic/public';
-import {token} from '$api/token.svelte.js';
+import { PIXPLAZE_WEB_API_URL } from '$app/env/public';
+import { token } from '#api/token.svelte.js';
 
 // URL API читается из окружения в РАНТАЙМЕ (adapter-node), а не инлайнится на сборке —
 // поэтому образ деплоится как есть, а URL задаётся через docker-compose `environment`
 // (или `.env` в dev). Фолбэк — локальная разработка.
 // ВАЖНО: по этому URL ходит БРАУЗЕР клиента, значит в проде он должен быть публично
 // доступен (не `localhost`) и с настроенным CORS (см. credentials: 'include' ниже).
-export const apiConfig = {
-  url: env.PUBLIC_PIXPLAZE_WEB_API_URL || 'http://localhost:8080',
-}
+export const apiConfig = { url: PIXPLAZE_WEB_API_URL };
 
 /**
  * Низкоуровневый HTTP-клиент: конфигурация URL и утилитные обёртки над fetch.

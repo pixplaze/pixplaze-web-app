@@ -1,7 +1,7 @@
-import {bidsApi} from '$api/bids.api.js';
-import {createNotice, LEVEL} from '$util/notice.util.js';
-import {mapBid} from '$util/server.mapper.js';
-import {createLatest} from '$util/latest.util.js';
+import {bidsApi} from '#api/bids.api.js';
+import {createNotice, LEVEL} from '#util/notice.util.js';
+import {mapBid} from '#util/gameServer.mapper.js';
+import {createLatest} from '#util/latest.util.js';
 
 /**
  * Заявки на подключение серверов: админ видит все с фильтром и решениями, остальные — свои.

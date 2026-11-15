@@ -1,14 +1,14 @@
 <script>
-  import ItemList from '$ui/lists/ItemList.svelte';
-  import ItemListRow from '$ui/lists/ItemListRow.svelte';
-  import Button from '$ui/buttons/Button.svelte';
-  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
-  import Loader from '$ui/indicators/Loader.svelte';
-  import {favorites} from '$scripts/favorites.svelte.js';
-  import {activeServer} from '$scripts/activeServer.svelte.js';
-  import {copyToClipboard} from '$util/dom.util.js';
-  import ServerIcon from '$components/servers/ServerIcon.svelte';
-  import Cancellable from "$ui/Cancellable.svelte";
+  import ItemList from '#ui/lists/ItemList.svelte';
+  import ItemListRow from '#ui/lists/ItemListRow.svelte';
+  import Button from '#ui/buttons/Button.svelte';
+  import ButtonIcon from '#ui/buttons/ButtonIcon.svelte';
+  import Loader from '#ui/indicators/Loader.svelte';
+  import {favoriteServers} from '#scripts/favoriteServers.svelte.js';
+  import {activeServer} from '#scripts/activeServer.svelte.js';
+  import {copyToClipboard} from '#util/dom.util.js';
+  import ServerIcon from '#components/servers/ServerIcon.svelte';
+  import Cancellable from "#ui/Cancellable.svelte";
 
   /** expanded — панель открыта: список перечитывается при каждом открытии, чтобы не устаревать. */
   const {expanded = false} = $props();
@@ -17,7 +17,7 @@
   let copiedId = $state(null);
 
   $effect(() => {
-    if (expanded) favorites.load();
+    if (expanded) favoriteServers.load();
   });
 
   const onCopy = async (server) => {
@@ -27,32 +27,32 @@
   };
 </script>
 
-{#if favorites.servers.length > 0}
+{#if favoriteServers.servers.length > 0}
   <div class="favorite-server-list">
     <ItemList>
-      {#each favorites.servers as server (server.id)}
+      {#each favoriteServers.servers as server (server.id)}
         <ItemListRow selected={activeServer.isActive(server.id)} onselect={() => activeServer.select(server)}>
           <ServerIcon src={server.image}/>
           <span class="server-name">{server.name}</span>
           {#snippet actions()}
-            {#if favorites.isPendingRemove(server.id)}
+            {#if favoriteServers.isPendingRemove(server.id)}
               <Cancellable time="5s">
-                <Button classes="transparent undo-button" onclick={() => favorites.undo(server.id)}>отменить</Button>
+                <Button classes="transparent undo-button" onclick={() => favoriteServers.undo(server.id)}>отменить</Button>
               </Cancellable>
             {:else}
               <ButtonIcon classes="transparent" icon="more"/>
               <ButtonIcon classes="transparent" icon={copiedId === server.id ? 'arrow-ok' : 'copy'} onclick={() => onCopy(server)}/>
-              <ButtonIcon classes="transparent" icon="star-filled" onclick={() => favorites.removeLater(server.id)}/>
+              <ButtonIcon classes="transparent" icon="star-filled" onclick={() => favoriteServers.removeLater(server.id)}/>
             {/if}
           {/snippet}
         </ItemListRow>
       {/each}
     </ItemList>
   </div>
-{:else if favorites.loading}
+{:else if favoriteServers.loading}
   <Loader loading={true}/>
-{:else if favorites.error}
-  <p class="favorite-servers-message">Не удалось загрузить избранное: {favorites.error}</p>
+{:else if favoriteServers.error}
+  <p class="favorite-servers-message">Не удалось загрузить избранное: {favoriteServers.error}</p>
 {:else}
   <p class="favorite-servers-message">В избранном пока нет серверов</p>
 {/if}

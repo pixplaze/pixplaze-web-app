@@ -1,6 +1,6 @@
 <script>
   import {untrack} from 'svelte';
-  import {classIf} from '$util/dom.util.js';
+  import {classIf} from '#util/dom.util.js';
 
   let {
     id,

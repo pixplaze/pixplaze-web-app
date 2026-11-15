@@ -1,9 +1,9 @@
 <script>
-  import {MessageStream} from '$scripts/messageStream.svelte.js';
-  import {formatMessageLine, MESSAGE_TYPE} from '$util/message.mapper.js';
-  import MinecraftText from '$ui/text/MinecraftText.svelte';
-  import ConsoleInput from '$components/console/ConsoleInput.svelte';
-  import ButtonIcon from "$ui/buttons/ButtonIcon.svelte";
+  import {MessageStream} from '#scripts/messageStream.svelte.js';
+  import {formatMessageLine, MESSAGE_TYPE} from '#util/message.mapper.js';
+  import MinecraftText from '#ui/text/MinecraftText.svelte';
+  import ConsoleInput from '#components/console/ConsoleInput.svelte';
+  import ButtonIcon from "#ui/buttons/ButtonIcon.svelte";
 
   /** Консоль сервера: лог и консольные команды. serverId — чей токен доступа; host — адрес плагина `host:port`. */
   const {serverId, host} = $props();

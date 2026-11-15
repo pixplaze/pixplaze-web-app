@@ -1,13 +1,13 @@
 <script>
-  import {copyToClipboard} from '$util/dom.util.js';
-  import {createNotice, LEVEL} from '$util/notice.util.js';
-  import {ServerBidForm} from '$components/servers/bids/ServerBidForm.svelte.js';
-  import Input from '$ui/inputs/Input.svelte';
-  import Notice from '$ui/Notice.svelte';
-  import Button from '$ui/buttons/Button.svelte';
-  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
-  import ServerIcon from '$components/servers/ServerIcon.svelte';
-  import {bidsApi} from '$api/bids.api.js';
+  import {copyToClipboard} from '#util/dom.util.js';
+  import {createNotice, LEVEL} from '#util/notice.util.js';
+  import {ServerBidForm} from '#components/servers/bids/ServerBidForm.svelte.js';
+  import Input from '#ui/inputs/Input.svelte';
+  import Notice from '#ui/Notice.svelte';
+  import Button from '#ui/buttons/Button.svelte';
+  import ButtonIcon from '#ui/buttons/ButtonIcon.svelte';
+  import ServerIcon from '#components/servers/ServerIcon.svelte';
+  import {bidsApi} from '#api/bids.api.js';
 
   const {
     onSubmit = () => {}

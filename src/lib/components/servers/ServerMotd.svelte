@@ -1,5 +1,5 @@
 <script>
-  import MinecraftText from "$ui/text/MinecraftText.svelte";
+  import MinecraftText from "#ui/text/MinecraftText.svelte";
 
   let {
     motd

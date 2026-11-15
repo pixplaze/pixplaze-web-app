@@ -1,17 +1,17 @@
 <script>
-  import Rating from '$ui/indicators/Rating.svelte';
-  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
-  import MinecraftText from '$ui/text/MinecraftText.svelte';
-  import {copyToClipboard} from '$util/dom.util.js';
-  import {createDistinctDebounce} from '$util/debounce.util.js';
-  import {navigation} from '$scripts/navigation.js';
-  import {serversApi} from '$api/servers.api.js';
-  import {notifications} from '$scripts/notifications.svelte.js';
-  import AlternatingText from '$ui/text/AlternatingText.svelte';
-  import ServerIcon from '$components/servers/ServerIcon.svelte';
-  import ServerState from "$components/servers/ServerStatus.svelte";
-  import {temp} from "$scripts/mixins/temp.svelte.js";
-  import ServerMotd from "$components/servers/ServerMotd.svelte";
+  import Rating from '#ui/indicators/Rating.svelte';
+  import ButtonIcon from '#ui/buttons/ButtonIcon.svelte';
+  import MinecraftText from '#ui/text/MinecraftText.svelte';
+  import {copyToClipboard} from '#util/dom.util.js';
+  import {createDistinctDebounce} from '#util/debounce.util.js';
+  import {navigation} from '#scripts/navigation.js';
+  import {serversApi} from '#api/servers.api.js';
+  import {notifications} from '#scripts/notifications.svelte.js';
+  import AlternatingText from '#ui/text/AlternatingText.svelte';
+  import ServerIcon from '#components/servers/ServerIcon.svelte';
+  import ServerState from "#components/servers/ServerStatus.svelte";
+  import {temp} from "#scripts/mixins/temp.svelte.js";
+  import ServerMotd from "#components/servers/ServerMotd.svelte";
 
   /**
    * favorite — сервер в избранном; null — избранное недоступно (гость), звезда скрыта.
@@ -45,11 +45,11 @@
     });
   };
 
-  $effect(() => {
-    if (server.name === 'MineDest') {
-      console.log(server);
-    }
-  });
+  // $effect(() => {
+  //   if (server.name === 'MineDest') {
+  //     console.log(server);
+  //   }
+  // });
 
   </script>
 

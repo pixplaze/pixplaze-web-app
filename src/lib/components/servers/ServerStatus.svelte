@@ -1,6 +1,6 @@
 <script>
-  import {formatNumber} from '$util/format.util.js';
-  import Icon from "$ui/Icon.svelte";
+  import {formatNumber} from '#util/format.util.js';
+  import Icon from "#ui/Icon.svelte";
 
   let {
     core,

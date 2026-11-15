@@ -1,5 +1,5 @@
-import {api} from '$api/client.js';
-import {mapServer} from '$util/server.mapper.js';
+import {api} from '#api/client.js';
+import {mapServer} from '#util/gameServer.mapper.js';
 
 /** Заявки на регистрацию серверов: свои — для пользователя, все — для админа. */
 export const bidsApi = {

@@ -1,7 +1,8 @@
-import {sveltekit} from '@sveltejs/kit/vite';
-import {defineConfig} from 'vite';
-import {execSync} from 'node:child_process';
-import {readFileSync} from 'node:fs';
+import adapter from '@sveltejs/adapter-node';
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
+import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 
 // Вывод git-команды или null, если git или .git недоступны.
 const git = (args) => {
@@ -21,8 +22,8 @@ const appVersion = {
 };
 
 export default defineConfig({
-  server: {host: true}, // Making dev application accessible in LAN
-  define: {__APP_VERSION__: JSON.stringify(appVersion)},
+  server: { host: true } /* Making dev application accessible in LAN */,
+  define: { __APP_VERSION__: JSON.stringify(appVersion) },
   plugins: [
     {
       name: 'generate-sprite',
@@ -40,6 +41,12 @@ export default defineConfig({
         });
       }
     },
-    sveltekit()
+
+    sveltekit({
+      // adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
+      // If your environment is not supported, or you settled on a specific environment, switch out the adapter.
+      // See https://kit.svelte.dev/docs/adapters for more information about adapters.
+      adapter: adapter()
+    })
   ]
 });

@@ -1,7 +1,7 @@
-import {browser} from '$app/environment';
-import {token} from '$api/token.svelte.js';
-import {permissionsApi} from '$api/permissions.api.js';
-import {implies} from '$util/permission.util.js';
+import { browser } from '$app/env';
+import { token } from '#api/token.svelte.js';
+import { permissionsApi } from '#api/permissions.api.js';
+import { implies } from '#util/permission.util.js';
 
 const HINT_KEY = 'permissions';
 const CATALOG_KEY = 'permissionCatalog';

@@ -1,7 +1,7 @@
 <script>
-  import {temp} from '$scripts/mixins/temp.svelte.js';
-  import {copyToClipboard} from '$util/dom.util.js';
-  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
+  import {temp} from '#scripts/mixins/temp.svelte.js';
+  import {copyToClipboard} from '#util/dom.util.js';
+  import ButtonIcon from '#ui/buttons/ButtonIcon.svelte';
 
   let {
     value = $bindable(),

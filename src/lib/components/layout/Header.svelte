@@ -1,5 +1,5 @@
 <script>
-  import ButtonIcon from "$ui/buttons/ButtonIcon.svelte";
+  import ButtonIcon from "#ui/buttons/ButtonIcon.svelte";
 
   const {
     onButtonAside,

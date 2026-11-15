@@ -1,13 +1,13 @@
 <script>
-  import Button from "$ui/buttons/Button.svelte";
-  import Icon from "$ui/Icon.svelte";
-  import {ui} from "$scripts/ui.svelte.js";
-  import {navigation} from "$scripts/navigation.js";
-  import {currentUser} from "$scripts/user.svelte.js";
-  import {auth} from '$scripts/auth.svelte.js';
-  import ItemList from "$ui/lists/ItemList.svelte";
-  import ItemListRow from "$ui/lists/ItemListRow.svelte";
-  import AppVersion from "$components/layout/AppVersion.svelte";
+  import Button from "#ui/buttons/Button.svelte";
+  import Icon from "#ui/Icon.svelte";
+  import {ui} from "#scripts/ui.svelte.js";
+  import {navigation} from "#scripts/navigation.js";
+  import {currentUser} from "#scripts/user.svelte.js";
+  import {auth} from '#scripts/auth.svelte.js';
+  import ItemList from "#ui/lists/ItemList.svelte";
+  import ItemListRow from "#ui/lists/ItemListRow.svelte";
+  import AppVersion from "#components/layout/AppVersion.svelte";
 
   // Реальный функционал — он уже реализован в сервисах.
   const onButtonTheme = () => ui.toggleTheme();

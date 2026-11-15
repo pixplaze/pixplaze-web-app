@@ -1,15 +1,15 @@
 <script>
   import {page} from '$app/state';
-  import {navigation} from '$scripts/navigation.js';
-  import {auth} from '$scripts/auth.svelte.js';
-  import {ui} from '$scripts/ui.svelte.js';
-  import {ROUTES} from '$scripts/routes.js';
-  import SignInForm from '$components/auth/SignInForm.svelte';
-  import SignUpForm from '$components/auth/SignUpForm.svelte';
-  import Button from '$ui/buttons/Button.svelte';
-  import DeviceAuthorization from '$components/auth/DeviceAuthorization.svelte';
-  import Delimiter from '$ui/Delimiter.svelte';
-  import ButtonSwitcher from "$ui/buttons/ButtonSwitcher.svelte";
+  import {navigation, patchUrl} from '#scripts/navigation.js';
+  import {auth} from '#scripts/auth.svelte.js';
+  import {ui} from '#scripts/ui.svelte.js';
+  import {ROUTES} from '#scripts/routes.js';
+  import SignInForm from "#components/auth/SignInForm.svelte";
+  import SignUpForm from '#components/auth/SignUpForm.svelte';
+  import Button from '#ui/buttons/Button.svelte';
+  import DeviceAuthorization from '#components/auth/DeviceAuthorization.svelte';
+  import Delimiter from '#ui/Delimiter.svelte';
+  import ButtonSwitcher from "#ui/buttons/ButtonSwitcher.svelte";
   import {onMount} from 'svelte';
 
   let mode = $state(page.params.mode);
@@ -30,7 +30,7 @@
   function activate(next) {
     ui.scrollTop();
     mode = next;
-    navigation.setAuthMode(next, page.url.search);
+    patchUrl(ROUTES.auth(next));
   }
 
   // После успешного входа (паролем или device-flow QR): если это был линк подтверждения

@@ -1,7 +1,7 @@
-import {profilesApi} from '$api/profiles.api.js';
-import {friends} from '$scripts/friends.svelte.js';
-import {auth} from '$scripts/auth.svelte.js';
-import {notifications} from '$scripts/notifications.svelte.js';
+import {profilesApi} from '#api/profiles.api.js';
+import {friends} from '#scripts/friends.svelte.js';
+import {auth} from '#scripts/auth.svelte.js';
+import {notifications} from '#scripts/notifications.svelte.js';
 
 /**
  * Персонажи профиля: серверы каждого с признаком основного, кто сейчас в сети и где.

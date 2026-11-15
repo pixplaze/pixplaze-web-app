@@ -1,6 +1,6 @@
 <script>
-  import Icon from '$ui/Icon.svelte';
-  import SvgSprite from "$ui/SvgSprite.svelte";
+  import Icon from '#ui/Icon.svelte';
+  import SvgSprite from "#ui/SvgSprite.svelte";
 
   /**
    * Иконка сервера. Без `src` — заглушка: значок picture по центру блока того же размера и с той же рамкой.

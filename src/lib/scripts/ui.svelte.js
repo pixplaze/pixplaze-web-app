@@ -1,4 +1,4 @@
-import {browser} from '$app/environment';
+import { browser } from '$app/env';
 
 const THEME_STORAGE_KEY = 'currentTheme';
 const IS_ASIDE_EXPANDED_STORAGE_KEY = 'isAsideExpanded';

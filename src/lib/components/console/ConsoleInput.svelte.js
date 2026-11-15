@@ -1,4 +1,4 @@
-import {createPrompt} from '$components/console/prompt.js';
+import {createPrompt} from '#components/console/prompt.js';
 
 /** «/команда аргументы» → `{name, args}` (команда без «/»); строка без «/» — null. */
 export function parseCommand(raw) {

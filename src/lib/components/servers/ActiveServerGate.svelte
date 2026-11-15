@@ -1,9 +1,9 @@
 <script>
-  import {activeServer} from '$scripts/activeServer.svelte.js';
-  import {hostAddress} from '$util/server.mapper.js';
-  import {permissions} from '$scripts/permissions.svelte.js';
-  import {pluginTokens} from '$scripts/pluginTokens.svelte.js';
-  import {PluginAccessDeniedError} from '$api/servers.api.js';
+  import {activeServer} from '#scripts/activeServer.svelte.js';
+  import {hostAddress} from '#util/gameServer.mapper.js';
+  import {permissions} from '#scripts/permissions.svelte.js';
+  import {pluginTokens} from '#scripts/pluginTokens.svelte.js';
+  import {PluginAccessDeniedError} from '#api/servers.api.js';
 
   /**
    * Показывает содержимое для активного сервера, если у него есть адрес нужного типа.

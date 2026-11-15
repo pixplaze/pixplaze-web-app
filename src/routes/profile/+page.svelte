@@ -1,24 +1,24 @@
 <script>
-  import {page} from '$app/state';
-  import {replaceState} from "$app/navigation";
-  import {currentUser} from "$scripts/user.svelte.js";
-  import {formatDate} from "$util/format.util.js";
-  import {LEVEL} from "$util/notice.util.js";
-  import Notice from '$ui/Notice.svelte';
-  import DeviceConsent from '$components/auth/DeviceConsent.svelte';
-  import BoxRow from '$ui/lists/BoxRow.svelte';
-  import ProfileForm from "$components/profile/ProfileForm.svelte";
-  import ProfilePlayers from "$components/profile/ProfilePlayers.svelte";
-  import FriendsPanel from "$components/friends/FriendsPanel.svelte";
-  import Checkbox from "$ui/inputs/Checkbox.svelte";
-  import {profilesApi} from "$api/profiles.api.js";
-  import {notifications} from "$scripts/notifications.svelte.js";
+  import { page } from '$app/state';
+  import { goto } from "$app/navigation";
+  import { currentUser } from "#scripts/user.svelte.js";
+  import { formatDate } from "#util/format.util.js";
+  import { LEVEL } from "#util/notice.util.js";
+  import Notice from '#ui/Notice.svelte';
+  import DeviceConsent from '#components/auth/DeviceConsent.svelte';
+  import BoxRow from '#ui/lists/BoxRow.svelte';
+  import ProfileForm from "#components/profile/ProfileForm.svelte";
+  import ProfilePlayers from "#components/profile/ProfilePlayers.svelte";
+  import FriendsPanel from "#components/friends/FriendsPanel.svelte";
+  import Checkbox from "#ui/inputs/Checkbox.svelte";
+  import {profilesApi} from "#api/profiles.api.js";
+  import {notifications} from "#scripts/notifications.svelte.js";
 
   const userCode = page.url.searchParams.get('userCode');
   const user = $derived(currentUser.value);
 
   // Решение принято — убираем userCode из адреса, чтобы обновление страницы не повторяло запрос
-  const onDecided = () => replaceState(page.url.pathname, {});
+  const onDecided = () => goto(page.url.pathname, { shallow: true, replace: true });
 
   /** Настройка «скрывать мой онлайн»: сохраняется сразу при переключении. */
   let onlineHidden = $state(false);
@@ -41,7 +41,7 @@
   <section class="profile-pane">
     <h1>Профиль</h1>
     {#if user}
-      <ProfileForm {user}/>
+      <ProfileForm user={user} />
 
       <label for="none">Дата регистрации</label>
       <BoxRow>
@@ -69,9 +69,7 @@
   </section>
 
   {#if userCode}
-    <section class="profile-pane">
-      <DeviceConsent {userCode} {onDecided}/>
-    </section>
+    <section class="profile-pane"><DeviceConsent userCode={userCode} onDecided={onDecided} /></section>
   {/if}
 </div>
 

@@ -1,4 +1,4 @@
-import {api, apiConfig} from '$api/client.js';
+import {api, apiConfig} from '#api/client.js';
 
 /**
  * Вход, регистрация, выход и обновление access-токена. Ответы входа, регистрации и refresh —

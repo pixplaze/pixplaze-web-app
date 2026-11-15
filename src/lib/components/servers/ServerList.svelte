@@ -1,10 +1,10 @@
 <script>
-  import ServerCard from '$components/servers/ServerCard.svelte';
-  import Input from '$ui/inputs/Input.svelte';
-  import Loader from '$ui/indicators/Loader.svelte';
-  import {ServerSearch} from '$components/servers/ServerList.svelte.js';
-  import {auth} from '$scripts/auth.svelte.js';
-  import {favorites} from '$scripts/favorites.svelte.js';
+  import ServerCard from '#components/servers/ServerCard.svelte';
+  import Input from '#ui/inputs/Input.svelte';
+  import Loader from '#ui/indicators/Loader.svelte';
+  import {ServerSearch} from '#components/servers/ServerList.svelte.js';
+  import {auth} from '#scripts/auth.svelte.js';
+  import {favoriteServers} from '#scripts/favoriteServers.svelte.js';
 
   /** servers — исходный листинг (SSR `load`), показывается при пустом поиске. */
   const {servers} = $props();
@@ -23,8 +23,8 @@
   <div class="server-list">
     {#each search.servers as server (server.id)}
       <ServerCard {server}
-                  favorite={auth.isAuthenticated ? favorites.has(server.id) : null}
-                  onFavorite={(server) => favorites.has(server.id) ? favorites.remove(server.id) : favorites.add(server)}/>
+                  favorite={auth.isAuthenticated ? favoriteServers.has(server.id) : null}
+                  onFavorite={(server) => favoriteServers.has(server.id) ? favoriteServers.remove(server.id) : favoriteServers.add(server)}/>
     {/each}
   </div>
 </section>

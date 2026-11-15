@@ -1,11 +1,11 @@
 <script>
   import {onMount} from 'svelte';
-  import {DeviceAuthorizationFlow, POLL_STATUS} from '$components/auth/DeviceAuthorization.svelte.js';
-  import QrCode from '$ui/QrCode.svelte';
-  import Button from '$ui/buttons/Button.svelte';
-  import {createNotice, LEVEL} from '$util/notice.util.js';
-  import Notice from '$ui/Notice.svelte';
-  import Clipboard from '$ui/Clipboard.svelte';
+  import {DeviceAuthorizationFlow, POLL_STATUS} from '#components/auth/DeviceAuthorization.svelte.js';
+  import QrCode from '#ui/QrCode.svelte';
+  import Button from '#ui/buttons/Button.svelte';
+  import {createNotice, LEVEL} from '#util/notice.util.js';
+  import Notice from '#ui/Notice.svelte';
+  import Clipboard from '#ui/Clipboard.svelte';
 
   /**
    * Запрашивающая сторона device-flow (RFC 8628, §5.1–5.2 гайда): получает `user_code`,

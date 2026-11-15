@@ -1,11 +1,11 @@
-import {browser} from '$app/environment';
-import {token} from '$api/token.svelte.js';
-import {favorites} from '$scripts/favorites.svelte.js';
-import {buildUserFromToken} from '$util/user.mapper.js';
-import {notifications} from "$scripts/notifications.svelte.js";
+import {browser} from '$app/env';
+import {token} from '#api/token.svelte.js';
+import {favoriteServers} from '#scripts/favoriteServers.svelte.js';
+import {buildUserFromToken} from '#util/user.mapper.js';
+import {notifications} from "#scripts/notifications.svelte.js";
 import {untrack} from "svelte";
-import {createDiffChecker} from "$util/diff.util.js";
-import {host} from "$util/server.mapper.js";
+import {createDiffChecker} from "#util/diff.util.js";
+import {host} from "#util/gameServer.mapper.js";
 
 const ACTIVE_SERVER_KEY = 'activeServer';
 
@@ -40,6 +40,7 @@ class ActiveServer {
 
     $effect.root(() => {
       // Очистка #selection (+ localStorage)
+      $inspect('serverId:', this.server?.id);
       $effect(() => {
         if (
             this.#selection && (!this.#isSelectionOwner() || this.#isSelectionDeleted())
@@ -51,10 +52,10 @@ class ActiveServer {
       // Установка #server
       $effect(() => {
         // Эффект сработает автоматически при изменении selection или массива серверов
-        if (!favorites.loaded || !this.#selection) return;
+        if (!favoriteServers.loaded || !this.#selection) return;
 
         untrack(() => {
-          const server = favorites.servers.find(s => this.isActive(s.id)) ?? null;
+          const server = favoriteServers.servers.find((s) => this.isActive(s.id)) ?? null;
           this.#setServer(server);
         })
       });
@@ -62,7 +63,7 @@ class ActiveServer {
       // Уведомления и установка #selection при первой загрузке страницы
       $effect(() => {
         // Ждем, пока загрузится избранное
-        if (!favorites.loaded || favorites.empty || this.#server) return;
+        if (!favoriteServers.loaded || favoriteServers.empty || this.#server) return;
 
         // Читаем зависимости через untrack, чтобы контролировать срабатывание
         untrack(() => {
@@ -70,14 +71,14 @@ class ActiveServer {
             return;
           }
 
-          if (favorites.servers.length === 1) {
-            const server = favorites.servers[0];
+          if (favoriteServers.servers.length === 1) {
+            const server = favoriteServers.servers[0];
             notifications.info('Установлен активный сервер: ' + server.name);
             this.select(server);
             return;
           }
 
-          if (favorites.servers.length > 1) {
+          if (favoriteServers.servers.length > 1) {
             notifications.warning('Не удалось определить активный сервер, в избранном больше одного сервера!');
           }
         });
@@ -92,7 +93,7 @@ class ActiveServer {
 
   /** Сервер выбран, но избранное ещё не загружено: данных о нём пока нет. */
   get loading() {
-    return this.#selection !== null && !favorites.loaded;
+    return this.#selection !== null && !favoriteServers.loaded;
   }
 
   isActive(target) {
@@ -117,14 +118,14 @@ class ActiveServer {
   }
 
   #isSelectionDeleted() {
-    return favorites.loaded &&
-        !favorites.has(this.#selection.serverId) &&
-        !favorites.isPendingRemove(this.#selection.serverId);
+    return favoriteServers.loaded &&
+        !favoriteServers.has(this.#selection.serverId) &&
+        !favoriteServers.isPendingRemove(this.#selection.serverId);
   }
 
   #delete() {
     this.#selection = null;
-    this.#server = null;
+    this.#setServer(null);
     localStorage.removeItem(ACTIVE_SERVER_KEY);
   }
 

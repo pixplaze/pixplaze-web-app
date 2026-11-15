@@ -1,13 +1,13 @@
 <script>
   import {onMount} from 'svelte';
-  import {ProfilePlayers} from '$components/profile/ProfilePlayers.svelte.js';
-  import {formatServerWhere} from '$util/server.mapper.js';
-  import PlayerRow from '$components/players/PlayerRow.svelte';
-  import Delimiter from '$ui/Delimiter.svelte';
-  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
-  import Button from '$ui/buttons/Button.svelte';
-  import Notice from '$ui/Notice.svelte';
-  import Icon from "$ui/Icon.svelte";
+  import {ProfilePlayers} from '#components/profile/ProfilePlayers.svelte.js';
+  import {formatServerWhere} from '#util/gameServer.mapper.js';
+  import PlayerRow from '#components/players/PlayerRow.svelte';
+  import Delimiter from '#ui/Delimiter.svelte';
+  import ButtonIcon from '#ui/buttons/ButtonIcon.svelte';
+  import Button from '#ui/buttons/Button.svelte';
+  import Notice from '#ui/Notice.svelte';
+  import Icon from "#ui/Icon.svelte";
 
   /** Персонажи профиля: онлайн, серверы с основным игроком, отвязка. */
   const {profileId} = $props();

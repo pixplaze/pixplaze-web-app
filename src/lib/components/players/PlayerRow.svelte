@@ -1,9 +1,9 @@
 <script>
-  import {parseImageBase64} from '$util/image.util.js';
-  import OnlineIndicator from '$ui/indicators/OnlineIndicator.svelte';
-  import AlternatingText from '$ui/text/AlternatingText.svelte';
-  import OperatorIndicator from '$ui/indicators/OperatorIndicator.svelte';
-  import SvgSprite from "$ui/SvgSprite.svelte";
+  import {parseImageBase64} from '#util/image.util.js';
+  import OnlineIndicator from '#ui/indicators/OnlineIndicator.svelte';
+  import AlternatingText from '#ui/text/AlternatingText.svelte';
+  import OperatorIndicator from '#ui/indicators/OperatorIndicator.svelte';
+  import SvgSprite from "#ui/SvgSprite.svelte";
 
   /**
    * Строка игрока или профиля: голова скина, имя с подписью, индикатор онлайна и действия справа.

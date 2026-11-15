@@ -1,7 +1,7 @@
-import {friendsApi} from '$api/friends.api.js';
-import {notifications} from '$scripts/notifications.svelte.js';
-import {friends} from '$scripts/friends.svelte.js';
-import {createDebounce} from '$util/debounce.util.js';
+import {friendsApi} from '#api/friends.api.js';
+import {notifications} from '#scripts/notifications.svelte.js';
+import {friends} from '#scripts/friends.svelte.js';
+import {createDebounce} from '#util/debounce.util.js';
 
 /** Короче web-api не ищет. */
 export const SEARCH_MIN_LENGTH = 2;
@@ -13,7 +13,7 @@ export const SEARCH_MIN_LENGTH = 2;
  */
 export class FriendsPanel {
   failed = $state(false);
-  /** @type {import('$api/friends.api.js').FoundProfile[]} */
+  /** @type {import('#api/friends.api.js').FoundProfile[]} */
   found = $state([]);
   searching = $state(false);
 

@@ -1,8 +1,8 @@
 <script>
-  import ButtonIcon from "$ui/buttons/ButtonIcon.svelte";
-  import Icon from "$ui/Icon.svelte";
-  import {createIdEnricher} from "$util/id.util.js";
-  import {blockDrop} from "$util/animation.js";
+  import ButtonIcon from "#ui/buttons/ButtonIcon.svelte";
+  import Icon from "#ui/Icon.svelte";
+  import {createIdEnricher} from "#util/id.util.js";
+  import {blockDrop} from "#util/animation.js";
   import {flip} from 'svelte/animate';
 
   let {

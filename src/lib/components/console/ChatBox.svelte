@@ -2,11 +2,11 @@
   /*
     TODO: Переделать вид вместе с дизайнером (облачка, события, аватары)
    */
-  import {MessageStream} from '$scripts/messageStream.svelte.js';
-  import MinecraftText from '$ui/text/MinecraftText.svelte';
-  import {FORMATTER_WEEK_DAY_HM} from '$util/date.util.js';
-  import {BUBBLE_TYPES, chatBody, formatMessageLine, MESSAGE_TYPE} from '$util/message.mapper.js';
-  import ConsoleInput from "$components/console/ConsoleInput.svelte";
+  import {MessageStream} from '#scripts/messageStream.svelte.js';
+  import MinecraftText from '#ui/text/MinecraftText.svelte';
+  import {FORMATTER_WEEK_DAY_HM} from '#util/date.util.js';
+  import {BUBBLE_TYPES, chatBody, formatMessageLine, MESSAGE_TYPE} from '#util/message.mapper.js';
+  import ConsoleInput from "#components/console/ConsoleInput.svelte";
 
   /** Команды обычного игрока, которые принимает чат плагина (`ChatWebSocketController`). */
   const CHAT_COMMANDS = ['msg', 'tell', 'w', 'me', 'list', 'help'];

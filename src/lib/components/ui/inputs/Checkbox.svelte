@@ -1,7 +1,7 @@
 <script>
   import {untrack} from 'svelte';
-  import Icon from "$ui/Icon.svelte";
-  import {classIf} from '$util/dom.util.js';
+  import Icon from "#ui/Icon.svelte";
+  import {classIf} from '#util/dom.util.js';
 
   let {
     id,

@@ -1,9 +1,9 @@
-import {createWebSocket} from '$api/ws.config.js';
-import {PluginAccessDeniedError} from '$api/servers.api.js';
-import {notifications} from '$scripts/notifications.svelte.js';
-import {pluginTokens} from '$scripts/pluginTokens.svelte.js';
-import {mapMessage} from '$util/message.mapper.js';
-import {parseJwt} from '$util/jwt.util.js';
+import {createWebSocket} from '#api/ws.config.js';
+import {PluginAccessDeniedError} from '#api/servers.api.js';
+import {notifications} from '#scripts/notifications.svelte.js';
+import {pluginTokens} from '#scripts/pluginTokens.svelte.js';
+import {mapMessage} from '#util/message.mapper.js';
+import {parseJwt} from '#util/jwt.util.js';
 
 /** Коды закрытия сокета плагина: токен не принят и нет прав (п. 23 схемы авторизации). */
 const CLOSE_UNAUTHORIZED = 4401;

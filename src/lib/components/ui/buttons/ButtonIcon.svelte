@@ -1,6 +1,6 @@
 <script>
-  import Button from '$ui/buttons/Button.svelte';
-  import Icon from '$ui/Icon.svelte';
+  import Button from '#ui/buttons/Button.svelte';
+  import Icon from '#ui/Icon.svelte';
 
   let {
     icon,

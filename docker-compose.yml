@@ -11,7 +11,7 @@ services:
       # ($env/dynamic/public), поэтому меняется без пересборки образа.
       # В проде заменить на публично доступный адрес API (НЕ localhost), напр.
       # https://api.pixplaze.net — и настроить CORS на стороне API.
-      - PUBLIC_PIXPLAZE_WEB_API_URL=${PUBLIC_PIXPLAZE_WEB_API_URL}
+      - PIXPLAZE_WEB_API_URL=${PIXPLAZE_WEB_API_URL}
       # adapter-node: публичный origin самого веб-приложения (для корректных URL/кук).
       # - ORIGIN=https://app.pixplaze.net
     restart: unless-stopped

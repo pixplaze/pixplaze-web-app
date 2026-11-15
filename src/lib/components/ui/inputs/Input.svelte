@@ -1,5 +1,5 @@
 <script>
-  import {required} from "$util/assert.util.js";
+  import {required} from "#util/assert.util.js";
 
   let {
     id = required('id'),
@@ -27,7 +27,6 @@
     if (code === 'Enter') {
       onEnter('enter event');
       inputElement.blur();
-      console.log('blurred');
       return;
     }
 

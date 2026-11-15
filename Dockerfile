@@ -30,5 +30,5 @@ COPY --from=builder /app/build ./build
 EXPOSE 3000
 
 # URL API не «зашит» в образ — задаётся в рантайме (docker-compose `environment`,
-# переменная PUBLIC_PIXPLAZE_WEB_API_URL), читается через $env/dynamic/public.
+# переменная PIXPLAZE_WEB_API_URL), читается через $env/dynamic/public.
 CMD ["node", "build"]

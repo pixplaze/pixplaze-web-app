@@ -1,16 +1,16 @@
 <script>
-  import {ui} from '$scripts/ui.svelte.js';
-  import {navigation} from '$scripts/navigation.js';
-  import {auth} from '$scripts/auth.svelte.js';
+  import {ui} from '#scripts/ui.svelte.js';
+  import {navigation} from '#scripts/navigation.js';
+  import {auth} from '#scripts/auth.svelte.js';
   import {page} from '$app/state';
-  import {ROUTES} from '$scripts/routes.js';
-  import {activeServer} from '$scripts/activeServer.svelte.js';
-  import Header from '$components/layout/Header.svelte';
-  import FavoriteServerList from '$components/servers/FavoriteServerList.svelte';
-  import Sidebar from '$components/layout/Sidebar.svelte';
-  import Backdrop from '$ui/Backdrop.svelte';
-  import AppNotifications from '$components/layout/AppNotifications.svelte';
-  import '$lib/style/global.css';
+  import {ROUTES} from '#scripts/routes.js';
+  import {activeServer} from '#scripts/activeServer.svelte.js';
+  import Header from '#components/layout/Header.svelte';
+  import FavoriteServerList from '#components/servers/FavoriteServerList.svelte';
+  import Sidebar from '#components/layout/Sidebar.svelte';
+  import Backdrop from '#ui/Backdrop.svelte';
+  import AppNotifications from '#components/layout/AppNotifications.svelte';
+  import '#lib/style/global.css';
 
   const {children} = $props();
 

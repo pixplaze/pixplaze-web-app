@@ -1,5 +1,5 @@
 <script>
-  import SvgSprite from "$ui/SvgSprite.svelte";
+  import SvgSprite from "#ui/SvgSprite.svelte";
 
   let {
     icon,

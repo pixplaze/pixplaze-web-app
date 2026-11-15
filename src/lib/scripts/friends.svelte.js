@@ -1,5 +1,5 @@
-import {friendsApi} from '$api/friends.api.js';
-import {notifications} from '$scripts/notifications.svelte.js';
+import {friendsApi} from '#api/friends.api.js';
+import {notifications} from '#scripts/notifications.svelte.js';
 
 /**
  * Друзья профиля и онлайн: свой и взаимных друзей. Онлайн — один запрос `/friends/online` на всех:
@@ -10,9 +10,9 @@ import {notifications} from '$scripts/notifications.svelte.js';
 class Friends {
   /** @type {{profileId: number, name: string, status: 'MUTUAL'|'OUTGOING'|'INCOMING'}[]} все друзья и заявки */
   list = $state([]);
-  /** @type {import('$api/friends.api.js').OnlineProfile | null} свой онлайн */
+  /** @type {import('#api/friends.api.js').OnlineProfile | null} свой онлайн */
   self = $state(null);
-  /** @type {import('$api/friends.api.js').OnlineProfile[]} взаимные друзья в сети, без себя */
+  /** @type {import('#api/friends.api.js').OnlineProfile[]} взаимные друзья в сети, без себя */
   online = $state([]);
 
   #profileId = null;

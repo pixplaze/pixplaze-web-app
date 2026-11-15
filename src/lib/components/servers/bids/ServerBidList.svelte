@@ -1,8 +1,8 @@
 <script>
-  import Button from '$ui/buttons/Button.svelte';
-  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
-  import {copyToClipboard} from '$util/dom.util.js';
-  import Clipboard from "$ui/Clipboard.svelte";
+  import Button from '#ui/buttons/Button.svelte';
+  import ButtonIcon from '#ui/buttons/ButtonIcon.svelte';
+  import {copyToClipboard} from '#util/dom.util.js';
+  import Clipboard from "#ui/Clipboard.svelte";
 
   /**
    * Список заявок. В режиме `admin` показывает, кто подал заявку, и кнопки решения по открытым.

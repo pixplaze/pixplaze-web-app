@@ -1,11 +1,11 @@
 <script>
   import {page} from '$app/state';
-  import ButtonIcon from '$ui/buttons/ButtonIcon.svelte';
-  import ButtonSwitcher from '$ui/buttons/ButtonSwitcher.svelte';
-  import Clipboard from '$ui/Clipboard.svelte';
+  import ButtonIcon from '#ui/buttons/ButtonIcon.svelte';
+  import ButtonSwitcher from '#ui/buttons/ButtonSwitcher.svelte';
+  import Clipboard from '#ui/Clipboard.svelte';
   import {goto} from "$app/navigation";
-  import Button from "$ui/buttons/Button.svelte";
-  import {pluginTokens} from "$scripts/pluginTokens.svelte.js";
+  import Button from "#ui/buttons/Button.svelte";
+  import {pluginTokens} from "#scripts/pluginTokens.svelte.js";
 
   const serverId = page.params.id;
   const mode = $derived(page.url.searchParams.get('mode') || 'players');

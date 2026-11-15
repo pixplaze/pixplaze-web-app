@@ -1,6 +1,6 @@
 <script>
-  import {ConsoleInput} from '$components/console/ConsoleInput.svelte.js';
-  import ButtonIcon from "$ui/buttons/ButtonIcon.svelte";
+  import {ConsoleInput} from '#components/console/ConsoleInput.svelte.js';
+  import ButtonIcon from "#ui/buttons/ButtonIcon.svelte";
 
   /**
    * Поле ввода команд и сообщений с предикатом (см. {@link ConsoleInput}).
