@@ -10,6 +10,10 @@ const RECONNECT_DELAY_MAX = 30000;
  * с растущей паузой; обработчики переносятся на новое подключение. Обработчик `onclosecode`
  * может решить иначе по коду закрытия: `'now'` — переподключиться сразу и молча (новый токен),
  * `'stop'` — больше не переподключаться (нет прав).
+ *
+ * Пауза сбрасывается не по `open`, а по {@link markHealthy}: сокет плагина открывается и тогда,
+ * когда сервер ещё не готов, и закрывается сразу после кадра AUTH. Сброс по `open` превращал
+ * такие отказы в переподключение раз в секунду без роста паузы.
  */
 export const createWebSocket = (host, path, type) => {
   const config = {
@@ -52,7 +56,6 @@ export const createWebSocket = (host, path, type) => {
     socket.onclose = config.onclose;
     socket.onmessage = config.onmessage;
     socket.onerror = config.onerror;
-    socket.addEventListener('open', () => reconnectDelay = RECONNECT_DELAY_MIN);
     socket.addEventListener('close', ({code, reason, wasClean}) => {
       // Код закрытия: 1001 — сервер закрыл по тайм-ауту простоя, 1000 — закрыли сами, 1006 — обрыв без кадра закрытия
       console.info(`WebSocket ${type}://${host}/${path} closed: ${code} ${reason} (clean: ${wasClean})`);
@@ -90,6 +93,10 @@ export const createWebSocket = (host, path, type) => {
     },
     send(data) {
       invokeIfConnectionOpened(connection.send, data)
+    },
+    /** Подключение действительно работает (сервер принял авторизацию): следующая пауза — снова первая. */
+    markHealthy() {
+      reconnectDelay = RECONNECT_DELAY_MIN;
     },
     /** Оборвать текущее подключение: дальше — обычное переподключение с паузой. */
     drop() {

@@ -3,9 +3,15 @@ import {authApi} from '$api/auth.api.js';
 import {token} from '$api/token.svelte.js';
 import {permissions} from '$scripts/permissions.svelte.js';
 
+/** Имя Web Lock: refresh выполняется одной вкладкой за раз. */
+const REFRESH_LOCK = 'pixplaze-auth-refresh';
+
 /**
  * Авторизация: вход, регистрация, выход и обновление access-токена на ответ 401.
- * Очередь refresh: при истечении токена обновление одно на все ожидающие запросы.
+ * Очередь refresh: при истечении токена обновление одно на все ожидающие запросы — и одно на все вкладки.
+ * Refresh-токен одноразовый, и web-api считает его повторное предъявление кражей и отзывает все сессии
+ * профиля. Две вкладки, одновременно получившие 401, отправили бы одну и ту же куку — поэтому refresh
+ * идёт под Web Lock, а вкладка, дождавшаяся замка, сначала смотрит, не обновила ли токен другая.
  */
 class Auth {
   #refreshing = null;
@@ -71,8 +77,25 @@ class Auth {
    */
   #handleUnauthorized() {
     // Если обновление уже идёт — ждём его результата
-    this.#refreshing ??= this.#refresh().finally(() => this.#refreshing = null);
+    const rejected = token.value;
+    this.#refreshing ??= this.#refreshExclusively(rejected).finally(() => this.#refreshing = null);
     return this.#refreshing;
+  }
+
+  /** Refresh под замком на все вкладки; без Web Locks (старый браузер) — как раньше, в пределах вкладки. */
+  #refreshExclusively(rejected) {
+    if (typeof navigator === 'undefined' || !navigator.locks) {
+      return this.#refresh();
+    }
+    return navigator.locks.request(REFRESH_LOCK, () => {
+      // Пока ждали замок, другая вкладка обновила токен: кука уже новая, свой refresh не нужен
+      const stored = token.stored;
+      if (stored && stored !== rejected) {
+        token.set(stored);
+        return stored;
+      }
+      return this.#refresh();
+    });
   }
 
   async #refresh() {
