@@ -110,6 +110,8 @@
     gap: 10px;
     line-height: 24px;
     overflow-wrap: anywhere;
+    content-visibility: auto;
+    contain-intrinsic-size: 80px;
   }
 
   /* Ответ команды — только этому клиенту */

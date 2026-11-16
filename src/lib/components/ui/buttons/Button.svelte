@@ -37,7 +37,7 @@
     padding-bottom: var(--ui-size-shadow);
 
     &:focus {
-      outline-style: auto;
+      outline-style: none;
     }
 
     &:hover {

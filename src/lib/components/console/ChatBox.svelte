@@ -122,6 +122,9 @@
     display: flex;
     gap: var(--ui-spacing);
     align-self: flex-start;
+
+    content-visibility: auto;
+    contain-intrinsic-size: 80px;
   }
 
   .message.own {
@@ -180,6 +183,9 @@
 
     text-align: center;
     background-color: rgba(0, 0, 0, .2);
+
+    content-visibility: auto;
+    contain-intrinsic-size: 33px;
 
     .time {
       width: auto;
