@@ -2,12 +2,20 @@
   import ActiveServerGate from '#components/servers/ActiveServerGate.svelte';
   import ChatBox from '#components/console/ChatBox.svelte';
   import {ROUTES} from "#scripts/routes.js";
-  import {patchUrl} from "#scripts/navigation.js";
+  import {page} from "$app/state";
+  import {goto} from "$app/navigation";
 
   $effect(() => {
     const serverId = activeServer.server?.id;
-    // console.log('serverId', serverId);
-    patchUrl(ROUTES.serversChat(serverId));
+
+    const newUrl = new URL(page.url);
+    newUrl.pathname = ROUTES.serversChat(serverId);
+
+    goto(newUrl, {
+      shallow: true,
+      replace: true,
+      reset: true
+    });
   });
 </script>
 

@@ -49,7 +49,6 @@ export const navigation = {
    */
   enforceAuth(pathname, search = '') {
     if (!auth.isAuthenticated && !pathname.startsWith('/auth')) {
-      console.log('ENFORCING AUTH FROM:', pathname);
       return goto(`${ROUTES.signIn}${search}`);
     }
   }
@@ -59,9 +58,12 @@ export function patchUrl(path) {
   // 1. Берем текущий URL со всеми query-параметрами
   const newUrl = new URL(page.url);
 
-  if (typeof window !== 'undefined' &&
+  if (
+      navigation.enforceAuth(newUrl.pathname, newUrl.search) ||
+      typeof window !== 'undefined' &&
       window.location.pathname === path &&
-      window.location.search === newUrl.search) {
+      window.location.search === newUrl.search
+  ) {
     return;
   }
 

@@ -1,8 +1,7 @@
 <script>
   import {page} from '$app/state';
-  import {navigation, patchUrl} from '#scripts/navigation.js';
+  import {navigation} from '#scripts/navigation.js';
   import {auth} from '#scripts/auth.svelte.js';
-  import {ui} from '#scripts/ui.svelte.js';
   import {ROUTES} from '#scripts/routes.js';
   import SignInForm from "#components/auth/SignInForm.svelte";
   import SignUpForm from '#components/auth/SignUpForm.svelte';
@@ -11,6 +10,7 @@
   import Delimiter from '#ui/Delimiter.svelte';
   import ButtonSwitcher from "#ui/buttons/ButtonSwitcher.svelte";
   import {onMount} from 'svelte';
+  import {goto} from "$app/navigation";
 
   let mode = $state(page.params.mode);
 
@@ -26,12 +26,15 @@
     }
   })
 
-  /** Сделать форму активной и отразить это в адресе, сохранив query (inviteCode). */
-  function activate(next) {
-    ui.scrollTop();
-    mode = next;
-    patchUrl(ROUTES.auth(next));
-  }
+  $effect(() => {
+    const newUrl = new URL(page.url);
+    newUrl.pathname = ROUTES.auth(mode);
+    goto(newUrl, {
+      shallow: true,
+      replace: true,
+      reset: true
+    });
+  });
 
   // После успешного входа (паролем или device-flow QR): если это был линк подтверждения
   // (?userCode=...) — уводим в /profile, сохраняя query, чтобы там подтвердить устройство;
@@ -73,7 +76,7 @@
 </div>
 <section class="auth-pane">
   <Delimiter value="или" classes="content-line"/>
-  <ButtonSwitcher bind:mode onSwitch={activate}>
+  <ButtonSwitcher bind:mode>
     <Button title="Переключить режим на вход"
             data-id="sign-in">Вход</Button>
     <Button title="Переключить режим на регистрацию"

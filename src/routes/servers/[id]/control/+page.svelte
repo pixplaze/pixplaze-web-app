@@ -8,27 +8,27 @@
   import {pluginTokens} from "#scripts/pluginTokens.svelte.js";
 
   const serverId = page.params.id;
-  const mode = $derived(page.url.searchParams.get('mode') || 'players');
+  let mode = $state(page.url.searchParams.get('mode') || 'players');
   let pluginToken = $state(null);
 
-  function nextMode(mode) {
-    page.url.searchParams.set('mode', mode);
-    return goto(page.url, {
-      replaceState: true,
-      noScroll: true,
-      keepFocus: true
+  $effect(() => {
+    const newUrl = new URL(page.url);
+    newUrl.searchParams.set('mode', mode);
+    goto(newUrl, {
+      shallow: true,
+      replace: true,
+      reset: false
     });
-  }
+  })
 
   async function requestAndSetToken(serverId) {
     pluginToken = (await pluginTokens.get(serverId)).accessToken;
-    console.log(pluginToken);
   }
 </script>
 
 <section>
   <h1>Управление сервером #{serverId}</h1>
-  <ButtonSwitcher {mode} onSwitch={nextMode}>
+  <ButtonSwitcher bind:mode>
     <ButtonIcon title="Игроки"
                 data-id="players"
                 icon="people">Игроки</ButtonIcon>
