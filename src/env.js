@@ -1,7 +1,8 @@
 import { defineEnvVars } from '@sveltejs/kit/env';
+import { building } from '$app/env';
 
 const required = (input, name) => {
-	if (!input) {
+	if (!building && !input) {
 		throw new Error('Environment variable \''+ name + '\' is not specified!');
 	}
 
@@ -10,7 +11,7 @@ const required = (input, name) => {
 
 export const variables = defineEnvVars({
 	PIXPLAZE_WEB_API_URL: {
-		static: true,
+		static: false,
 		public: true,
 		schema: (input) => required(input, 'PIXPLAZE_WEB_API_URL')
 	}
