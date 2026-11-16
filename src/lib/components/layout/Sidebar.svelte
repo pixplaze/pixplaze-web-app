@@ -4,16 +4,15 @@
   import {ui} from "#scripts/ui.svelte.js";
   import {navigation} from "#scripts/navigation.js";
   import {currentUser} from "#scripts/user.svelte.js";
-  import {auth} from '#scripts/auth.svelte.js';
   import ItemList from "#ui/lists/ItemList.svelte";
   import ItemListRow from "#ui/lists/ItemListRow.svelte";
   import AppVersion from "#components/layout/AppVersion.svelte";
 
   // Реальный функционал — он уже реализован в сервисах.
   const onButtonTheme = () => ui.toggleTheme();
-  const onButtonSignOut = () => {
+  const onButtonSignOut = async () => {
     ui.minimize();
-    auth.signOut();
+    await ui.singOut();
   }
 
   const onButtonProfile = () => {

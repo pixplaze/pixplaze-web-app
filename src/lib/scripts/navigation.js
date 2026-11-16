@@ -37,6 +37,10 @@ export const navigation = {
     return goto(ROUTES.profile);
   },
 
+  goToAuth(mode) {
+    return goto(ROUTES.auth(mode || 'sign-in'));
+  },
+
   /** Отразить активную форму авторизации в URL без добавления записи в историю. */
   setAuthMode(mode, search = '') {
     // Второй аргумент — обязательный объект page-state для shallow routing SvelteKit.

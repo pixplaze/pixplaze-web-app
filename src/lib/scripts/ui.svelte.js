@@ -1,4 +1,6 @@
 import { browser } from '$app/env';
+import {auth} from "#scripts/auth.svelte.js";
+import {navigation} from "#scripts/navigation.js";
 
 const THEME_STORAGE_KEY = 'currentTheme';
 const IS_ASIDE_EXPANDED_STORAGE_KEY = 'isAsideExpanded';
@@ -56,6 +58,10 @@ class Ui {
     if (this.#favoritesExpanded) {
       this.toggleFavorites();
     }
+  }
+
+  async singOut() {
+    auth.signOut().then(async r => await navigation.goToAuth('sign-in'));
   }
 }
 
