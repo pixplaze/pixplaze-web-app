@@ -49,6 +49,7 @@
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: max-content;
+    gap: 10px;
 
     text-wrap: nowrap;
 

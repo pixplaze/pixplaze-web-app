@@ -1,7 +1,6 @@
 <script>
   import Rating from '#ui/indicators/Rating.svelte';
   import ButtonIcon from '#ui/buttons/ButtonIcon.svelte';
-  import MinecraftText from '#ui/text/MinecraftText.svelte';
   import {copyToClipboard} from '#util/dom.util.js';
   import {createDistinctDebounce} from '#util/debounce.util.js';
   import {navigation} from '#scripts/navigation.js';
@@ -12,6 +11,7 @@
   import ServerState from "#components/servers/ServerStatus.svelte";
   import {temp} from "#scripts/mixins/temp.svelte.js";
   import ServerMotd from "#components/servers/ServerMotd.svelte";
+  import Icon from "#ui/Icon.svelte";
 
   /**
    * favorite — сервер в избранном; null — избранное недоступно (гость), звезда скрыта.
@@ -55,6 +55,11 @@
 
 <div class="server-card">
   <div class="ui box server-card-box" class:integrated={server.state.integrationStatus === 'PLUGIN'}>
+    {#if server.state.status !== 'ONLINE'}
+      <span title="Сервер недоступен!" class="status-info status">
+        <Icon icon="warning-filled"/>
+      </span>
+    {/if}
     <ServerIcon src={server.image} alt="Server Icon" framed/>
     <div class="server-info">
       <div class="description">
@@ -156,6 +161,29 @@
     color: var(--color-text-secondary);
   }
 
+  .status-info.status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    top: var(--ui-size-border);
+    left: var(--ui-size-border);
+
+    width: var(--ui-size-block);
+    height: var(--ui-size-block);
+
+    color: var(--color-red-main);
+
+    animation: blink 2s ease-out infinite;
+  }
+
+  @keyframes blink {
+    0% {opacity: 100%}
+    80% {opacity: 100%}
+    95% {opacity: 50%}
+  }
+
   :global {
     .server-card-box {
       .rating {
@@ -211,14 +239,6 @@
 
         color: inherit;
       }
-
-      .server-status > span {
-        padding-right: 0;
-      }
-    }
-
-    .server-status .icon {
-      margin-right: 10px;
     }
 
     .slot.primary {

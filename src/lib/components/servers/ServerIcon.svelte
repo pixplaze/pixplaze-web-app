@@ -10,13 +10,16 @@
   let {
     src,
     framed = false,
+    online = false,
     alt = '',
     classes = ''
   } = $props();
+
+  const title = $derived(online ? 'Сервер онлайн': 'Сервер оффлайн');
 </script>
 
 {#if src}
-  <img {src} {alt} class="server-icon pixel-art {classes}" class:framed>
+  <img {src} {alt} {title} class="server-icon pixel-art {classes}" class:framed>
 {:else}
 <!--  <Icon icon="picture" classes="server-icon placeholder {framed ? 'framed' : ''} {classes}"/>-->
   <SvgSprite path="/images/sprite.svg"

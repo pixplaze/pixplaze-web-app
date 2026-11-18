@@ -21,7 +21,7 @@ div, button, input, label, span, a, p {
 }
 
 h1, h2, h3, button, input, label {
-  font-family: "Minecraft", "Arial", "sans-serif";
+  font-family: var(--ui-font-headline), sans-serif;
   color: var(--color-text-primary);
 }
 

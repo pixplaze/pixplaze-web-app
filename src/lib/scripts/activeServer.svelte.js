@@ -25,9 +25,8 @@ class ActiveServer {
   });
 
   constructor() {
-    if (!browser) {
-      return;
-    }
+    if (!browser) return;
+
     window.activeServer = this;
     this.#selection = read();
 
