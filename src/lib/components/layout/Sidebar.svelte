@@ -1,35 +1,39 @@
 <script>
   import Button from "#ui/buttons/Button.svelte";
   import Icon from "#ui/Icon.svelte";
-  import {ui} from "#scripts/ui.svelte.js";
+  import {app} from "#scripts/app.svelte.js";
   import {navigation} from "#scripts/navigation.js";
   import {currentUser} from "#scripts/user.svelte.js";
   import ItemList from "#ui/lists/ItemList.svelte";
   import ItemListRow from "#ui/lists/ItemListRow.svelte";
   import AppVersion from "#components/layout/AppVersion.svelte";
+  import UpdateApp from "#components/UpdateApp.svelte";
 
   // Реальный функционал — он уже реализован в сервисах.
-  const onButtonTheme = () => ui.toggleTheme();
+  const onButtonTheme = () => app.toggleTheme();
   const onButtonSignOut = async () => {
-    ui.minimize();
-    await ui.singOut();
+    app.minimize();
+    await app.singOut();
   }
 
   const onButtonProfile = () => {
-    ui.minimize();
+    app.minimize();
     navigation.goToProfile();
   }
 
   const onButtonBids = () => {
-    ui.minimize();
+    app.minimize();
     navigation.goToServersBids();
   }
 
-  const onButtonLanguage = () => ui.minimize();
-  const onButtonSettings = () => ui.minimize();
-  const onButtonHelp = () => ui.minimize();
+  const onButtonLanguage = () => app.minimize();
+  const onButtonSettings = async () => {
+    app.minimize();
+    await navigation.goToSettings();
+  }
+  const onButtonHelp = () => app.minimize();
 
-  const themeIcon = $derived(ui.theme === 'dark' ? 'sun' : 'moon');
+  const themeIcon = $derived(app.theme === 'dark' ? 'sun' : 'moon');
 
   const menuItems = $derived([
     {item: currentUser.name, icon: 'profile', onClick: onButtonProfile},
@@ -52,6 +56,7 @@
 
   <AppVersion/>
 
+  <UpdateApp/>
   <Button classes="sidebar-button sidebar-button--danger"
           onclick={onButtonSignOut}
   >выйти<Icon icon="sign-out"/></Button>

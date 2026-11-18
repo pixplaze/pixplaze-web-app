@@ -1,5 +1,5 @@
 <script>
-  import {ui} from '#scripts/ui.svelte.js';
+  import {app} from '#scripts/app.svelte.js';
   import {navigation} from '#scripts/navigation.js';
   import {auth} from '#scripts/auth.svelte.js';
   import {page} from '$app/state';
@@ -11,6 +11,7 @@
   import Backdrop from '#ui/Backdrop.svelte';
   import AppNotifications from '#components/layout/AppNotifications.svelte';
   import '#lib/style/global.css';
+  import InstallApp from "#components/InstallAppBanner.svelte";
 
   const {children} = $props();
 
@@ -18,24 +19,24 @@
   const FULLSCREEN_ROUTES = [ROUTES.serversChat(''), ROUTES.serversMap(''), ROUTES.serversConsole('')];
   const fullscreen = $derived(FULLSCREEN_ROUTES.includes(page.url.pathname.replace(/\d/, '')));
 
-  const onButtonAside = () => ui.toggleAside();
+  const onButtonAside = () => app.toggleAside();
   const onButtonConsole = () => {
-    ui.minimize();
+    app.minimize();
     navigation.goToServersConsole(activeServer.server?.id)
   };
   const onButtonMap = () => {
-    ui.minimize();
+    app.minimize();
     navigation.goToServersMap(activeServer.server?.id);
   }
   const onButtonSearch = () => {
-    ui.minimize();
+    app.minimize();
     navigation.goToServersList();
   }
   const onButtonChat = () => {
-    ui.minimize();
+    app.minimize();
     navigation.goToServersChat(activeServer.server?.id);
   }
-  const onButtonFavorite = () => ui.toggleFavorites();
+  const onButtonFavorite = () => app.toggleFavorites();
 
   const onButtonProfile = () => {}
   const onButtonLanguage = () => {}
@@ -52,8 +53,9 @@
   });
 </script>
 
-<div id="layout" class={`container themed ${ui.theme}`} class:fullscreen>
+<div id="layout" class={`container themed ${app.theme}`} class:fullscreen>
   <header>
+    <InstallApp/>
     <Header {onButtonAside}
             {onButtonConsole}
             {onButtonMap}
@@ -64,14 +66,14 @@
     />
     {#if auth.isAuthenticated}
       <div class="favorite-servers-menu debug">
-        <div class="favorite-servers" class:expanded={ui.isFavoritesExpanded}>
-          <FavoriteServerList expanded={ui.isFavoritesExpanded}/>
+        <div class="favorite-servers" class:expanded={app.isFavoritesExpanded}>
+          <FavoriteServerList expanded={app.isFavoritesExpanded}/>
         </div>
       </div>
     {/if}
     <AppNotifications/>
   </header>
-  <aside class:expanded={ui.isAsideExpanded} class="debug">
+  <aside class:expanded={app.isAsideExpanded} class="debug">
     <div class="aside-host">
       <Sidebar {onButtonProfile}
                {onButtonLanguage}
@@ -257,6 +259,17 @@
       padding-left: 30px;
       padding-right: 30px;
     }
+
+    .pwa-install-banner {
+      position: fixed;
+      width: auto;
+      left: 0;
+      right: 0;
+
+      top: var(--ui-size-block);
+      bottom: auto;
+      margin: 30px;
+    }
   }
 
   @media screen and (max-width: 440px) {
@@ -290,6 +303,12 @@
       0% {opacity: 0; transform: translateY(100%) }
       0% {opacity: 0 }
       100% {opacity: 100%; transform: translateY(0) }
+    }
+
+    :global(.pwa-install-banner) {
+      top: auto;
+      bottom: var(--ui-size-block);
+      margin: 10px;
     }
 
     aside {

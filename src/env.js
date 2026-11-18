@@ -1,5 +1,5 @@
-import { defineEnvVars } from '@sveltejs/kit/env';
-import { building } from '$app/env';
+import {defineEnvVars} from '@sveltejs/kit/env';
+import {building} from '$app/env';
 
 const required = (input, name) => {
 	if (!building && !input) {
@@ -14,5 +14,18 @@ export const variables = defineEnvVars({
 		static: false,
 		public: true,
 		schema: (input) => required(input, 'PIXPLAZE_WEB_API_URL')
+	},
+	PUBLIC_WEB_PUSH_ENABLED: {
+		public: true,
+		schema: (value) => (value?.trim().toLowerCase() === 'true' ? 'true' : 'false')
+	},
+	PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY: {
+		public: true,
+		schema: (value) => value?.trim() ?? ''
+	},
+	PUBLIC_WEB_PUSH_SUBSCRIPTIONS_PATH: {
+		public: true,
+		schema: (value) =>
+			value?.trim() || '/api/v1/push/subscriptions'
 	}
 });

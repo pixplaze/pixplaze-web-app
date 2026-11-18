@@ -3,6 +3,7 @@
  * импортируется из сервисов, компонентов и тестов. Убирает захардкоженные пути.
  */
 export const ROUTES = {
+  settings: '/settings',
   serversList: '/servers',
   serversMap: (serverId) => `/servers/${serverId}/map`,
   serversChat: (serverId) => `/servers/${serverId}/chat`,

@@ -1,0 +1,36 @@
+{
+  "id": "/",
+  "name": "Pixplaze Server Listing",
+  "short_name": "Pixplaze",
+  "description": "Листинг Minecraft серверов, просмотр друзей онлайн, чат сервера, консоль управления сервером",
+  "lang": "ru-RU",
+  "dir": "ltr",
+  "start_url": "/servers",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#52A435",
+  "theme_color": "#5CBB3A",
+  "categories": ["social", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

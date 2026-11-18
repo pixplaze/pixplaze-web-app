@@ -9,6 +9,10 @@ export const navigation = {
     return goto(url);
   },
 
+  goToSettings() {
+    return goto(ROUTES.settings);
+  },
+
   goToServersList() {
     return goto(ROUTES.serversList);
   },

@@ -28,6 +28,7 @@
     align-items: center;
     flex-direction: row-reverse;
     justify-content: space-between;
+    gap: 10px;
 
     width: 100%;
     height: 100%;
@@ -35,6 +36,8 @@
     cursor: pointer;
     user-select: none;
     -webkit-user-drag: none;
+
+    color: inherit;
   }
 
   .checkbox.no-label {

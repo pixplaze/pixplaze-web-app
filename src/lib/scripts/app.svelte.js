@@ -1,13 +1,14 @@
-import { browser } from '$app/env';
+import {browser} from '$app/env';
 import {auth} from "#scripts/auth.svelte.js";
 import {navigation} from "#scripts/navigation.js";
+import {pwa} from "#scripts/pwa.svelte.js";
 
 const THEME_STORAGE_KEY = 'currentTheme';
 const IS_ASIDE_EXPANDED_STORAGE_KEY = 'isAsideExpanded';
 const THEMES = ['light', 'dark'];
 
 /** Состояние интерфейса: тема, боковая панель, список избранных серверов. */
-class Ui {
+class App {
   #theme = $state(browser ? localStorage.getItem(THEME_STORAGE_KEY) || 'light' : 'light');
   #asideExpanded = $state(browser ? JSON.parse(localStorage.getItem(IS_ASIDE_EXPANDED_STORAGE_KEY)) || false : false);
   #favoritesExpanded = $state(false);
@@ -26,6 +27,19 @@ class Ui {
 
   get isMobileLayout() {
     return window.innerWidth <= 440;
+  }
+
+  get isInstalled() {
+    return pwa.isInstalled;
+  }
+
+  get isAppleMobile() {
+    return window &&
+        /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+        !window.MSStream ||
+        navigator?.maxTouchPoints &&
+        navigator?.maxTouchPoints > 1 &&
+        /Macintosh/.test(userAgent);
   }
 
   /** Переключить тему на следующую по кругу и сохранить выбор. */
@@ -65,4 +79,4 @@ class Ui {
   }
 }
 
-export const ui = new Ui();
+export const app = new App();
