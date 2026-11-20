@@ -1,0 +1,71 @@
+<svg width="256" height="160" viewBox="0 0 256 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes kf_Head_transform_0 {
+  0% {
+    animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+    transform: translateX(2px) translateY(2px) translate(22px, 39.6px) rotate(0rad) translate(-22px, -39.6px);
+  }
+  20% {
+    animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+    transform: translateX(2px) translateY(2px) translate(22px, 39.6px) rotate(-0.105rad) translate(-22px, -39.6px);
+  }
+  40% {
+    animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+    transform: translateX(2px) translateY(2px) translate(22px, 39.6px) rotate(0.105rad) translate(-22px, -39.6px);
+  }
+  60% {
+    animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+    transform: translateX(2px) translateY(2px) translate(22px, 39.6px) rotate(-0.105rad) translate(-22px, -39.6px);
+  }
+  80% {
+    transform: translateX(2px) translateY(2px) translate(22px, 39.6px) rotate(0rad) translate(-22px, -39.6px);
+  }
+  100% {
+    transform: translateX(2px) translateY(2px) translate(22px, 39.6px) rotate(0rad) translate(-22px, -39.6px);
+  }
+}
+#Head {
+  transform-origin: 0 0;
+  animation: kf_Head_transform_0 2s linear infinite;
+}
+</style>
+<g id="anim-art-nitwit-villager" clip-path="url(#clip0_5259_2491)">
+<g id="Villager_Anim_Variant2" transform="translate(104 68)">
+<g id="Legs" transform="translate(10 66)">
+<path d="M0 0H20V8H0V0Z" id="Legs_bg_0" fill="#583E34">
+</path>
+<path d="M0 4H20V8H0V4Z" fill="#757575"/>
+<path d="M20 0H28V8H20V0Z" fill="#44322E"/>
+<path d="M20 4H28V8H20V4Z" fill="#595959"/>
+</g>
+<g id="Body" transform="translate(6 40)">
+<path d="M30 0H36V14H30V0Z" id="Body_bg_0" fill="#41483A">
+</path>
+<path d="M24 14H32V26H24V14Z" fill="#41483A"/>
+<path d="M4 0H24V26H4V0Z" fill="#647355"/>
+<path d="M4 14H32V16H4V14Z" fill="black" fill-opacity="0.2"/>
+<path d="M0 0H4V6H24V0H30V14H0V0Z" fill="#738462"/>
+<path d="M0 0H4V4H0V0Z" fill="black" fill-opacity="0.2"/>
+<path d="M24 0H36V4H24V0Z" fill="black" fill-opacity="0.2"/>
+<path d="M12 14H16V26H12V14Z" fill="#41483A"/>
+</g>
+<g id="Head" transform="translate(2 2)">
+<path d="M0 0H32V40H0V0Z" id="Head_bg_0" fill="#B57B67">
+</path>
+<path d="M32 0H44V40H32V0Z" fill="#905E43"/>
+<path d="M4 24H8V28H4V24Z" fill="white"/>
+<path d="M4 20H28V24H4V20Z" fill="#332411"/>
+<path d="M28 28H24V24H28V28Z" fill="white"/>
+<path d="M8 24H12V28H8V24Z" fill="#009611"/>
+<path d="M24 28H20V24H24V28Z" fill="#009611"/>
+<path d="M8 28H16V44H8V28Z" fill="#905E43"/>
+<path d="M20 28H16V44H20V36H24V32H20V28Z" fill="#774235"/>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_5259_2491">
+<rect width="256" height="160" fill="white"/>
+</clipPath>
+</defs>
+</svg>
