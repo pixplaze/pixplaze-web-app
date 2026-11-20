@@ -5,7 +5,6 @@
   import {formatServerWhere} from '#util/gameServer.mapper.js';
   import Delimiter from '#ui/Delimiter.svelte';
   import Input from '#ui/inputs/Input.svelte';
-  import Button from '#ui/buttons/Button.svelte';
   import ButtonIcon from '#ui/buttons/ButtonIcon.svelte';
   import PlayerRow from '#components/players/PlayerRow.svelte';
   import Notice from '#ui/Notice.svelte';
@@ -29,10 +28,9 @@
     return friend.lastSeenAt ? `был в сети ${formatDate(friend.lastSeenAt)}` : 'не в сети';
   };
 
-  /** Добавить по точному имени профиля из поля поиска. */
-  const add = async () => {
-    if (panel.query.trim() && await panel.add(panel.query)) panel.query = '';
-  };
+  const keyOf = (profile) => {
+    return profile.profileId + ":" + profile.name;
+  }
 
   /** Подпись найденного профиля; у не связанного — без подписи. */
   const FOUND_STATUS = {MUTUAL: 'уже в друзьях', OUTGOING: 'заявка отправлена', INCOMING: 'хочет дружить'};
@@ -44,29 +42,27 @@
 <Delimiter value="друзья"/>
 
 <div class="friends-add">
-  <Input id="friend-name" placeholder="Имя профиля или ник игрока" bind:value={panel.query} onEnter={add}/>
+  <Input id="friend-name"
+         placeholder="Имя профиля или ник игрока"
+         bind:value={panel.query}/>
   {#if panel.found.length}
     <div class="friends-found">
       <ItemList>
-        {#each panel.found as profile (profile.profileId)}
-          {#snippet foundStatus()}{FOUND_STATUS[profile.status]}{/snippet}
+        {#each panel.found as friend (keyOf(friend))}
+          {#snippet foundStatus()}{FOUND_STATUS[friend.status]}{/snippet}
           <!-- Без onselect строка — блок, поэтому кнопки лежат в PlayerRow и берут его цвета -->
           <ItemListRow>
-            <PlayerRow skinHeadBase64={profile.skinHeadBase64}
-                       name={profile.name}
-                       subtitle={FOUND_STATUS[profile.status] ? foundStatus : undefined}
+            <PlayerRow skinHeadBase64={friend.skinHeadBase64}
+                       name={friend.name}
+                       subtitle={FOUND_STATUS[friend.status] ? foundStatus : undefined}
                        classes="">
               {#snippet actions()}
-                {#if FOUND_ACTION[profile.status]}
+                {#if FOUND_ACTION[friend.status]}
                   <ButtonIcon title="Добавить в друзья"
                               icon="plus"
                               classes="transparent"
                               disabled={!panel.query.trim()}
-                              onclick={add}/>
-                  <ButtonIcon title={FOUND_ACTION[profile.status]}
-                              icon="people"
-                              classes="transparent"
-                              onclick={() => panel.add(profile.name)}/>
+                              onclick={panel.add(friend)}/>
                 {/if}
               {/snippet}
             </PlayerRow>
@@ -85,18 +81,18 @@
 
 {#if panel.incoming.length}
   <h3 class="friends-caption">Хотят дружить</h3>
-  {#each panel.incoming as friend (friend.profileId)}
+  {#each panel.incoming as friend (keyOf(friend))}
     <div class="friend">
       <PlayerRow name={friend.name} classes="">
         {#snippet actions()}
           <ButtonIcon title="Добавить в ответ"
                       icon="arrow-ok"
                       classes="transparent"
-                      onclick={() => panel.add(friend.name)}/>
+                      onclick={() => panel.add(friend)}/>
           <ButtonIcon title="Отказать в ответ"
                       icon="close"
                       classes="transparent"
-                      onclick={() => panel.remove(friend.name)}/>
+                      onclick={() => {panel.remove(friend)}}/>
         {/snippet}
       </PlayerRow>
     </div>
@@ -105,7 +101,7 @@
 
 {#if panel.online.length}
   <h3 class="friends-caption">Друзья</h3>
-  {#each panel.online as friend (friend.profileId)}
+  {#each panel.online as friend (keyOf(friend))}
     <div class="friend">
       <PlayerRow name={friend.name} classes="">
         {#snippet subtitle()}{friendStatus(friend)}{/snippet}
@@ -123,7 +119,7 @@
 
 {#if panel.outgoing.length}
   <h3 class="friends-caption">Ждут ответа</h3>
-  {#each panel.outgoing as friend (friend.profileId)}
+  {#each panel.outgoing as friend (keyOf(friend))}
     <div class="friend">
       <PlayerRow name={friend.name} classes="">
         {#snippet actions()}

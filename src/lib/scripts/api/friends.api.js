@@ -26,8 +26,8 @@ export const friendsApi = {
   },
 
   /** Добавить в друзья по имени профиля. */
-  async add(name) {
-    await api.ensureOk(await api.post('/friends', {body: JSON.stringify({name})}));
+  async add(profileId) {
+    await api.ensureOk(await api.post(`/friends/${profileId}`));
   },
 
   /** Убрать друга со своей стороны. */
