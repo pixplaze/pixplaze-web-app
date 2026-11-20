@@ -85,18 +85,18 @@
 
 {#if panel.incoming.length}
   <h3 class="friends-caption">Хотят дружить</h3>
-  {#each panel.incoming as friend (friend.profileId)}
+  {#each panel.incoming as friend (friend.name)}
     <div class="friend">
       <PlayerRow name={friend.name} classes="">
         {#snippet actions()}
           <ButtonIcon title="Добавить в ответ"
                       icon="arrow-ok"
                       classes="transparent"
-                      onclick={() => panel.add(friend.name)}/>
+                      onclick={() => panel.add(friend)}/>
           <ButtonIcon title="Отказать в ответ"
                       icon="close"
                       classes="transparent"
-                      onclick={() => panel.remove(friend.name)}/>
+                      onclick={() => {panel.remove(friend)}}/>
         {/snippet}
       </PlayerRow>
     </div>

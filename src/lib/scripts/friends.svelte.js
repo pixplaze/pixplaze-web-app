@@ -61,9 +61,9 @@ class Friends {
   }
 
   /** @returns {Promise<boolean>} добавлен ли */
-  async add(name) {
+  async add(friend) {
     try {
-      await friendsApi.add(name.trim());
+      await friendsApi.add(friend.profileId);
     } catch (error) {
       notifications.error(`Не удалось добавить в друзья: ${error.message}`);
       return false;
