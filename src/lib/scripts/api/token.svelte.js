@@ -23,6 +23,14 @@ class Token {
     });
   }
 
+  /**
+   * Токен прямо из localStorage, без ожидания события `storage`: другая вкладка могла только что
+   * его обновить. Нужен, чтобы не повторять refresh, который она уже сделала.
+   */
+  get stored() {
+    return browser ? localStorage.getItem(ACCESS_TOKEN_KEY) || '' : '';
+  }
+
   /** Текущий токен или '' (реактивно). */
   get value() {
     return this.#value;

@@ -8,6 +8,8 @@ import {parseJwt} from '#util/jwt.util.js';
 /** Коды закрытия сокета плагина: токен не принят и нет прав (п. 23 схемы авторизации). */
 const CLOSE_UNAUTHORIZED = 4401;
 const CLOSE_FORBIDDEN = 4403;
+/** Плагин пока не может проверить токен (не подключён к Pixplaze, ключи не загружены): ждать с тем же токеном. */
+const CLOSE_TRY_AGAIN_LATER = 1013;
 
 /**
  * Websocket-поток сообщений сервера (консоль или чат плагина Pixplaze). После подключения сервер
@@ -17,7 +19,10 @@ const CLOSE_FORBIDDEN = 4403;
  *
  * Авторизация — первым кадром `{"type":"AUTH","token":…}` с токеном доступа к плагину; историю плагин
  * присылает только после него. Перед истечением токена шлётся новый `AUTH`. Закрытие с кодом 4401
- * (токен не принят) — тихий новый обмен и переподключение, 4403 (нет прав) — сообщение, без переподключения.
+ * (токен не принят) — тихий новый обмен и переподключение, но сразу — только первый раз подряд: если и новый
+ * токен не принят, дальше с растущей паузой, иначе отказ плагина превращается в цикл обменов на web-api.
+ * 4403 (нет прав) — сообщение, без переподключения. 1013 (плагин не готов) — пауза, токен не меняется.
+ * Подключение считается открытым, когда пришла история: значит, плагин принял AUTH.
  *
  * О потере и восстановлении подключения сообщает центр уведомлений.
  */
@@ -33,6 +38,8 @@ export class MessageStream {
   #label;
   /** Уведомление о потере подключения; есть, пока подключение не восстановлено. */
   #lostNotice = null;
+  /** Закрытий 4401 подряд без принятого AUTH между ними. */
+  #rejectedInRow = 0;
 
   /**
    * @param {number} serverId сервер: чей токен доступа к плагину слать
@@ -99,11 +106,10 @@ export class MessageStream {
     this.#ws.send(line);
   }
 
-  /** Первый кадр подключения — AUTH; затем подключение считается открытым. */
+  /** Первый кадр подключения — AUTH; открытым подключение станет с приходом истории ({@link #receive}). */
   async #authorize() {
     try {
       await this.#sendAuth();
-      this.#onConnection(true);
     } catch (error) {
       if (error instanceof PluginAccessDeniedError) {
         this.#deny();
@@ -126,10 +132,19 @@ export class MessageStream {
   #onCloseCode(code) {
     clearTimeout(this.#renewTimer);
     if (code === CLOSE_UNAUTHORIZED) {
-      // Тихо: без уведомления о потере, но до нового AUTH отправлять нельзя
-      this.#connected = false;
       pluginTokens.invalidate(this.#serverId);
-      return 'now';
+      this.#rejectedInRow++;
+      if (this.#rejectedInRow === 1) {
+        // Тихо: без уведомления о потере, но до нового AUTH отправлять нельзя
+        this.#connected = false;
+        return 'now';
+      }
+      // И свежий токен не принят: обычная пауза с уведомлением
+      return null;
+    }
+    if (code === CLOSE_TRY_AGAIN_LATER) {
+      // Токен, возможно, верный: ждём с ним же
+      return null;
     }
     if (code === CLOSE_FORBIDDEN) {
       this.#deny();
@@ -163,6 +178,15 @@ export class MessageStream {
     } catch {
       console.warn('Message stream: frame is not JSON, skipped', data);
       return;
+    }
+
+    if (Array.isArray(parsed)) {
+      // История приходит только в ответ на принятый AUTH
+      this.#rejectedInRow = 0;
+      this.#ws.markHealthy();
+      if (!this.#connected) {
+        this.#onConnection(true);
+      }
     }
 
     const received = (Array.isArray(parsed) ? parsed : [parsed]).map(mapMessage);
