@@ -29,8 +29,8 @@ class PWA {
 
   get isInstalled() {
     return browser &&
-        window.navigator.standalone === true ||
-        window.matchMedia('(display-mode: standalone)').matches;
+        (window.navigator.standalone === true ||
+        window.matchMedia('(display-mode: standalone)').matches);
   }
 
   get showInstallSuggestion() {
