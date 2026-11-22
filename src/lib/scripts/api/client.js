@@ -27,6 +27,7 @@ class ApiClient {
 
   /**
    * @param {string} endpoint путь относительно {@link baseUrl}
+   * @param {function} doFetch
    * @param {RequestInit & {fetch?: typeof fetch}} [options] `fetch` — реализация запроса,
    *        например `fetch` из `load` SvelteKit: ответ SSR переиспользуется при гидрации
    */

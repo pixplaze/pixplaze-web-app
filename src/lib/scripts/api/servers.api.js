@@ -6,13 +6,15 @@ export const serversApi = {
   /**
    * Все серверы листинга.
    * @param {typeof fetch} [fetch] `fetch` из `load` SvelteKit при SSR
+   * @param {typeof signal}
    */
-  async list(fetch) {
-    return (await api.json(await api.get('/servers', {fetch}))).map(mapServer);
+  async list({fetch, signal}) {
+    return (await api.json(await api.get('/servers', {fetch, signal}))).map(mapServer);
   },
 
   /**
    * Поиск по листингу.
+   * @param {string} query
    * @param {AbortSignal} [signal] отмена устаревшего запроса при продолжении ввода
    */
   async search(query, signal) {

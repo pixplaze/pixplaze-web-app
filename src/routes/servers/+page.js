@@ -6,7 +6,7 @@ export const ssr = true
 
 export const load = async ({fetch}) => {
   try {
-    return {servers: await serversApi.list(fetch)};
+    return {servers: await serversApi.list({fetch})};
   } catch {
     // 503, а не пустой список: поисковик не проиндексирует пустой листинг и зайдёт позже
     error(503, 'Сервис временно недоступен');
