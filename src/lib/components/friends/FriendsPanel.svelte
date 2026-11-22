@@ -62,7 +62,7 @@
                               icon="plus"
                               classes="transparent"
                               disabled={!panel.query.trim()}
-                              onclick={panel.add(friend)}/>
+                              onclick={() => panel.add(friend)}/>
                 {/if}
               {/snippet}
             </PlayerRow>
@@ -92,7 +92,7 @@
           <ButtonIcon title="Отказать в ответ"
                       icon="close"
                       classes="transparent"
-                      onclick={() => {panel.remove(friend)}}/>
+                      onclick={() => panel.remove(friend)}/>
         {/snippet}
       </PlayerRow>
     </div>
