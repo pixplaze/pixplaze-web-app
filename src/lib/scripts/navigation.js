@@ -56,7 +56,7 @@ export const navigation = {
    * чтобы не зацикливать сам вход. Зовётся из реактивного эффекта корневого layout.
    */
   enforceAuth(pathname, search = '') {
-    if (!auth.isAuthenticated && !pathname.startsWith('/auth')) {
+    if (!auth.isAuthenticated && (!pathname.startsWith('/auth') && !pathname.startsWith('/offline'))) {
       return goto(`${ROUTES.signIn}${search}`);
     }
   }

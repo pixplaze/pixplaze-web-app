@@ -21,7 +21,7 @@ const appVersion = {
   buildTime: new Date().toISOString()
 };
 
-const isPWAEnabled = process.env.NODE_ENV === 'production';
+const isPWAEnabled = true || process.env.NODE_ENV === 'production';
 
 export default defineConfig({
   server: { host: true } /* Making dev application accessible in LAN */,
@@ -51,10 +51,10 @@ export default defineConfig({
       }
     },
     sveltekit({
-      // adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
-      // If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-      // See https://kit.svelte.dev/docs/adapters for more information about adapters.
       adapter: adapter(),
+      paths: {
+        relative: false
+      },
       serviceWorker: {
         register: isPWAEnabled
       }
