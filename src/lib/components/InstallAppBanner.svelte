@@ -11,7 +11,7 @@
 {#if pwa.showInstallSuggestion}
   <div class="pwa-install-banner">
     <p>Установите приложение Pixplaze!</p>
-    {#if !app.isAppleMobile}
+    {#if app.isAppleMobile}
       <ol>
         <li>
           Нажмите кнопку <strong>«Ещё»</strong>
