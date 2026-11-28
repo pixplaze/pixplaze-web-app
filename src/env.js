@@ -26,6 +26,6 @@ export const variables = defineEnvVars({
 	PUBLIC_WEB_PUSH_SUBSCRIPTIONS_PATH: {
 		public: true,
 		schema: (value) =>
-			value?.trim() || '/api/v1/push/subscriptions'
+			value?.trim() || '/notifications/subscriptions'
 	}
 });

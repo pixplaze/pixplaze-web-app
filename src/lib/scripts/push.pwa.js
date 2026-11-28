@@ -1,14 +1,11 @@
-import {
-    PIXPLAZE_WEB_API_URL,
-    PUBLIC_WEB_PUSH_ENABLED,
-    PUBLIC_WEB_PUSH_SUBSCRIPTIONS_PATH,
-    PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY
-} from '$app/env/public';
+import {PIXPLAZE_WEB_API_URL, PUBLIC_WEB_PUSH_ENABLED, PUBLIC_WEB_PUSH_SUBSCRIPTIONS_PATH} from '$app/env/public';
 import {app} from "#scripts/app.svelte.js";
+import {notificationsApi} from "#api/notifications.api.js";
+import {randomUUID} from "#util/id.util.js";
 
-const pushEnabled = PUBLIC_WEB_PUSH_ENABLED === 'true';
-const vapidPublicKey = PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY;
-const subscriptionsPath = PUBLIC_WEB_PUSH_SUBSCRIPTIONS_PATH || '/api/v1/push/subscriptions';
+const pushEnabled = true || PUBLIC_WEB_PUSH_ENABLED === 'true';
+const subscriptionsPath = PUBLIC_WEB_PUSH_SUBSCRIPTIONS_PATH;
+const DEVICE_ID_KEY = 'app.deviceId';
 
 function isBrowserPushSupported() {
     return (typeof window !== 'undefined' &&
@@ -21,10 +18,8 @@ function assertPushConfigured() {
     if (!pushEnabled) {
         throw new Error('Web Push пока отключён в конфигурации приложения.');
     }
-    if (!vapidPublicKey) {
-        throw new Error('Не задан публичный VAPID-ключ.');
-    }
 }
+
 function base64UrlToArrayBuffer(base64Url) {
     const padding = '='.repeat((4 - (base64Url.length % 4)) % 4);
     const base64 = (base64Url + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -36,7 +31,7 @@ function getSubscriptionsUrl() {
     const apiOrigin = PIXPLAZE_WEB_API_URL || window.location.origin;
     return new URL(subscriptionsPath, `${apiOrigin.replace(/\/+$/, '')}/`).toString();
 }
-async function sendSubscriptionRequest(method, body) {
+async function sendSubscriptionRequest(method, body)    {
     const response = await fetch(getSubscriptionsUrl(), {
         method,
         credentials: 'include',
@@ -48,12 +43,13 @@ async function sendSubscriptionRequest(method, body) {
         throw new Error(`Backend не сохранил push-подписку (HTTP ${response.status}).`);
     }
 }
+
 export async function getPushUiState() {
     if (!pushEnabled)
         return { kind: 'disabled' };
-    if (!vapidPublicKey) {
-        return { kind: 'misconfigured', reason: 'Не задан публичный VAPID-ключ.' };
-    }
+    // if (!vapidPublicKey) {
+    //     return { kind: 'misconfigured', reason: 'Не задан публичный VAPID-ключ.' };
+    // }
     if (typeof window === 'undefined')
         return { kind: 'checking' };
     if (!window.isSecureContext) {
@@ -85,6 +81,7 @@ export async function getPushUiState() {
 /** Call this only from a deliberate user action, such as clicking a button. */
 export async function enablePushNotifications() {
     assertPushConfigured();
+    console.log('ASSSS!!!');
     if (typeof window === 'undefined' || !isBrowserPushSupported()) {
         throw new Error('Push API недоступен в этом браузере или контексте.');
     }
@@ -100,9 +97,14 @@ export async function enablePushNotifications() {
     if (permission !== 'granted') {
         throw new Error('Разрешение на уведомления не предоставлено.');
     }
+
+    const vapidPublicKey = await notificationsApi.getPublicVapidKey();
+
     const registration = await navigator.serviceWorker.ready;
     let subscription = await registration.pushManager.getSubscription();
     const createdHere = subscription === null;
+    console.log(vapidPublicKey);
+    console.log(base64UrlToArrayBuffer(vapidPublicKey));
     if (!subscription) {
         subscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
@@ -112,13 +114,21 @@ export async function enablePushNotifications() {
     try {
         // Contract for the future Spring Boot API: POST the PushSubscription JSON.
         // The backend must associate it with the currently authenticated user.
-        await sendSubscriptionRequest('POST', subscription.toJSON());
+        // const deviceId = randomUUID();
+        const deviceId = localStorage.getItem(DEVICE_ID_KEY) || randomUUID();
+        localStorage.setItem(DEVICE_ID_KEY, deviceId);
+        await notificationsApi.subscribe({
+            deviceId: deviceId,
+            subscription: subscription.toJSON()
+        });
     }
     catch (error) {
         // Do not leave a newly-created browser subscription that the backend never
         // learned about. Existing subscriptions are preserved so the user can retry.
-        if (createdHere)
+        if (createdHere) {
             await subscription.unsubscribe();
+            localStorage.removeItem(DEVICE_ID_KEY);
+        }
         throw error;
     }
 }
@@ -131,6 +141,8 @@ export async function disablePushNotifications() {
     const subscription = await registration?.pushManager.getSubscription();
     if (!subscription)
         return;
-    await sendSubscriptionRequest('DELETE', { endpoint: subscription.endpoint });
+    // await sendSubscriptionRequest('DELETE', { endpoint: subscription.endpoint });
+    const deviceId = localStorage.getItem(DEVICE_ID_KEY);
+    await notificationsApi.unsubscribe(deviceId);
     await subscription.unsubscribe();
 }

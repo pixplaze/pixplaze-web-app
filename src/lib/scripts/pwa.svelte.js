@@ -34,7 +34,7 @@ class PWA {
   }
 
   get showInstallSuggestion() {
-    return !this.isInstalled && this.#showInstallSuggestionAgain && (true || this.#showInstallSuggestion);
+    return !this.isInstalled && this.#showInstallSuggestionAgain && this.#showInstallSuggestion;
   }
 
   handleBeforeInstallPrompt = (e) => {
